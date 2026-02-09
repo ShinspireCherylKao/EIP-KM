@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>標籤 - 文件庫管理</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-km-base.css">
+    <link rel="stylesheet" href="css/style-km-tags.css">
+    
+    <style>
+        /* 標籤雲 */
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .tag-cloud .btn {
+            font-size: 13px;
+            padding: 6px 12px;
+        }
+        .tag-cloud .btn.active {
+            background: var(--primary-color, #3B82F6);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <div id="header-container"></div>
+    
+    <!-- 側邊欄 -->
+    <div id="sidebar-container"></div>
+    
+    <!-- 主要內容區 -->
+    <div class="main-content">
+        <!-- KM 導航 -->
+        <div id="km-nav-container"></div>
+        
+        <!-- 標籤內容 -->
+        <div class="km-container">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-tags"></i> 標籤分類</h2>
+            </div>
+            
+            <div class="panel">
+                <h3>熱門標籤</h3>
+                <div id="tagCloud" class="tag-cloud">
+                    <button class="btn ghost">載入中...</button>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h3 id="tagTitle">#合約</h3>
+                <div class="km-table-container">
+                    <table class="km-table">
+                        <thead>
+                            <tr>
+                                <th>項目名稱</th>
+                                <th>標籤</th>
+                                <th>部門</th>
+                                <th>類型</th>
+                                <th>更新時間</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tagResultBody">
+                            <tr><td colspan="6" class="text-center">載入中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast 通知 -->
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- JS 引用 -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="shared/layout-loader.js"></script>
+    <script src="js/km-base.js"></script>
+    
+    <script>
+    /**
+     * km-tags.js（內嵌版）
+     * 標籤頁專用 JS - 與「近期存取」假資料同步
+     */
+
+    // 從 localStorage 的 fileDatabase 取得檔案資料（與近期存取同步）
+    let tagsFileData = [];
+
+    /**
+     * 初始化標籤頁資料
+     */
+    function initTagsData() {
+        const data = localStorage.getItem('fileDatabase');
+        if (data) {
+            const db = JSON.parse(data);
+            tagsFileData = db.files || [];
+        }
+        
+        // 如果沒有資料，建立預設資料
+        if (tagsFileData.length === 0) {
+            initDefaultTagsData();
+        }
+    }
+
+    /**
+     * 建立預設標籤資料（與近期存取假資料一致）
+     */
+    function initDefaultTagsData() {
+        tagsFileData = [
+            // HR/FAQ
+            { name: '差旅報銷規範_2026版.pdf', folder: 'HR/FAQ', uploadDate: '2026-01-15', tags: ['差旅', '報銷', 'FAQ'] },
+            { name: '請假制度說明.docx', folder: 'HR/FAQ', uploadDate: '2026-01-10', tags: ['請假', '制度', 'FAQ'] },
+            { name: '員工福利手冊.pdf', folder: 'HR/FAQ', uploadDate: '2025-12-20', tags: ['福利', '必讀'] },
+            { name: '新進人員FAQ.docx', folder: 'HR/FAQ', uploadDate: '2026-01-08', tags: ['新人', 'FAQ'] },
+            { name: '考勤規則Q&A.pdf', folder: 'HR/FAQ', uploadDate: '2025-11-25', tags: ['考勤', 'FAQ'] },
+
+            // HR/SOP
+            { name: '入職流程SOP.pdf', folder: 'HR/SOP', uploadDate: '2026-01-12', tags: ['SOP', '入職'] },
+            { name: '離職流程SOP.pdf', folder: 'HR/SOP', uploadDate: '2025-12-15', tags: ['SOP', '離職'] },
+            { name: '績效考核SOP.docx', folder: 'HR/SOP', uploadDate: '2026-01-05', tags: ['SOP', '績效'] },
+            { name: '招募面試SOP.pdf', folder: 'HR/SOP', uploadDate: '2025-11-30', tags: ['SOP', '招募'] },
+
+            // HR/表單/差旅
+            { name: '國內差旅申請單.xlsx', folder: 'HR/表單/差旅', uploadDate: '2026-01-20', tags: ['差旅', '表單'] },
+            { name: '海外差旅申請單.xlsx', folder: 'HR/表單/差旅', uploadDate: '2026-01-18', tags: ['差旅', '表單', '海外'] },
+            { name: '差旅費用報銷單.xlsx', folder: 'HR/表單/差旅', uploadDate: '2026-01-15', tags: ['差旅', '報銷', '表單'] },
+
+            // HR/表單/請假
+            { name: '請假申請單.xlsx', folder: 'HR/表單/請假', uploadDate: '2026-01-22', tags: ['請假', '表單'] },
+            { name: '特休申請說明.pdf', folder: 'HR/表單/請假', uploadDate: '2025-12-28', tags: ['請假', '特休'] },
+
+            // HR/培訓
+            { name: '新人訓練手冊.pdf', folder: 'HR/培訓', uploadDate: '2026-01-10', tags: ['培訓', '新人', '必讀'] },
+            { name: '資安教育訓練講義.pptx', folder: 'HR/培訓', uploadDate: '2025-12-20', tags: ['培訓', '資安'] },
+            { name: '職業安全訓練簡報.pptx', folder: 'HR/培訓', uploadDate: '2025-11-15', tags: ['培訓', '安全'] },
+
+            // 管理部/會議紀錄
+            { name: '2026年1月份主管會議紀錄.docx', folder: '管理部/會議紀錄', uploadDate: '2026-01-25', tags: ['會議', '主管'] },
+            { name: '2025年Q4營運檢討會議紀錄.docx', folder: '管理部/會議紀錄', uploadDate: '2025-12-30', tags: ['會議', '營運', 'Q4'] },
+            { name: '年度策略規劃會議紀錄.docx', folder: '管理部/會議紀錄', uploadDate: '2025-12-15', tags: ['會議', '策略'] },
+
+            // 管理部/財務報表
+            { name: '2025年度財務報表.xlsx', folder: '管理部/財務報表', uploadDate: '2026-01-28', tags: ['財報', '機密', '年度'] },
+            { name: '2025年Q4損益表.xlsx', folder: '管理部/財務報表', uploadDate: '2026-01-20', tags: ['財報', 'Q4'] },
+            { name: '2026年度預算規劃.xlsx', folder: '管理部/財務報表', uploadDate: '2026-01-15', tags: ['預算', '規劃'] },
+
+            // 管理部/採購合約
+            { name: '辦公設備採購合約.pdf', folder: '管理部/採購合約', uploadDate: '2026-01-10', tags: ['合約', '採購'] },
+            { name: '軟體授權合約.pdf', folder: '管理部/採購合約', uploadDate: '2025-12-20', tags: ['合約', '軟體'] },
+            { name: '供應商名冊2026.xlsx', folder: '管理部/採購合約', uploadDate: '2026-01-05', tags: ['供應商', '採購'] },
+
+            // 行政部/公告
+            { name: '2026年春節假期公告.pdf', folder: '行政部/公告', uploadDate: '2026-01-20', tags: ['公告', '假期'] },
+            { name: '辦公室搬遷通知.pdf', folder: '行政部/公告', uploadDate: '2026-01-15', tags: ['公告', '行政'] },
+            { name: '停車位申請辦法.docx', folder: '行政部/公告', uploadDate: '2025-12-10', tags: ['公告', '停車'] },
+
+            // 行政部/庶務
+            { name: '文具用品請購單.xlsx', folder: '行政部/庶務', uploadDate: '2026-01-22', tags: ['庶務', '請購'] },
+            { name: '會議室預約管理規則.docx', folder: '行政部/庶務', uploadDate: '2025-12-25', tags: ['庶務', '會議室'] },
+
+            // 專案/A專案
+            { name: 'A專案服務合約.pdf', folder: '專案/A專案', uploadDate: '2025-12-01', tags: ['合約', 'A專案'] },
+            { name: 'A專案需求規格書.docx', folder: '專案/A專案', uploadDate: '2025-11-20', tags: ['需求', 'A專案'] },
+            { name: 'A專案進度報告_Q1.pptx', folder: '專案/A專案', uploadDate: '2025-03-31', tags: ['進度', 'A專案'] },
+
+            // 專案/B專案
+            { name: 'B專案外包合約.pdf', folder: '專案/B專案', uploadDate: '2025-12-05', tags: ['合約', '外包', 'B專案'] },
+            { name: 'B專案結案報告.pptx', folder: '專案/B專案', uploadDate: '2025-12-10', tags: ['結案', 'B專案'] },
+            { name: 'B專案費用明細.xlsx', folder: '專案/B專案', uploadDate: '2025-12-08', tags: ['帳務', 'B專案'] }
+        ];
+    }
+
+    /**
+     * 統計所有標籤及數量
+     */
+    function getTagsStatistics() {
+        const tagCount = {};
+        tagsFileData.forEach(file => {
+            (file.tags || []).forEach(tag => {
+                tagCount[tag] = (tagCount[tag] || 0) + 1;
+            });
+        });
+        
+        // 轉換成陣列並依數量排序
+        return Object.entries(tagCount)
+            .map(([tag, count]) => ({ tag, count }))
+            .sort((a, b) => b.count - a.count);
+    }
+
+    /**
+     * 取得檔案圖示 class
+     */
+    function getFileIcon(fileName) {
+        const ext = fileName.split('.').pop().toLowerCase();
+        switch (ext) {
+            case 'pdf': return 'fa-file-pdf pdf-icon';
+            case 'doc':
+            case 'docx': return 'fa-file-word doc-icon';
+            case 'xls':
+            case 'xlsx': return 'fa-file-excel xls-icon';
+            case 'ppt':
+            case 'pptx': return 'fa-file-powerpoint ppt-icon';
+            default: return 'fa-file';
+        }
+    }
+
+    /**
+     * 取得部門名稱
+     */
+    function getDeptFromFolder(folder) {
+        const parts = folder.split('/');
+        return parts[0] || '-';
+    }
+
+    /**
+     * 渲染標籤雲
+     */
+    function renderKmTags() {
+        initTagsData();
+        
+        const tagCloud = document.getElementById('tagCloud');
+        if (!tagCloud) return;
+        
+        const tagsStats = getTagsStatistics();
+        
+        if (tagsStats.length === 0) {
+            tagCloud.innerHTML = '<button class="btn ghost">尚無標籤資料</button>';
+            return;
+        }
+        
+        tagCloud.innerHTML = tagsStats.map(t => `
+            <button class="btn" onclick="openKmTag('${t.tag}')">
+                #${t.tag} <span class="mut">(${t.count})</span>
+            </button>
+        `).join('');
+        
+        // 預設開啟第一個標籤
+        if (tagsStats[0]) {
+            openKmTag(tagsStats[0].tag);
+        }
+    }
+
+    /**
+     * 開啟標籤詳頁
+     */
+    function openKmTag(tag) {
+        const titleEl = document.getElementById('tagTitle');
+        const tbody = document.getElementById('tagResultBody');
+        
+        if (titleEl) titleEl.textContent = '#' + tag;
+        
+        // 標示當前選中的標籤
+        document.querySelectorAll('#tagCloud .btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent.includes('#' + tag + ' ')) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // 從檔案資料中篩選含有此標籤的項目
+        const items = tagsFileData.filter(file => (file.tags || []).includes(tag));
+        
+        if (!tbody) return;
+        
+        if (items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="mut text-center">此標籤目前沒有項目</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = items.map(file => `
+            <tr>
+                <td>
+                    <div class="file-name">
+                        <i class="fa-solid ${getFileIcon(file.name)}"></i>
+                        <span>${file.name}</span>
+                    </div>
+                </td>
+                <td>${(file.tags || []).map(t => `<span class="tag">${t}</span>`).join('')}</td>
+                <td>${getDeptFromFolder(file.folder)}</td>
+                <td>檔案</td>
+                <td>${file.uploadDate || '-'}</td>
+                <td>
+                    <button class="btn small ghost" onclick="viewTagFile('${file.name}')"><i class="fa-solid fa-eye"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    /**
+     * 檢視檔案
+     */
+    function viewTagFile(fileName) {
+        alert('檢視檔案: ' + fileName);
+    }
+
+    // 頁面載入時初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            renderKmTags();
+        }, 100);
+    });
+    </script>
+</body>
+</html>

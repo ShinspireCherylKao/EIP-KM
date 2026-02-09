@@ -1,0 +1,113 @@
+/* 
+* style-tables.css
+* 表格樣式表，定義資料表格的外觀
+*/
+
+/* 表格容器 */
+.data-table {
+    width: 100%;
+    overflow-x: auto;
+    background-color: var(--white-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.data-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* 表頭樣式 */
+.data-table thead {
+    background-color: #f8f9fa;
+}
+
+.data-table thead th {
+    text-align: left;
+    padding: 12px 15px;
+    font-weight: 600;
+    color: var(--dark-color);
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+}
+
+/* 表格內容樣式 */
+.data-table tbody td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: middle;
+}
+
+.data-table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* 操作圖標 */
+.action-icons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.action-icons i {
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.action-icons .fa-eye {
+    color: var(--info-color);
+}
+
+.action-icons .fa-eye:hover {
+    background-color: rgba(23, 162, 184, 0.1);
+}
+
+.action-icons .fa-edit {
+    color: var(--warning-color);
+}
+
+.action-icons .fa-edit:hover {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.action-icons .fa-trash {
+    color: var(--danger-color);
+}
+
+.action-icons .fa-trash:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+/* 單選與多選框樣式 */
+.data-table input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+/* 響應式調整 */
+@media screen and (max-width: 992px) {
+    .data-table {
+        font-size: 13px;
+    }
+    
+    .data-table thead th,
+    .data-table tbody td {
+        padding: 10px 12px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .data-table thead th {
+        font-size: 12px;
+    }
+    
+    .action-icons {
+        gap: 5px;
+    }
+}

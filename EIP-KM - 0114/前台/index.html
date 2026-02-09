@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JoinTime (DEV) - 企業入口網站</title>
+    <!-- 引入 Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入自定義 CSS -->
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-home.css">
+</head>
+<body>
+    <!-- 頂部導航欄 -->
+    <header class="top-header">
+        <div class="header-left">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <h1 class="header-title">JoinTime (DEV)</h1>
+        </div>
+        
+        <div class="header-right">
+            <!-- 搜尋框 -->
+            <div class="search-box">
+                <input type="text" placeholder="請輸入關鍵字" id="globalSearch">
+                <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            
+            <!-- 語言選擇 -->
+            <div class="language-selector">
+                <span>繁體中...</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            
+            <!-- 使用者資訊 -->
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <span class="user-name">Miranda</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要容器 -->
+    <div class="main-container">
+        <!-- 側邊欄 -->
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-nav">
+                <!-- 公佈欄 -->
+                <a href="#" class="nav-item" data-page="home" onclick="gotoPage('home')">
+                    <i class="fa-solid fa-bullhorn"></i>
+                    <span>公佈欄*</span>
+                </a>
+
+                <!-- 物品領用 -->
+                <a href="#" class="nav-item" data-page="items">
+                    <i class="fa-solid fa-box-open"></i>
+                    <span>物品領用</span>
+                </a>
+
+                <!-- 投票問券 -->
+                <a href="#" class="nav-item" data-page="vote">
+                    <i class="fa-solid fa-square-poll-vertical"></i>
+                    <span>投票問券</span>
+                </a>
+
+                <!-- 待辦事項 -->
+                <a href="#" class="nav-item" data-page="todo">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>待辦事項</span>
+                </a>
+
+                <!-- 通訊錄 -->
+                <a href="#" class="nav-item" data-page="contacts">
+                    <i class="fa-solid fa-address-book"></i>
+                    <span>通訊錄</span>
+                </a>
+
+                <!-- 影音相簿 -->
+                <a href="#" class="nav-item" data-page="media">
+                    <i class="fa-solid fa-photo-film"></i>
+                    <span>影音相簿</span>
+                </a>
+
+                <!-- 檔案中心（文件庫管理） -->
+                <a href="km-recent.html" class="nav-item" data-page="km">
+                    <i class="fa-solid fa-folder-tree"></i>
+                    <span>文件庫管理</span>
+                </a>
+                <!-- KM 知識管理（文件庫管理子項目） -->
+                <a href="km-knowledge.html" class="nav-item sub-item" data-page="km-knowledge">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>KM 知識管理</span>
+                </a>
+                <!-- 投影機 -->
+                <a href="#" class="nav-item" data-page="projector">
+                    <i class="fa-solid fa-tv"></i>
+                    <span>投影機</span>
+                </a>
+
+                <!-- 按摩預約 -->
+                <a href="#" class="nav-item" data-page="massage">
+                    <i class="fa-solid fa-spa"></i>
+                    <span>按摩預約</span>
+                </a>
+
+                <!-- 電子表單申請 -->
+                <a href="#" class="nav-item" data-page="eform-apply">
+                    <i class="fa-solid fa-file-signature"></i>
+                    <span>電子表單申請*</span>
+                </a>
+
+                <!-- 電子表單簽核 -->
+                <a href="#" class="nav-item" data-page="eform-sign">
+                    <i class="fa-solid fa-file-circle-check"></i>
+                    <span>電子表單簽核</span>
+                </a>
+
+                <!-- 投票問券 (重複項) -->
+                <a href="#" class="nav-item" data-page="survey">
+                    <i class="fa-solid fa-clipboard-question"></i>
+                    <span>投票問券</span>
+                </a>
+
+                <!-- IT 服務區 -->
+                <a href="#" class="nav-item" data-page="it-service">
+                    <i class="fa-solid fa-headset"></i>
+                    <span>IT 服務區</span>
+                </a>
+
+                <!-- 會議管理 -->
+                <a href="#" class="nav-item" data-page="meeting">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>會議管理</span>
+                </a>
+
+                <!-- 活動預約 -->
+                <a href="#" class="nav-item" data-page="activity">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>活動預約</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- 主要內容區 -->
+        <main class="main-content">
+            <!-- ==================== 首頁內容 ==================== -->
+            <section class="page-section" id="page-home">
+                <!-- 警告橫幅 -->
+                <div class="alert-banner">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>防詐騙提醒!!! 本公司近期接獲通報，有自稱陳銘川之人士假冒本公司及關係企業員工，於北中南等多個縣市持偽造之員工識別證洽詢租屋事宜，謹此提醒此為新型態詐騙手法（詳見相關連結報導 https://lifenews.com.tw/317797/），若有遇自稱本公司或關係企業員工而洽詢租屋者，請務必提高警覺，避免受騙上當！</span>
+                </div>
+
+                <div class="home-layout">
+                    <!-- 左側主要內容 -->
+                    <div class="home-main">
+                        <!-- 輪播 Banner -->
+                        <div class="banner-carousel">
+                            <div class="carousel-container" id="carouselContainer">
+                                <div class="carousel-slide active">
+                                    <img src="https://picsum.photos/800/400?random=1" alt="Banner 1">
+                                </div>
+                                <div class="carousel-slide">
+                                    <img src="https://picsum.photos/800/400?random=2" alt="Banner 2">
+                                </div>
+                                <div class="carousel-slide">
+                                    <img src="https://picsum.photos/800/400?random=3" alt="Banner 3">
+                                </div>
+                            </div>
+                            <button class="carousel-btn prev" onclick="prevSlide()">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                            <button class="carousel-btn next" onclick="nextSlide()">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                            <div class="carousel-dots" id="carouselDots"></div>
+                        </div>
+
+                        <!-- 公佈欄 -->
+                        <div class="card announcement-card">
+                            <div class="card-header">
+                                <h3>公佈欄*</h3>
+                                <a href="#" class="view-more">查看更多 <i class="fa-solid fa-chevron-right"></i></a>
+                            </div>
+                            <div class="card-body">
+                                <div class="tabs">
+                                    <button class="tab-btn active" onclick="switchAnnouncementTab('all')">所有公告</button>
+                                    <button class="tab-btn" onclick="switchAnnouncementTab('dept')">部門公告</button>
+                                </div>
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 120px;">類別</th>
+                                            <th>標題</th>
+                                            <th style="width: 140px;">發佈單位</th>
+                                            <th style="width: 100px;">公告時間</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="announcementBody">
+                                        <tr>
+                                            <td><span class="category-tag blue">系所公告</span></td>
+                                            <td><a href="#">生技EMBA新生註冊</a></td>
+                                            <td>admin預設部門</td>
+                                            <td>2024-12-31</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="category-tag green">活動公告</span></td>
+                                            <td><a href="#">年終尾牙活動通知</a></td>
+                                            <td>人資部</td>
+                                            <td>2024-12-28</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="category-tag orange">重要公告</span></td>
+                                            <td><a href="#">系統維護公告</a></td>
+                                            <td>資訊部</td>
+                                            <td>2024-12-25</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右側邊欄 -->
+                    <div class="home-sidebar">
+                        <!-- 相關連結 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>相關連結</h3>
+                                <a href="#" class="view-more">查看更多 <i class="fa-solid fa-chevron-right"></i></a>
+                            </div>
+                            <div class="card-body">
+                                <table class="data-table compact">
+                                    <thead>
+                                        <tr>
+                                            <th>類別</th>
+                                            <th>標題</th>
+                                            <th>發佈單位</th>
+                                            <th>公告時間</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="category-tag purple">下午茶</span></td>
+                                            <td>餐飲</td>
+                                            <td>admin預設部門</td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 電子表單申請 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>電子表單申請*</h3>
+                                <a href="#" class="view-more">查看更多 <i class="fa-solid fa-chevron-right"></i></a>
+                            </div>
+                            <div class="card-body">
+                                <table class="data-table compact">
+                                    <thead>
+                                        <tr>
+                                            <th>類別</th>
+                                            <th>表單名稱</th>
+                                            <th>狀態</th>
+                                            <th>申請時間</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>費用</td>
+                                            <td>交通費用</td>
+                                            <td><span class="status-icon"><i class="fa-solid fa-gear"></i></span> 簽核中</td>
+                                            <td>2025-07-03 14:38:38</td>
+                                        </tr>
+                                        <tr>
+                                            <td>員工旅遊</td>
+                                            <td>員工旅遊費用申請</td>
+                                            <td><span class="status-icon"><i class="fa-solid fa-gear"></i></span> 簽核通過</td>
+                                            <td>2025-06-24 17:51:09</td>
+                                        </tr>
+                                        <tr>
+                                            <td>員工旅遊</td>
+                                            <td>員工旅遊費用申請</td>
+                                            <td><span class="status-icon"><i class="fa-solid fa-gear"></i></span> 簽核通過</td>
+                                            <td>2025-03-04 14:40:43</td>
+                                        </tr>
+                                        <tr>
+                                            <td>請假單</td>
+                                            <td>請假單</td>
+                                            <td><span class="status-icon red"><i class="fa-solid fa-gear"></i></span> 不通過</td>
+                                            <td>2024-12-09 16:45:52</td>
+                                        </tr>
+                                        <tr>
+                                            <td>員工旅遊</td>
+                                            <td>員工旅遊費用</td>
+                                            <td><span class="status-icon red"><i class="fa-solid fa-gear"></i></span> 不通過</td>
+                                            <td>2024-11-23 22:13:11</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== 其他頁面佔位 ==================== -->
+            <section class="page-section" id="page-items" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-box-open"></i>
+                    <h2>物品領用</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+
+            <section class="page-section" id="page-vote" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-square-poll-vertical"></i>
+                    <h2>投票問券</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+
+            <section class="page-section" id="page-todo" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-list-check"></i>
+                    <h2>待辦事項</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+
+            <section class="page-section" id="page-contacts" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-address-book"></i>
+                    <h2>通訊錄</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+
+            <section class="page-section" id="page-media" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-photo-film"></i>
+                    <h2>影音相簿</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+
+            <section class="page-section" id="page-files" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-folder"></i>
+                    <h2>檔案中心</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+
+            <section class="page-section" id="page-projector" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-tv"></i>
+                    <h2>投影機</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+
+            <section class="page-section" id="page-massage" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-spa"></i>
+                    <h2>按摩預約</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+
+            <section class="page-section" id="page-eform-apply" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-file-signature"></i>
+                    <h2>電子表單申請</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+
+            <section class="page-section" id="page-eform-sign" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-file-circle-check"></i>
+                    <h2>電子表單簽核</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+
+            <section class="page-section" id="page-survey" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-clipboard-question"></i>
+                    <h2>投票問券</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+
+            <section class="page-section" id="page-it-service" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-headset"></i>
+                    <h2>IT 服務區</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+
+            <section class="page-section" id="page-meeting" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <h2>會議管理</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+
+            <section class="page-section" id="page-activity" style="display:none;">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <h2>活動預約</h2>
+                    <p>此功能尚在開發中...</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ==================== Modals ==================== -->
+    <!-- 上傳 Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>上傳到 <strong id="uploadTargetPath">HR/FAQ</strong></span>
+                <button class="btn ghost" onclick="closeModal('uploadModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>選擇檔案</label>
+                        <p class="hint">支援多檔</p>
+                        <input type="file" multiple id="uploadFiles">
+                    </div>
+                    <div class="form-group">
+                        <label>基本資訊</label>
+                        <div class="form-field">
+                            <span>標題（可選）：</span>
+                            <input type="text" id="uploadTitle" placeholder="顯示名稱，不改檔名">
+                        </div>
+                        <div class="form-field">
+                            <span>描述：</span>
+                            <input type="text" id="uploadDesc" placeholder="可選填">
+                        </div>
+                        <div class="form-field">
+                            <span>標籤：</span>
+                            <input type="text" id="uploadTags" placeholder="以逗號分隔">
+                        </div>
+                        <label class="checkbox-label">
+                            <input type="checkbox" checked id="uploadInherit"> 繼承目前資料夾權限
+                        </label>
+                        <p class="hint">提示：標題僅影響列表顯示，不會改變實際檔名。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('uploadModal')">取消</button>
+                <button class="btn primary" onclick="doUpload()">上傳</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增資料夾 Modal -->
+    <div class="modal" id="createFolderModal">
+        <div class="modal-box small">
+            <div class="modal-header">
+                <span>在 <strong id="createFolderPath">HR/FAQ</strong> 新增資料夾</span>
+                <button class="btn ghost" onclick="closeModal('createFolderModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-field">
+                    <span>資料夾名稱：</span>
+                    <input type="text" id="newFolderName" placeholder="例如：年度報表">
+                </div>
+                <label class="checkbox-label">
+                    <input type="checkbox" checked id="folderInherit"> 繼承目前資料夾權限
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('createFolderModal')">取消</button>
+                <button class="btn primary" onclick="confirmCreateFolder()">建立</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 權限設定 Modal -->
+    <div class="modal" id="permModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>權限設定：<strong id="permTarget">HR/FAQ</strong></span>
+                <button class="btn ghost" onclick="closeModal('permModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>可見性模式</label>
+                        <select id="permVisibility">
+                            <option value="inherit">繼承上層</option>
+                            <option value="whitelist">白名單</option>
+                            <option value="blacklist">黑名單</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>允許動作</label>
+                        <label class="checkbox-label"><input type="checkbox" checked> 可瀏覽</label>
+                        <label class="checkbox-label"><input type="checkbox"> 可下載</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('permModal')">取消</button>
+                <button class="btn primary" onclick="alert('已儲存'); closeModal('permModal')">儲存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分享 Modal -->
+    <div class="modal" id="shareModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>建立訪客分享連結：<strong id="shareTarget">HR/FAQ</strong></span>
+                <button class="btn ghost" onclick="closeModal('shareModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>有效期限</label>
+                        <select>
+                            <option>7 天</option>
+                            <option>30 天</option>
+                            <option>永久</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>存取密碼（可選）</label>
+                        <input type="password" placeholder="留空則不需密碼">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('shareModal')">取消</button>
+                <button class="btn primary" onclick="alert('已建立分享連結'); closeModal('shareModal')">建立</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 標籤編輯 Modal -->
+    <div class="modal" id="tagsModal">
+        <div class="modal-box small">
+            <div class="modal-header">
+                <span>編輯標籤：<strong id="tagsTargetName"></strong></span>
+                <button class="btn ghost" onclick="closeModal('tagsModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-field">
+                    <span>以逗號分隔多個標籤：</span>
+                    <input type="text" id="tagsInput" placeholder="例如：差旅, 報銷, SOP">
+                </div>
+                <p class="hint">提示：會自動去除重複與多餘空白；留空可清除全部標籤。</p>
+                <input type="hidden" id="tagsItemId">
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="document.getElementById('tagsInput').value=''; saveTags()">清除全部</button>
+                <button class="btn" onclick="closeModal('tagsModal')">取消</button>
+                <button class="btn primary" onclick="saveTags()">儲存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 JavaScript -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="js/home-script.js"></script>
+
+    <!-- localStorage 連動功能 -->
+    <script>
+        // 顯示同步狀態
+        function showSyncStatus() {
+            const statusPanel = document.getElementById('syncStatus');
+            const statusText = document.getElementById('syncStatusText');
+            if (statusPanel && localStorage.getItem('fileDatabase')) {
+                statusPanel.style.display = 'block';
+                const data = JSON.parse(localStorage.getItem('fileDatabase'));
+                const updateTime = new Date(data.lastUpdate).toLocaleString('zh-TW');
+                statusText.textContent = `最後更新：${updateTime} | 共 ${data.files.length} 個檔案 | 來源：${data.updateSource === 'backend' ? '後台管理系統' : '前台'}`;
+            }
+        }
+
+        // 顯示權限更新通知
+        function showPermissionUpdateNotification() {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 16px 24px;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                z-index: 9999;
+                animation: slideIn 0.3s ease-out;
+                max-width: 400px;
+            `;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fa-solid fa-sync-alt fa-spin" style="font-size: 24px;"></i>
+                    <div>
+                        <div style="font-weight: bold; margin-bottom: 4px;">🔄 權限已更新</div>
+                        <div style="font-size: 13px; opacity: 0.9;">後台管理員已修改檔案權限，您的檔案訪問權限可能已變更</div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.5s';
+                setTimeout(() => notification.remove(), 500);
+            }, 5000);
+
+            // 更新同步狀態
+            showSyncStatus();
+        }
+
+        // 檢查檔案權限
+        function checkFilePermission(fileName, action = 'download') {
+            const data = localStorage.getItem('fileDatabase');
+            if (!data) return true;
+            
+            const db = JSON.parse(data);
+            const file = db.files.find(f => f.name === fileName);
+            if (!file) return true;
+            
+            const userDept = 'HR';
+            const perm = file.permissions[userDept];
+            
+            if (perm === '不可見') return false;
+            if (action === 'download' && perm === '僅瀏覽') {
+                alert('❌ 權限不足：您只有瀏覽權限，無法下載此檔案。');
+                return false;
+            }
+            return true;
+        }
+
+        // 監聽 localStorage 變更（跨分頁通知）
+        window.addEventListener('storage', e => {
+            if (e.key === 'fileDatabase') {
+                console.log('🔄 偵測到後台權限更新');
+                showPermissionUpdateNotification();
+            }
+        });
+
+        // 頁面載入時檢查
+        window.addEventListener('DOMContentLoaded', () => {
+            showSyncStatus();
+            loadFolderTree(); // 載入資料夾樹狀結構
+            console.log('✅ 前台權限檢查系統已就緒');
+        });
+
+        // 從 localStorage 載入資料夾樹狀結構
+        function loadFolderTree() {
+            const data = localStorage.getItem('fileDatabase');
+            if (!data) {
+                console.error('❌ localStorage 中沒有資料夾數據！請先在後台重置數據庫。');
+                const container = document.getElementById('folderTree');
+                if (container) {
+                    container.innerHTML = '<div style="padding:20px;color:red;text-align:center;">⚠️ 請先開啟後台管理並點擊「重置數據庫」按鈕<br><button onclick="location.reload()" style="margin-top:10px;padding:8px 16px;background:#4F46E5;color:white;border:none;border-radius:4px;cursor:pointer;">刷新頁面</button></div>';
+                }
+                return;
+            }
+
+            const db = JSON.parse(data);
+            const folders = db.folders || [];
+            const currentUserDept = 'HR'; // 當前登入用戶的部門
+            
+            console.log('📂 從 localStorage 載入資料夾:', folders);
+            console.log('👤 當前用戶部門:', currentUserDept);
+            console.log('📂 資料夾總數:', folders.length);
+            
+            if (folders.length === 0) {
+                console.error('❌ folders 陣列是空的！');
+                const container = document.getElementById('folderTree');
+                if (container) {
+                    container.innerHTML = '<div style="padding:20px;color:orange;text-align:center;">⚠️ 資料夾數據為空<br>請開啟後台管理並點擊「重置數據庫」<br><button onclick="location.reload()" style="margin-top:10px;padding:8px 16px;background:#4F46E5;color:white;border:none;border-radius:4px;cursor:pointer;">刷新頁面</button></div>';
+                }
+                return;
+            }
+            
+            // 過濾有權限的資料夾
+            const visibleFolders = folders.filter(folder => {
+                const perm = folder.permissions[currentUserDept];
+                const isVisible = perm && perm !== '不可見';
+                console.log(`  ${folder.name}: ${perm} → ${isVisible ? '✅ 可見' : '❌ 不可見'}`);
+                return isVisible;
+            });
+            
+            console.log('✅ 有權限的資料夾數量:', visibleFolders.length);
+            
+            // 建立樹狀結構（只包含有權限的資料夾）
+            const tree = {};
+            visibleFolders.forEach(folder => {
+                console.log('  建立樹節點:', folder.name);
+                const parts = folder.name.split('/');
+                let current = tree;
+                
+                parts.forEach((part, index) => {
+                    if (!current[part]) {
+                        current[part] = {
+                            name: part,
+                            fullPath: parts.slice(0, index + 1).join('/'),
+                            children: {},
+                            permissions: folder.permissions
+                        };
+                    }
+                    current = current[part].children;
+                });
+            });
+
+            console.log('🌳 建立的樹狀結構:', tree);
+
+            // 渲染樹狀結構
+            const container = document.getElementById('folderTree');
+            if (!container) {
+                console.error('❌ 找不到 folderTree 容器元素！');
+                return;
+            }
+
+            let html = '';
+            
+            // 渲染 HR 部門
+            if (tree['HR']) {
+                console.log('✅ 開始渲染 HR 部門');
+                html += '<details open>';
+                html += '<summary>HR (人資部)</summary>';
+                html += renderTreeNode(tree['HR'].children, 'HR', db.files, currentUserDept);
+                html += '</details>';
+            }
+
+            // 渲染管理部
+            if (tree['管理部']) {
+                console.log('✅ 開始渲染管理部');
+                html += '<details>';
+                html += '<summary>管理部</summary>';
+                html += renderTreeNode(tree['管理部'].children, '管理部', db.files, currentUserDept);
+                html += '</details>';
+            }
+
+            // 渲染行政部
+            if (tree['行政部']) {
+                console.log('✅ 開始渲染行政部');
+                html += '<details>';
+                html += '<summary>行政部</summary>';
+                html += renderTreeNode(tree['行政部'].children, '行政部', db.files, currentUserDept);
+                html += '</details>';
+            }
+
+            // 渲染專案部門
+            if (tree['專案']) {
+                console.log('✅ 開始渲染專案部門');
+                html += '<details open>';
+                html += '<summary>專案</summary>';
+                html += renderTreeNode(tree['專案'].children, '專案', db.files, currentUserDept);
+                html += '</details>';
+            }
+
+            console.log('📝 生成的 HTML 長度:', html.length);
+            
+            container.innerHTML = html;
+            console.log('✅ 資料夾樹狀結構渲染完成');
+        }
+
+        // 遞迴渲染樹狀節點（只顯示資料夾）
+        function renderTreeNode(children, parentPath, allFiles, currentUserDept) {
+            let html = '';
+            
+            console.log(`  渲染節點: ${parentPath}, 子節點數量: ${Object.keys(children).length}`);
+            
+            for (const key in children) {
+                const node = children[key];
+                const fullPath = `${parentPath}/${key}`;
+                
+                console.log(`    - ${key} (子節點: ${Object.keys(node.children).length})`);
+                
+                if (Object.keys(node.children).length > 0) {
+                    // 有子節點 - 顯示為可展開的資料夾
+                    html += '<details>';
+                    html += `<summary onclick="loadKmFolder('${fullPath}')">${key}</summary>`;
+                    html += renderTreeNode(node.children, fullPath, allFiles, currentUserDept);
+                    html += '</details>';
+                } else {
+                    // 葉節點 - 只顯示可點擊的資料夾項目
+                    html += `<a href="#" class="tree-item" onclick="loadKmFolder('${fullPath}'); return false;">
+                        <i class="fa-solid fa-folder"></i> ${key}
+                    </a>`;
+                }
+            }
+            
+            return html;
+        }
+        
+        // 根據檔名取得圖標
+        function getFileIcon(fileName) {
+            const ext = fileName.split('.').pop().toLowerCase();
+            const iconMap = {
+                'pdf': 'fa-solid fa-file-pdf text-red-500',
+                'doc': 'fa-solid fa-file-word text-blue-500',
+                'docx': 'fa-solid fa-file-word text-blue-500',
+                'xls': 'fa-solid fa-file-excel text-green-500',
+                'xlsx': 'fa-solid fa-file-excel text-green-500',
+                'ppt': 'fa-solid fa-file-powerpoint text-orange-500',
+                'pptx': 'fa-solid fa-file-powerpoint text-orange-500',
+                'txt': 'fa-solid fa-file-lines text-gray-500',
+                'zip': 'fa-solid fa-file-zipper text-yellow-500',
+                'rar': 'fa-solid fa-file-zipper text-yellow-500',
+            };
+            return iconMap[ext] || 'fa-solid fa-file text-gray-400';
+        }
+        
+        // 添加操作記錄到 localStorage
+        function addFrontendAuditLog(action, fileName) {
+            const db = JSON.parse(localStorage.getItem('fileDatabase') || '{}');
+            if (!db.auditLogs) db.auditLogs = [];
+            
+            const newLog = {
+                id: (db.auditLogs.length + 1),
+                timestamp: new Date().toLocaleString('zh-TW', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit', 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit',
+                    hour12: false
+                }).replace(/\//g, '-'),
+                userName: 'Miranda', // 當前用戶
+                userDept: 'HR',
+                action: action,
+                targetFile: fileName,
+                targetType: 'file',
+                ip: '192.168.1.100'
+            };
+            
+            db.auditLogs.unshift(newLog);
+            db.lastUpdate = new Date().toISOString();
+            db.updateSource = 'frontend';
+            localStorage.setItem('fileDatabase', JSON.stringify(db));
+            
+            console.log(`📝 已記錄操作：${action} - ${fileName}`);
+        }
+        
+        // 檢視檔案
+        function viewFile(fileName) {
+            if (checkFilePermission(fileName, 'view')) {
+                addFrontendAuditLog('瀏覽', fileName);
+                alert(`📄 檢視檔案：${fileName}\n\n(實際應用中會開啟檔案預覽)`);
+            }
+        }
+        
+        // 下載檔案（在 km-script.js 中的 downloadFile 會呼叫）
+        function downloadFile(fileName) {
+            if (checkFilePermission(fileName, 'download')) {
+                addFrontendAuditLog('下載', fileName);
+                alert(`⬇️ 下載檔案：${fileName}\n\n(實際應用中會觸發檔案下載)`);
+            }
+        }
+
+        // 定期檢查更新（同分頁時 storage 事件不觸發，需要輪詢）
+        let lastUpdate = null;
+        setInterval(() => {
+            const data = localStorage.getItem('fileDatabase');
+            if (data) {
+                const db = JSON.parse(data);
+                if (lastUpdate && lastUpdate !== db.lastUpdate) {
+                    console.log('🔄 偵測到權限更新（輪詢）');
+                    showPermissionUpdateNotification();
+                    loadFolderTree(); // 重新載入資料夾結構
+                }
+                lastUpdate = db.lastUpdate;
+            }
+        }, 2000);
+
+        console.log('✅ 前台 localStorage 連動功能已啟動');
+    </script>
+</body>
+</html>

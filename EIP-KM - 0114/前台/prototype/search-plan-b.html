@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>方案 B - 範圍選擇搜尋 | Prototype</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft JhengHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .top-header {
+            background: #fff;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        /* 搜尋框 - 方案B：帶範圍選擇器 */
+        .search-wrapper {
+            display: flex;
+            align-items: center;
+            background: #f5f7fa;
+            border: 2px solid #e0e5ec;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        
+        .search-wrapper:focus-within {
+            border-color: #3b82f6;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* 範圍選擇器 */
+        .scope-selector {
+            position: relative;
+            border-right: 1px solid #e0e5ec;
+        }
+        
+        .scope-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 12px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            color: #4b5563;
+            white-space: nowrap;
+        }
+        
+        .scope-btn:hover {
+            background: #e5e7eb;
+        }
+        
+        .scope-btn i.icon {
+            color: #3b82f6;
+        }
+        
+        .scope-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            min-width: 180px;
+            z-index: 200;
+            margin-top: 4px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .scope-dropdown.show {
+            display: block;
+        }
+        
+        .scope-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #4b5563;
+            transition: background 0.15s;
+        }
+        
+        .scope-option:hover {
+            background: #f3f4f6;
+        }
+        
+        .scope-option.active {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+        
+        .scope-option i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .scope-option .check {
+            margin-left: auto;
+            color: #3b82f6;
+        }
+        
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 10px 12px;
+            font-size: 14px;
+            outline: none;
+            min-width: 280px;
+        }
+        
+        .search-btn {
+            background: #3b82f6;
+            border: none;
+            color: #fff;
+            padding: 10px 16px;
+            cursor: pointer;
+        }
+        
+        .search-btn:hover {
+            background: #2563eb;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+        
+        /* 主內容區 */
+        .main-content {
+            margin-top: 60px;
+            padding: 24px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Prototype 標籤 */
+        .prototype-badge {
+            position: fixed;
+            top: 70px;
+            right: 24px;
+            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 99;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+        
+        /* 說明卡片 */
+        .info-card {
+            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            color: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .info-card h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-card p {
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+        
+        .info-card ul {
+            margin-top: 12px;
+            padding-left: 20px;
+        }
+        
+        .info-card li {
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        
+        /* 示範區塊 */
+        .demo-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        
+        .demo-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .demo-title i {
+            color: #f59e0b;
+        }
+        
+        /* 模擬不同情境的搜尋框 */
+        .demo-search-box {
+            display: flex;
+            align-items: center;
+            background: #f5f7fa;
+            border: 2px solid #e0e5ec;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        
+        .demo-scope {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 12px;
+            background: #eff6ff;
+            border-right: 1px solid #e0e5ec;
+            font-size: 13px;
+            color: #3b82f6;
+            font-weight: 500;
+        }
+        
+        .demo-input {
+            flex: 1;
+            padding: 10px 12px;
+            color: #4b5563;
+            font-size: 14px;
+        }
+        
+        .demo-btn {
+            background: #3b82f6;
+            color: #fff;
+            padding: 10px 16px;
+        }
+        
+        .demo-desc {
+            font-size: 13px;
+            color: #6b7280;
+            padding-left: 12px;
+            border-left: 3px solid #e5e7eb;
+        }
+        
+        /* 結果預覽 */
+        .result-preview {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .result-preview-title {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+        
+        .result-item-mini {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .result-item-mini:last-child {
+            border-bottom: none;
+        }
+        
+        .result-item-mini i {
+            color: #3b82f6;
+        }
+        
+        .result-item-mini span {
+            font-size: 13px;
+            color: #4b5563;
+        }
+        
+        /* 情境切換指示 */
+        .context-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .context-indicator i {
+            color: #f59e0b;
+            font-size: 18px;
+        }
+        
+        .context-indicator .text {
+            flex: 1;
+        }
+        
+        .context-indicator .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #92400e;
+        }
+        
+        .context-indicator .desc {
+            font-size: 12px;
+            color: #a16207;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="top-header">
+        <div class="header-left">
+            <i class="fa-solid fa-bars" style="color: #6b7280; cursor: pointer;"></i>
+            <h1 class="header-title">JoinTime (DEV)</h1>
+        </div>
+        <div class="header-right">
+            <!-- 方案 B：帶範圍選擇的搜尋框 -->
+            <div class="search-wrapper">
+                <div class="scope-selector">
+                    <button class="scope-btn" onclick="toggleScopeDropdown()">
+                        <i class="icon fa-solid fa-layer-group"></i>
+                        <span id="currentScope">全站</span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 10px;"></i>
+                    </button>
+                    <div id="scopeDropdown" class="scope-dropdown">
+                        <div class="scope-option active" onclick="selectScope('全站', 'fa-layer-group')">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <span>全站搜尋</span>
+                            <i class="fa-solid fa-check check"></i>
+                        </div>
+                        <div class="scope-option" onclick="selectScope('KM 文件', 'fa-folder')">
+                            <i class="fa-solid fa-folder"></i>
+                            <span>KM 文件</span>
+                        </div>
+                        <div class="scope-option" onclick="selectScope('公告', 'fa-bullhorn')">
+                            <i class="fa-solid fa-bullhorn"></i>
+                            <span>公告</span>
+                        </div>
+                        <div class="scope-option" onclick="selectScope('表單', 'fa-file-lines')">
+                            <i class="fa-solid fa-file-lines"></i>
+                            <span>電子表單</span>
+                        </div>
+                        <div class="scope-option" onclick="selectScope('會議室', 'fa-calendar')">
+                            <i class="fa-solid fa-calendar"></i>
+                            <span>會議室預約</span>
+                        </div>
+                    </div>
+                </div>
+                <input type="text" class="search-input" value="請假" placeholder="請輸入關鍵字">
+                <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
+                <span>Miranda</span>
+            </div>
+        </div>
+    </header>
+    
+    <div class="prototype-badge">
+        <i class="fa-solid fa-flask"></i> 方案 B - 範圍選擇搜尋
+    </div>
+    
+    <div class="main-content">
+        <!-- 說明卡片 -->
+        <div class="info-card">
+            <h3><i class="fa-solid fa-lightbulb"></i> 方案 B 特色說明</h3>
+            <p>搜尋框旁邊加一個「搜尋範圍」下拉選單，用戶可精準控制：</p>
+            <ul>
+                <li>✅ 用戶可精準控制搜尋範圍</li>
+                <li>✅ 進入特定模組（如 KM）時自動切換範圍</li>
+                <li>✅ 減少不相關的搜尋結果</li>
+                <li>✅ 搜尋體驗更貼近用戶當下需求</li>
+            </ul>
+        </div>
+        
+        <!-- 情境示範 1 -->
+        <div class="demo-section">
+            <div class="demo-title">
+                <i class="fa-solid fa-globe"></i>
+                情境 1：在首頁進行全站搜尋
+            </div>
+            
+            <div class="demo-search-box">
+                <div class="demo-scope">
+                    <i class="fa-solid fa-layer-group"></i> 全站
+                </div>
+                <div class="demo-input">請假</div>
+                <div class="demo-btn"><i class="fa-solid fa-magnifying-glass"></i></div>
+            </div>
+            
+            <div class="demo-desc">
+                用戶在 EIP 首頁搜尋，預設為「全站搜尋」，結果包含所有類型資料
+            </div>
+            
+            <div class="result-preview">
+                <div class="result-preview-title">搜尋結果預覽：</div>
+                <div class="result-item-mini">
+                    <i class="fa-solid fa-folder"></i>
+                    <span>請假制度說明.pdf (KM 文件)</span>
+                </div>
+                <div class="result-item-mini">
+                    <i class="fa-solid fa-bullhorn"></i>
+                    <span>2026年請假規定更新 (公告)</span>
+                </div>
+                <div class="result-item-mini">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>請假申請單 (表單)</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 情境示範 2 -->
+        <div class="demo-section">
+            <div class="demo-title">
+                <i class="fa-solid fa-folder-open"></i>
+                情境 2：在 KM 文件庫內搜尋
+            </div>
+            
+            <div class="context-indicator">
+                <i class="fa-solid fa-info-circle"></i>
+                <div class="text">
+                    <div class="title">自動切換搜尋範圍</div>
+                    <div class="desc">進入「文件庫管理」頁面時，搜尋範圍自動切換為「KM 文件」</div>
+                </div>
+            </div>
+            
+            <div class="demo-search-box">
+                <div class="demo-scope" style="background: #dbeafe;">
+                    <i class="fa-solid fa-folder"></i> KM 文件
+                </div>
+                <div class="demo-input">請假</div>
+                <div class="demo-btn"><i class="fa-solid fa-magnifying-glass"></i></div>
+            </div>
+            
+            <div class="demo-desc">
+                用戶進入 KM 文件庫後，範圍自動切換，僅搜尋 KM 內的檔案
+            </div>
+            
+            <div class="result-preview">
+                <div class="result-preview-title">搜尋結果預覽：</div>
+                <div class="result-item-mini">
+                    <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i>
+                    <span>請假制度說明.pdf - HR/FAQ</span>
+                </div>
+                <div class="result-item-mini">
+                    <i class="fa-solid fa-file-word" style="color: #3b82f6;"></i>
+                    <span>員工請假申請SOP.docx - HR/SOP</span>
+                </div>
+                <div class="result-item-mini">
+                    <i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i>
+                    <span>2026年請假規定更新.pdf - HR/FAQ</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 情境示範 3 -->
+        <div class="demo-section">
+            <div class="demo-title">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                情境 3：手動切換回全站搜尋
+            </div>
+            
+            <div class="demo-desc" style="margin-bottom: 16px;">
+                即使在 KM 頁面，用戶仍可手動將範圍切換回「全站」以搜尋其他類型資料
+            </div>
+            
+            <div class="demo-search-box">
+                <div class="demo-scope" style="background: #fef3c7; color: #92400e;">
+                    <i class="fa-solid fa-layer-group"></i> 全站 ↩️
+                </div>
+                <div class="demo-input">差旅報銷</div>
+                <div class="demo-btn"><i class="fa-solid fa-magnifying-glass"></i></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleScopeDropdown() {
+            document.getElementById('scopeDropdown').classList.toggle('show');
+        }
+        
+        function selectScope(name, icon) {
+            document.getElementById('currentScope').textContent = name;
+            document.getElementById('scopeDropdown').classList.remove('show');
+            
+            // 更新 active 狀態
+            document.querySelectorAll('.scope-option').forEach(opt => {
+                opt.classList.remove('active');
+                const check = opt.querySelector('.check');
+                if (check) check.style.display = 'none';
+            });
+            event.currentTarget.classList.add('active');
+            const check = event.currentTarget.querySelector('.check');
+            if (check) check.style.display = 'inline';
+        }
+        
+        // 點擊外部關閉下拉選單
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.scope-selector')) {
+                document.getElementById('scopeDropdown').classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

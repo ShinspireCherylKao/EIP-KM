@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 加值 - 文件庫管理</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-km-base.css">
+    <link rel="stylesheet" href="css/style-km-ai.css">
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <div id="header-container"></div>
+    
+    <!-- 側邊欄 -->
+    <div id="sidebar-container"></div>
+    
+    <!-- 主要內容區 -->
+    <div class="main-content">
+        <!-- KM 導航 -->
+        <div id="km-nav-container"></div>
+        
+        <!-- AI 加值內容 -->
+        <div class="km-container">
+            <div class="ai-container">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-brain"></i> AI 智能助手</h2>
+                </div>
+                
+                <div class="ai-tabs">
+                    <button class="ai-tab-btn active" onclick="switchAiTab('ask')">
+                        <i class="fa-solid fa-comments"></i> 智能問答
+                    </button>
+                    <button class="ai-tab-btn" onclick="switchAiTab('compare')">
+                        <i class="fa-solid fa-code-compare"></i> 文件比較
+                    </button>
+                    <button class="ai-tab-btn" onclick="switchAiTab('summary')">
+                        <i class="fa-solid fa-file-lines"></i> 智能摘要
+                    </button>
+                    <button class="ai-tab-btn" onclick="switchAiTab('graph')">
+                        <i class="fa-solid fa-diagram-project"></i> 知識圖譜
+                    </button>
+                </div>
+                
+                <!-- 智能問答 -->
+                <div id="ai-ask" class="ai-panel active">
+                    <div class="ai-chat-container">
+                        <div class="ai-chat-history" id="aiChatHistory">
+                            <div class="ai-message assistant">
+                                <div class="ai-avatar"><i class="fa-solid fa-robot"></i></div>
+                                <div class="ai-bubble">
+                                    <p>您好！我是智能助手，請問有什麼可以幫助您的？</p>
+                                    <p class="ai-hint-text">您可以詢問關於文件內容、專案比較、規範差異等問題。</p>
+                                    <div class="ai-quick-questions">
+                                        <span class="ai-quick-label">常用提問：</span>
+                                        <button class="ai-quick-btn" onclick="fillQuickQuestion('比較A專案與B專案差異')">
+                                            <i class="fa-solid fa-code-compare"></i> 比較A專案與B專案差異
+                                        </button>
+                                        <button class="ai-quick-btn" onclick="fillQuickQuestion('列出近三年申請旅費表格差異')">
+                                            <i class="fa-solid fa-table"></i> 列出近三年申請旅費表格差異
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ai-chat-input">
+                            <div class="ai-input-wrapper">
+                                <textarea id="aiSearchInput" rows="3" placeholder="輸入您的問題..." 
+                                          onkeydown="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); sendAiQuestion(); }"></textarea>
+                                <button class="btn primary" onclick="sendAiQuestion()">
+                                    <i class="fa-solid fa-paper-plane"></i> 發送
+                                </button>
+                            </div>
+                            <div class="ai-input-hint">按 Enter 發送，Shift + Enter 換行</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 文件比較 -->
+                <div id="ai-compare" class="ai-panel">
+                    <div class="ai-compare-section">
+                        <h3>選擇要比較的檔案</h3>
+                        <div class="ai-file-selector">
+                            <div class="file-select-box">
+                                <label>檔案 A</label>
+                                <select id="compareFileA" class="form-select">
+                                    <option value="">請選擇檔案...</option>
+                                </select>
+                            </div>
+                            <div class="file-select-box">
+                                <label>檔案 B</label>
+                                <select id="compareFileB" class="form-select">
+                                    <option value="">請選擇檔案...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn primary" onclick="compareFiles()">
+                            <i class="fa-solid fa-code-compare"></i> 開始比較
+                        </button>
+                        <div id="compareResult" class="ai-compare-result"></div>
+                    </div>
+                </div>
+                
+                <!-- 智能摘要 -->
+                <div id="ai-summary" class="ai-panel">
+                    <div class="ai-summary-section">
+                        <h3>選擇要摘要的檔案</h3>
+                        <div class="ai-file-selector">
+                            <select id="summaryFile" class="form-select">
+                                <option value="">請選擇檔案...</option>
+                            </select>
+                        </div>
+                        <button class="btn primary" onclick="generateSummary()">
+                            <i class="fa-solid fa-file-lines"></i> 產生摘要
+                        </button>
+                        <div id="summaryResult" class="ai-summary-result"></div>
+                    </div>
+                </div>
+                
+                <!-- 知識圖譜 -->
+                <div id="ai-graph" class="ai-panel">
+                    <div class="graph-controls">
+                        <button class="btn primary" onclick="generateKnowledgeGraph()">
+                            <i class="fa-solid fa-diagram-project"></i> 產生知識圖譜
+                        </button>
+                        <button class="btn ghost" onclick="clearKnowledgeGraph()">
+                            <i class="fa-solid fa-eraser"></i> 清除
+                        </button>
+                    </div>
+                    <div id="graphCanvas" class="graph-canvas">
+                        <p class="text-center mut">點擊「產生知識圖譜」開始分析...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast 通知 -->
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- JS 引用 -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="shared/layout-loader.js"></script>
+    <script src="js/km-base.js"></script>
+    <script src="js/km-ai.js"></script>
+</body>
+</html>

@@ -1,0 +1,1079 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KM 中心｜使用者與系統管理</title>
+  <style>
+    :root{
+      --bg:#F1F5F9; --panel:#FFFFFF; --line:#E5E7EB; --txt:#0F172A; --mut:#64748B;
+      --pri:#3B82F6; --pri-600:#2563EB; --hover:#F8FAFC; --shadow:0 10px 24px rgba(2,6,23,0.06); --radius:12px;
+    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.6 system-ui,"Noto Sans TC",Arial;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    .shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    .sidebar{position:sticky;top:0;height:100vh;overflow:auto;background:#fff;border-right:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);font-weight:800}
+    .logo{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,var(--pri),#7c3aed)}
+    .nav{padding:10px}
+    .nav .sec{font-size:12px;color:var(--mut);margin:12px 8px 6px}
+    .nav a.btnnav{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;color:var(--txt)}
+    .nav a.btnnav:hover{background:var(--hover)}
+    .nav a.btnnav.active{background:#EEF2FF;color:#1D4ED8;font-weight:700}
+    .mechips{display:flex;gap:6px;padding:10px;border-top:1px solid var(--line)}
+    .chip{font-size:12px;color:var(--mut);border:1px solid var(--line);padding:2px 8px;border-radius:999px;background:#fff}
+    .main{padding:20px}
+    .page-hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+    .searchbar{display:flex;gap:8px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 10px;min-width:280px;max-width:540px;flex:1}
+    .searchbar input{flex:1;background:transparent;border:0;outline:none;color:var(--txt)}
+    .btn{display:inline-flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--txt);cursor:pointer;transition:.15s}
+    .btn:hover{background:var(--hover)}
+    .btn.primary{border-color:transparent;background:var(--pri);color:#fff;font-weight:700}
+    .btn.primary:hover{background:var(--pri-600)}
+    .btn.ghost{background:transparent}
+    .btn[disabled]{opacity:.5;cursor:not-allowed}
+    .col{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+    .col>.hd{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#fff}
+    .col>.bd{padding:14px;background:#fff}
+    .mut{color:var(--mut)}
+    .row{display:flex;gap:8px;align-items:center}
+    .row.space{justify-content:space-between}
+    .pill{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mut);background:#fff}
+    .tag{font-size:12px;padding:2px 6px;border-radius:999px;border:1px solid var(--line);background:#fff}
+    table{width:100%;border-collapse:collapse;background:#fff}
+    th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    tr:hover td{background:var(--hover)}
+    .layout{display:grid;grid-template-columns:320px 1fr;gap:14px;max-width:1200px;margin:0 auto}
+    .grid{display:grid;gap:10px}
+    .grid.cols-2{grid-template-columns:repeat(2,1fr)}
+    .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+    .tree details{padding-left:8px;border-left:1px dashed #CAD3E0;margin-left:8px}
+    .tree summary{cursor:pointer;padding:4px 0}
+    .tree a{display:block;padding:4px 6px;border-radius:6px}
+    .tree a.active{background:#F3F6FF}
+    .tabs{display:flex;border-bottom:1px solid var(--line);background:#fff}
+    .tabs button{padding:10px 12px;border:0;background:transparent;color:var(--mut);cursor:pointer}
+    .tabs button.active{color:var(--txt);border-bottom:2px solid var(--pri)}
+    [data-view]{display:none}
+    [data-view].show{display:block}
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.32);z-index:50;padding:12px}
+    .box{width:min(900px,92vw);background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+    .box .hd,.box .ft{padding:10px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#fff}
+    .box .ft{border-top:1px solid var(--line);border-bottom:0}
+    .box .bd{padding:12px;background:#fff}
+    @media (max-width: 1200px){ .layout{grid-template-columns:1fr} }
+    @media (max-width: 960px){
+      .shell{grid-template-columns:80px 1fr}
+      .brand span{display:none}
+      .nav .sec{display:none}
+      .nav a.btnnav{justify-content:center}
+      .mechips{display:none}
+    }
+    @media (max-width: 640px){ .main{padding:12px} }
+    .title-secondary{color:var(--mut);font-size:12px}
+    .hint{font-size:12px;color:var(--mut)}
+    .icon{font-size:14px}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo"></div><span>KM 中心</span></div>
+      <nav class="nav">
+        <div class="sec">主功能</div>
+        <a href="javascript:void(0)" class="btnnav" onclick="goto('home')">近期存取</a>
+        <a href="javascript:void(0)" class="btnnav" onclick="goto('tags');renderTags()">標籤</a>
+        <a href="javascript:void(0)" class="btnnav" onclick="goto('shares');renderSharedLists()">分享中心</a>
+        <a href="javascript:void(0)" class="btnnav" onclick="goto('my');renderMy()">我的</a>
+        <a id="btnAdminNav" href="javascript:void(0)" class="btnnav" style="display:none" onclick="goto('admin');renderAdmin()">系統管理</a>
+        <div class="sec">快速操作</div>
+        <div class="row" style="padding:0 10px 10px">
+          <button class="btn primary" style="width:100%" onclick="openUpload()">上傳</button>
+        </div>
+      </nav>
+      <div class="mechips">
+        <span class="chip" id="meDeptChip">我的部門：-</span>
+        <span class="chip" id="meRoleChip">角色：-</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="page-hd">
+        <div class="searchbar" style="flex:1">
+          <span>🔎</span>
+          <input id="globalQ" placeholder="搜尋文件、資料夾、標籤…" />
+          <button class="btn ghost" onclick="goto('search');doSearch()">搜尋</button>
+        </div>
+      </div>
+
+      <!-- 近期存取 -->
+      <section data-view="home" class="show">
+        <div class="layout">
+          <aside class="col">
+            <div class="hd">
+              <div>我的部門：<span id="myDept">HR</span></div>
+              <button class="btn ghost" onclick="toggleAll()">展開/收合</button>
+            </div>
+            <div class="bd tree" id="tree">
+              <details open>
+                <summary>HR（根）</summary>
+                <a href="#" class="active" onclick="loadList('folder','HR/FAQ')">FAQ</a>
+                <a href="#" onclick="loadList('folder','HR/SOP')">SOP</a>
+                <details open>
+                  <summary>表單</summary>
+                  <a href="#" onclick="loadList('folder','HR/表單/差旅')">差旅</a>
+                  <a href="#" onclick="loadList('folder','HR/表單/請假')">請假</a>
+                </details>
+              </details>
+            </div>
+          </aside>
+
+          <section class="col">
+            <div class="hd">
+              <div class="row">
+                <strong id="path">HR/FAQ</strong>
+                <span class="pill" id="inheritLabel">繼承權限</span>
+              </div>
+              <div class="row">
+                <button id="btnCreateFolder" class="btn" onclick="tryCreateFolderCurrent()">新增資料夾</button>
+                <button id="btnPermHome" class="btn" onclick="tryOpenPermCurrent()">權限</button>
+                <button id="btnShareHome" class="btn" onclick="tryOpenShareCurrent()">訪客分享</button>
+              </div>
+            </div>
+            <div class="bd">
+              <table>
+                <thead><tr><th style="width:38%">名稱</th><th style="width:24%">標籤</th><th>類型</th><th>更新</th><th>可見性</th><th></th></tr></thead>
+                <tbody id="listBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- 搜尋中心 -->
+      <section data-view="search">
+        <div class="layout">
+          <aside class="col">
+            <div class="hd"><div>篩選</div><button class="btn ghost" onclick="clearFilters()">清除</button></div>
+            <div class="bd">
+              <div class="grid" style="gap:12px">
+                <div class="facet">
+                  <b>部門</b>
+                  <div id="facetDept"></div>
+                </div>
+                <div class="facet">
+                  <b>類型</b>
+                  <label class="row"><input type="checkbox" value="file" onchange="facetChange()"> 檔案</label>
+                  <label class="row"><input type="checkbox" value="folder" onchange="facetChange()"> 資料夾</label>
+                </div>
+                <div class="facet">
+                  <b>可見性</b>
+                  <label class="row"><input type="checkbox" value="whitelist" onchange="facetChange()"> 白名單</label>
+                  <label class="row"><input type="checkbox" value="blacklist" onchange="facetChange()"> 黑名單</label>
+                  <label class="row"><input type="checkbox" value="inherit" onchange="facetChange()"> 繼承</label>
+                </div>
+                <div class="facet">
+                  <b>允許動作</b>
+                  <label class="row"><input type="checkbox" value="view" onchange="facetChange()"> 可瀏覽</label>
+                  <label class="row"><input type="checkbox" value="download" onchange="facetChange()"> 可下載</label>
+                </div>
+                <div class="facet">
+                  <b>時間</b>
+                  <select id="facetSince" onchange="facetChange()">
+                    <option value="">不限</option>
+                    <option value="7">近 7 天</option>
+                    <option value="30">近 30 天</option>
+                    <option value="90">近 90 天</option>
+                  </select>
+                </div>
+                <div class="facet">
+                  <b>標籤</b>
+                  <div id="facetTags"></div>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <section class="col">
+            <div class="hd">
+              <div class="row">
+                <strong>搜尋結果</strong>
+                <span class="pill" id="activeFilters">無篩選</span>
+              </div>
+              <div class="row">
+                <select id="sortBy" onchange="doSearch()">
+                  <option value="relevance">相關度</option>
+                  <option value="updated">最近更新</option>
+                  <option value="downloads">下載最多</option>
+                </select>
+                <button class="btn ghost" onclick="toggleViewMode()">切換列表/卡片</button>
+              </div>
+            </div>
+            <div class="bd">
+              <div id="resultWrapper">
+                <table id="resultTable">
+                  <thead><tr><th style="width:38%">名稱</th><th style="width:24%">標籤</th><th>部門</th><th>類型</th><th>可見性/動作</th><th>更新</th><th></th></tr></thead>
+                  <tbody id="resultBody"></tbody>
+                </table>
+                <div id="resultCards" style="display:none" class="grid cols-3"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- 標籤 -->
+      <section data-view="tags">
+        <div class="layout">
+          <aside class="col">
+            <div class="hd"><div>熱門標籤</div><span class="pill">Top</span></div>
+            <div class="bd" id="tagCloud"></div>
+          </aside>
+          <section class="col">
+            <div class="hd">
+              <div>標籤詳頁：<span id="tagTitle">尚未選擇</span></div>
+              <div class="row"><button class="btn ghost" onclick="goto('search')">到搜尋中心</button></div>
+            </div>
+            <div class="bd">
+              <table>
+                <thead><tr><th style="width:38%">名稱</th><th style="width:24%">標籤</th><th>部門</th><th>類型</th><th>更新</th><th></th></tr></thead>
+                <tbody id="tagResultBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- 分享中心 -->
+      <section data-view="shares">
+        <div class="layout">
+          <section class="col">
+            <div class="hd">
+              <div>分享中心</div>
+              <div class="row"><span class="pill">檢視我的分享關係</span></div>
+            </div>
+            <div class="bd">
+              <div class="tabs">
+                <button id="tabSharedWithMe" class="active" onclick="switchShareTab('withMe')">我被分享的</button>
+                <button id="tabSharedByMe" onclick="switchShareTab('byMe')">我分享的</button>
+              </div>
+              <div id="panelWithMe">
+                <table style="margin-top:10px">
+                  <thead><tr><th style="width:38%">名稱</th><th style="width:24%">標籤</th><th>類型</th><th>來自部門/人員</th><th>權限</th><th>更新</th><th>動作</th></tr></thead>
+                  <tbody id="withMeBody"></tbody>
+                </table>
+              </div>
+              <div id="panelByMe" style="display:none">
+                <table style="margin-top:10px">
+                  <thead><tr><th style="width:38%">名稱</th><th style="width:24%">標籤</th><th>類型</th><th>分享對象</th><th>權限</th><th>狀態</th><th>動作</th></tr></thead>
+                  <tbody id="byMeBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- 我的 -->
+      <section data-view="my">
+        <div class="layout">
+          <section class="col">
+            <div class="hd"><div>我的</div><div class="row"><span class="pill">個人快捷</span></div></div>
+            <div class="bd">
+              <div class="tabs">
+                <button id="tabRecent" class="active" onclick="switchMyTab('recent')">最近檢視</button>
+                <button id="tabFav" onclick="switchMyTab('fav')">我的收藏</button>
+              </div>
+              <div id="panelRecent">
+                <table style="margin-top:10px">
+                  <thead><tr><th style="width:38%">名稱</th><th style="width:24%">標籤</th><th>部門</th><th>類型</th><th>更新</th><th></th></tr></thead>
+                  <tbody id="recentBody"></tbody>
+                </table>
+              </div>
+              <div id="panelFav" style="display:none">
+                <table style="margin-top:10px">
+                  <thead><tr><th style="width:38%">名稱</th><th style="width:24%">標籤</th><th>部門</th><th>類型</th><th>更新</th><th></th></tr></thead>
+                  <tbody id="favBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- 系統管理 -->
+      <section data-view="admin">
+        <div class="layout">
+          <aside class="col" style="grid-column:1 / -1">
+            <div class="hd"><div>部門空間管理</div><span class="pill">系統管理者</span></div>
+            <div class="bd">
+              <div class="grid cols-2">
+                <div>
+                  <b>建立部門空間</b>
+                  <div style="margin-top:6px">部門：
+                    <select id="adminDeptSelect" style="width:100%"></select>
+                  </div>
+                  <div style="margin-top:6px">根路徑：
+                    <input id="adminRootPath" placeholder="如：HR/根空間" style="width:100%">
+                  </div>
+                  <div style="margin-top:6px">配額（GB）：
+                    <input id="adminQuota" type="number" min="1" value="50" style="width:100%">
+                  </div>
+                  <div style="margin-top:6px">部門管理員（使用者ID）：
+                    <input id="adminManagerId" placeholder="如：u001" style="width:100%">
+                  </div>
+                  <div class="row" style="margin-top:8px">
+                    <button class="btn primary" onclick="adminCreateSpace()">建立空間</button>
+                  </div>
+                </div>
+                <div>
+                  <b>調整既有空間</b>
+                  <div style="margin-top:6px">選擇部門：
+                    <select id="adminAdjustDept" style="width:100%"></select>
+                  </div>
+                  <div style="margin-top:6px">新配額（GB）：
+                    <input id="adminNewQuota" type="number" min="1" value="100" style="width:100%">
+                  </div>
+                  <div style="margin-top:6px">更換管理員（使用者ID）：
+                    <input id="adminNewManager" placeholder="如：u002" style="width:100%">
+                  </div>
+                  <div class="row" style="margin-top:8px">
+                    <button class="btn" onclick="adminAdjustSpace()">套用調整</button>
+                  </div>
+                </div>
+              </div>
+              <hr style="border-color:var(--line);margin:12px 0">
+              <b>空間總覽</b>
+              <table style="margin-top:6px">
+                <thead><tr><th>部門</th><th>根路徑</th><th>管理員</th><th>使用量</th><th>配額</th></tr></thead>
+                <tbody id="adminSpaceBody"></tbody>
+              </table>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modals -->
+  <div class="modal" id="m-upload">
+    <div class="box">
+      <div class="hd"><div>上傳到 <span id="targetPath">HR/FAQ</span></div><button class="btn ghost" onclick="closeM('m-upload')">關閉</button></div>
+      <div class="bd">
+        <div class="grid cols-2">
+          <div>
+            <b>選擇檔案</b>
+            <p class="mut">支援多檔</p>
+            <input type="file" multiple />
+          </div>
+          <div>
+            <b>基本資訊</b>
+            <div style="margin:6px 0">標題（可選）：<input id="uploadDisplayTitle" placeholder="顯示名稱，不改檔名" style="width:100%"></div>
+            <div style="margin:6px 0">描述：<input placeholder="可選填" style="width:100%"></div>
+            <div>標籤：<input id="uploadTags" placeholder="以逗號分隔" style="width:100%"></div>
+            <div style="margin-top:6px"><label><input type="checkbox" checked> 繼承目前資料夾權限</label></div>
+            <p class="hint" style="margin-top:6px">提示：標題僅影響列表顯示，不會改變實際檔名。</p>
+          </div>
+        </div>
+      </div>
+      <div class="ft">
+        <button class="btn" onclick="closeM('m-upload')">取消</button>
+        <button class="btn primary" onclick="mockUpload()">上傳</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 標籤編輯 Modal -->
+  <div class="modal" id="m-tags">
+    <div class="box">
+      <div class="hd"><div>編輯標籤：<span id="tagsTargetName"></span></div><button class="btn ghost" onclick="closeM('m-tags')">關閉</button></div>
+      <div class="bd">
+        <div>以逗號分隔多個標籤：</div>
+        <input id="tagsInput" placeholder="例如：差旅, 報銷, SOP" style="width:100%;margin-top:6px">
+        <p class="hint" style="margin-top:8px">提示：會自動去除重複與多餘空白；留空可清除全部標籤。</p>
+        <input type="hidden" id="tagsItemId">
+        <input type="hidden" id="tagsScope">
+        <input type="hidden" id="tagsDeptId">
+        <input type="hidden" id="tagsPath">
+      </div>
+      <div class="ft">
+        <button class="btn" onclick="clearTags()">清除全部</button>
+        <button class="btn" onclick="closeM('m-tags')">取消</button>
+        <button class="btn primary" onclick="saveTags()">儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="m-perm">
+    <div class="box">
+      <div class="hd"><div>權限設定：<span id="permTarget">HR/FAQ</span></div><button class="btn ghost" onclick="closeM('m-perm')">關閉</button></div>
+      <div class="bd">
+        <div class="grid cols-2">
+          <div>
+            <b>策略模式</b>
+            <div class="row" style="margin:6px 0">
+              <label class="row"><input type="radio" name="mode" checked> 白名單</label>
+              <label class="row" style="margin-left:12px"><input type="radio" name="mode"> 黑名單</label>
+            </div>
+            <b style="display:block;margin-top:10px">名單（可混搭部門與人員）</b>
+            <table>
+              <thead><tr><th>對象</th><th>類型</th><th>瀏覽</th><th>下載</th><th></th></tr></thead>
+              <tbody id="permList">
+                <tr>
+                  <td>HR</td><td>部門</td>
+                  <td><input type="checkbox" checked></td>
+                  <td><input type="checkbox" checked></td>
+                  <td><button class="btn ghost">移除</button></td>
+                </tr>
+                <tr>
+                  <td>Finance</td><td>部門</td>
+                  <td><input type="checkbox" checked></td>
+                  <td><input type="checkbox"></td>
+                  <td><button class="btn ghost">移除</button></td>
+                </tr>
+                <tr>
+                  <td>王小明</td><td>人員</td>
+                  <td><input type="checkbox" checked></td>
+                  <td><input type="checkbox" checked></td>
+                  <td><button class="btn ghost">移除</button></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="row" style="margin-top:8px">
+              <input placeholder="輸入部門或人員名稱…" style="flex:1">
+              <button class="btn">新增</button>
+            </div>
+            <div style="margin-top:8px"><label><input type="checkbox"> 覆寫上層，停止繼承</label></div>
+          </div>
+          <div>
+            <b>摘要</b>
+            <p class="mut">- 模式：白名單
+            <br>- 繼承：來自 HR 根（可覆寫）
+            <br>- 跨部門：Finance（僅瀏覽）
+            <br>- 人員：王小明（瀏覽+下載）</p>
+            <div class="row" style="margin-top:8px"><span class="pill">view</span><span class="pill">download</span></div>
+            <div class="row" style="margin-top:12px">
+              <button class="btn" onclick="alert('已套用到子項')">套用到子項</button>
+              <button class="btn ghost">檢視繼承鏈</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ft">
+        <button class="btn" onclick="closeM('m-perm')">取消</button>
+        <button class="btn primary" onclick="alert('已儲存');closeM('m-perm')">儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="m-share">
+    <div class="box">
+      <div class="hd"><div>建立訪客分享連結：<span id="shareTarget">HR/FAQ</span></div><button class="btn ghost" onclick="closeM('m-share')">關閉</button></div>
+      <div class="bd">
+        <div class="tabs"><button class="active">連結設定</button></div>
+        <div class="grid cols-2" style="margin-top:10px">
+          <div>
+            <div style="margin:6px 0">有效期：<input type="date"></div>
+            <div style="margin:6px 0">密碼（可選）：<input placeholder="留空則無密碼"></div>
+            <div style="margin:6px 0">
+              允許動作：
+              <label class="row"><input type="radio" name="guestAct" checked> 僅瀏覽</label>
+              <label class="row"><input type="radio" name="guestAct"> 瀏覽+下載</label>
+            </div>
+            <div style="margin:6px 0"><label><input type="checkbox" checked> 浮水印</label></div>
+          </div>
+          <div>
+            <div>連結：</div>
+            <div style="padding:8px;border:1px solid var(--line);border-radius:8px;word-break:break-all;background:#fff">https://share.example.com/g/abcd-1234?view=1</div>
+            <div class="row" style="margin-top:8px"><button class="btn">複製</button><button class="btn ghost">停用此連結</button></div>
+            <p class="mut" style="margin-top:8px">訪客連結遵循允許動作設定與有效期限。</p>
+          </div>
+        </div>
+      </div>
+      <div class="ft">
+        <button class="btn" onclick="closeM('m-share')">取消</button>
+        <button class="btn primary" onclick="alert('已建立');closeM('m-share')">建立</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="m-create-folder">
+    <div class="box">
+      <div class="hd"><div>在 <span id="createFolderPath">HR/FAQ</span> 新增資料夾</div><button class="btn ghost" onclick="closeM('m-create-folder')">關閉</button></div>
+      <div class="bd">
+        <div>資料夾名稱：<input id="createFolderName" placeholder="例如：年度報表" style="width:100%"></div>
+        <div style="margin-top:8px"><label><input id="createFolderInherit" type="checkbox" checked> 繼承目前資料夾權限</label></div>
+      </div>
+      <div class="ft">
+        <button class="btn" onclick="closeM('m-create-folder')">取消</button>
+        <button class="btn primary" onclick="confirmCreateFolder()">建立</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // mock 資料
+    window.__mockData = window.__mockData || {
+      me: { id:'u001', name:'王小明', dept:'HR', role:'admin' },
+      departments: [
+        { id:'HR', name:'HR', desc:'人力資源', accessible:true, quotaGb:100, usedGb:24, rootPath:'HR' },
+        { id:'Supply', name:'Supply', desc:'供應鏈', accessible:true, quotaGb:200, usedGb:98, rootPath:'Supply' },
+        { id:'Finance', name:'Finance', desc:'財務', accessible:false, quotaGb:150, usedGb:120, rootPath:'Finance' },
+      ],
+      spaces: [
+        { deptId:'HR', rootPath:'HR', managerUserId:'u001', quotaGb:100, usedGb:24 },
+        { deptId:'Supply', rootPath:'Supply', managerUserId:'u010', quotaGb:200, usedGb:98 },
+        { deptId:'Finance', rootPath:'Finance', managerUserId:'u020', quotaGb:150, usedGb:120 },
+      ],
+      indexItems: [
+        { id:'i1', name:'差旅報銷規範.pdf', displayTitle:'差旅報銷（新版）', type:'file', path:'HR/FAQ', deptId:'HR', tags:['差旅','報銷'], actionsAllowed:['view','download'], visibilityMode:'whitelist', updatedAt:'2025-11-01', downloads:120, fileKind:'pdf', reasonVisible:'inheritFrom', ownerUserId:'u001' },
+        { id:'i2', name:'請假制度.docx', type:'file', path:'HR/FAQ', deptId:'HR', tags:['請假','制度'], actionsAllowed:['view'], visibilityMode:'inherit', updatedAt:'2025-10-25', downloads:32, fileKind:'docx', reasonVisible:'directGrant', ownerUserId:'u002' },
+        { id:'i3', name:'海外差旅', displayTitle:'海外差旅（資料夾）', type:'folder', path:'HR/FAQ', deptId:'HR', tags:['差旅'], actionsAllowed:['view'], visibilityMode:'blacklist', updatedAt:'2025-11-04', downloads:0, fileKind:'folder', reasonVisible:'inheritFrom', ownerUserId:'u003' },
+        { id:'i4', name:'供應商名單.xlsx', type:'file', path:'Supply/Vendor', deptId:'Supply', tags:['供應商','採購'], actionsAllowed:['view','download'], visibilityMode:'whitelist', updatedAt:'2025-11-03', downloads:75, fileKind:'xlsx', reasonVisible:'directGrant', ownerUserId:'u010' },
+        { id:'i5', name:'採購合約', type:'folder', path:'Supply/Contract', deptId:'Supply', tags:['合約','保密'], actionsAllowed:['view','download'], visibilityMode:'whitelist', updatedAt:'2025-10-29', downloads:12, fileKind:'folder', reasonVisible:'guestLink', ownerUserId:'u010' },
+        { id:'i6', name:'報帳總覽.pptx', type:'file', path:'Finance/Policy', deptId:'Finance', tags:['報帳','政策'], actionsAllowed:[], visibilityMode:'whitelist', updatedAt:'2025-09-20', downloads:210, fileKind:'pptx', reasonVisible:'', ownerUserId:'u020' },
+      ],
+      folders: {
+        'HR/FAQ': { path:'HR/FAQ', inherit:true, deptId:'HR', items:[
+          { id:'f1', name:'差旅報銷規範.pdf', displayTitle:'差旅報銷（新版）', type:'file', updated:'3 天前', visibility:'白名單', tags:['差旅','報銷'], deptId:'HR' },
+          { id:'f2', name:'請假制度.docx', type:'file', updated:'1 週前', visibility:'繼承', tags:['請假','制度'], deptId:'HR' },
+          { id:'d1', name:'海外差旅', displayTitle:'海外差旅（資料夾）', type:'folder', updated:'昨天', visibility:'黑名單', tags:['差旅'], deptId:'HR' },
+        ]},
+        'HR/SOP': { path:'HR/SOP', inherit:false, deptId:'HR', items:[
+          { id:'f3', name:'新人報到SOP.docx', type:'file', updated:'5 天前', visibility:'白名單', tags:['新人','SOP'], deptId:'HR' }
+        ]},
+        'HR/表單/差旅': { path:'HR/表單/差旅', inherit:true, deptId:'HR', items:[] },
+        'HR/表單/請假': { path:'HR/表單/請假', inherit:true, deptId:'HR', items:[] }
+      },
+      tags: { popular: [ { tag:'差旅', count:18 }, { tag:'報銷', count:12 }, { tag:'請假', count:9 }, { tag:'供應商', count:7 }, { tag:'合約', count:6 } ] },
+      sharedWithMe: [
+        { id:'s1', name:'供應商名單.xlsx', type:'file', from:'Supply 部門', perms:['view'], updated:'昨天', deptId:'Supply', ownerUserId:'u010', displayTitle:'供應商名單（共享）', tags:['供應商'] },
+        { id:'s2', name:'採購合約', type:'folder', from:'Supply 部門', perms:['view','download'], updated:'2 天前', deptId:'Supply', ownerUserId:'u010', tags:['合約','共享'] }
+      ],
+      sharedByMe: [
+        { id:'b1', name:'差旅報銷規範.pdf', type:'file', to:['Finance 部門','張華'], perms:['view'], status:'生效中', deptId:'HR', ownerUserId:'u001', displayTitle:'差旅報銷（新版）', tags:['差旅','報銷'] },
+        { id:'b2', name:'HR/FAQ', type:'folder', to:['全公司（黑名單：外包）'], perms:['view','download'], status:'生效中', deptId:'HR', ownerUserId:'u001', tags:['FAQ'] }
+      ],
+      meData: { recent: ['i1','i4','i2'], favorites: ['i1','i5'] }
+    };
+
+    // 工具
+    const $ = sel => document.querySelector(sel);
+
+    function displayName(it){
+      return (it.displayTitle && it.displayTitle.trim()) ? it.displayTitle.trim() : it.name;
+    }
+    function parseTagsInput(val){
+      const arr = (val||'').split(',').map(s=>s.trim()).filter(Boolean);
+      return Array.from(new Set(arr));
+    }
+
+    // 導航
+    function goto(v){
+      document.querySelectorAll('.nav a.btnnav').forEach(a=>a.classList.remove('active'));
+      const map = {home:0,tags:1,shares:2,my:3,admin:4};
+      const idx = map[v];
+      if(idx!==undefined){
+        const links = Array.from(document.querySelectorAll('.nav .btnnav'));
+        links[idx]?.classList?.add('active');
+      }
+      document.querySelectorAll('[data-view]').forEach(x=>x.classList.remove('show'));
+      document.querySelector('[data-view="'+v+'"]').classList.add('show');
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    // Modal
+    function openM(id){ document.getElementById(id).style.display='flex'; }
+    function closeM(id){ document.getElementById(id).style.display='none'; }
+
+    // 權限
+    function me(){ return window.__mockData.me; }
+    function isAdmin(){ return me().role === 'admin'; }
+    function canManageItem(it){ return it && it.deptId === me().dept; }
+
+    // 下載（示意）
+    function canDownload(it){
+      return it.type==='file' && (it.actionsAllowed||[]).includes('download');
+    }
+    function downloadItem(it){
+      if(!canDownload(it)){ alert('無下載權限或為資料夾'); return; }
+      alert(`開始下載：${displayName(it)}（示意）`);
+    }
+
+    // 上傳（含標題）
+    function mockUpload(){
+      const path = $('#path').textContent;
+      const folder = window.__mockData.folders[path];
+      const title = ($('#uploadDisplayTitle').value||'').trim();
+      const tagStr = ($('#uploadTags').value||'').trim();
+      const tags = parseTagsInput(tagStr);
+      if(!folder){ alert('上傳路徑不存在'); return; }
+      const newId = 'f_' + Math.random().toString(36).slice(2,8);
+      const fileName = '新檔案_' + newId + '.pdf';
+      folder.items.unshift({ id:newId, name:fileName, displayTitle: title || undefined, type:'file', updated:'剛剛', visibility:'繼承', tags, deptId: folder.deptId });
+      window.__mockData.indexItems.unshift({ id:newId, name:fileName, displayTitle: title || undefined, type:'file', path, deptId: folder.deptId, tags, actionsAllowed:['view','download'], visibilityMode:'inherit', updatedAt:new Date().toISOString(), downloads:0, fileKind:'pdf' });
+      renderFolderFileList(path);
+      doSearch();
+      closeM('m-upload');
+      $('#uploadDisplayTitle').value = '';
+      $('#uploadTags').value = '';
+      alert('上傳成功（示意）');
+    }
+
+    // 標籤編輯
+    function openTagsEditor(opts){
+      const { itemId, scope, name, currentTags, deptId, path } = opts;
+      const manageable = canManageItem({deptId});
+      if(!manageable){ alert('不同部門：不可編輯標籤'); return; }
+      $('#tagsItemId').value = itemId;
+      $('#tagsScope').value = scope;
+      $('#tagsTargetName').textContent = name;
+      $('#tagsDeptId').value = deptId || '';
+      $('#tagsPath').value = path || '';
+      $('#tagsInput').value = (currentTags||[]).join(', ');
+      openM('m-tags');
+    }
+    function saveTags(){
+      const id = $('#tagsItemId').value;
+      const scope = $('#tagsScope').value;
+      const deptId = $('#tagsDeptId').value;
+      const path = $('#tagsPath').value;
+      const tags = parseTagsInput($('#tagsInput').value);
+      if(scope==='folders'){
+        const list = window.__mockData.folders[path]?.items || [];
+        const it = list.find(x=>x.id===id);
+        if(it) it.tags = tags;
+        renderFolderFileList(path);
+        const idx = window.__mockData.indexItems.find(x=>x.name===it?.name && x.path===path);
+        if(idx) { idx.tags = tags; }
+      }else if(scope==='index' || scope==='tag' || scope==='my_recent' || scope==='my_fav'){
+        const it = window.__mockData.indexItems.find(x=>x.id===id);
+        if(it) it.tags = tags;
+        doSearch();
+        if(scope==='tag'){
+          const t = document.getElementById('tagTitle').textContent.replace(/^#/,'');
+          openTag(t);
+        }
+        if(scope==='my_recent' || scope==='my_fav'){ renderMy(); }
+      }else if(scope==='sharedWithMe'){
+        const it = window.__mockData.sharedWithMe.find(x=>x.id===id);
+        if(it) it.tags = tags;
+        renderSharedLists();
+      }else if(scope==='sharedByMe'){
+        const it = window.__mockData.sharedByMe.find(x=>x.id===id);
+        if(it) it.tags = tags;
+        renderSharedLists();
+      }
+      closeM('m-tags');
+    }
+    function clearTags(){ $('#tagsInput').value = ''; saveTags(); }
+
+    // 近期存取
+    function loadList(type,path){
+      $('#path').textContent = path;
+      renderFolderFileList(path);
+      const folder = window.__mockData.folders[path];
+      const manageable = !!folder && canManageItem({deptId: folder?.deptId});
+      $('#btnPermHome').disabled = !manageable; $('#btnPermHome').title = manageable?'':'不同部門：不可設定權限';
+      $('#btnShareHome').disabled = !manageable; $('#btnShareHome').title = manageable?'':'不同部門：不可建立分享';
+      $('#btnCreateFolder').disabled = !manageable; $('#btnCreateFolder').title = manageable?'':'不同部門：不可新增資料夾';
+    }
+    function renderFolderFileList(path){
+      const data = window.__mockData.folders[path];
+      const tbody = $('#listBody'); const inheritLabel = $('#inheritLabel');
+      if(!data){ tbody.innerHTML = '<tr><td colspan="6" class="mut">無資料</td></tr>'; return; }
+      inheritLabel.textContent = data.inherit ? '繼承權限' : '已覆寫';
+      tbody.innerHTML = (data.items.map(it => {
+        const manageable = canManageItem(it);
+        const canDl = it.type==='file' && (findIndexItemByNamePath(it.name, path)?.actionsAllowed||[]).includes('download');
+        const tagsBtn = `<button class="btn" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可編輯'}" onclick="openTagsEditor(${JSON.stringify({ itemId:it.id, scope:'folders', name:it.name, currentTags:it.tags||[], deptId:it.deptId, path })})">標籤</button>`;
+        const permBtn = `<button class="btn ghost" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可設定'}" onclick="${manageable?'openPerm()':'void(0)'}">權限</button>`;
+        const linkBtn = `<button class="btn ghost" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可分享'}" onclick="${manageable?'openM(\'m-share\')':'void(0)'}">連結</button>`;
+        const dlBtn = `<button class="btn" ${canDl?'':'disabled'} title="${canDl?'下載':''}" onclick='attemptDownload(${JSON.stringify({ name:it.name, type:it.type, path, deptId:it.deptId })})'>下載</button>`;
+        return `
+          <tr>
+            <td><b>${displayName(it)}</b><div class="title-secondary">${it.name}</div></td>
+            <td>${(it.tags||[]).map(t=>`<span class="pill">${t}</span>`).join(' ') || '—'}</td>
+            <td>${it.type==='folder'?'資料夾':'檔案'}</td>
+            <td>${it.updated}</td>
+            <td><span class="tag">${it.visibility}</span></td>
+            <td class="row">${dlBtn}${tagsBtn}${permBtn}${linkBtn}</td>
+          </tr>
+        `;
+      }).join('')) || '<tr><td colspan="6" class="mut">此處目前沒有內容</td></tr>';
+    }
+    function attemptDownload(meta){
+      const it = window.__mockData.indexItems.find(x=>x.name===meta.name && x.path===meta.path);
+      if(!it){ alert('找不到檔案'); return; }
+      downloadItem(it);
+    }
+    function findIndexItemByNamePath(name, path){
+      return window.__mockData.indexItems.find(x=>x.name===name && x.path===path);
+    }
+    function toggleAll(){ document.querySelectorAll('#tree details').forEach(d=>d.open=!d.open); }
+
+    function tryOpenPermCurrent(){
+      const p = $('#path').textContent;
+      const folder = window.__mockData.folders[p];
+      if(!folder) return;
+      if(folder.deptId !== me().dept){ alert('你沒有權限設定其他部門的項目權限'); return; }
+      $('#permTarget').textContent = p;
+      openM('m-perm');
+    }
+    function tryOpenShareCurrent(){
+      const p = $('#path').textContent;
+      const folder = window.__mockData.folders[p];
+      if(!folder) return;
+      if(folder.deptId !== me().dept){ alert('你沒有權限為其他部門的項目建立訪客分享'); return; }
+      $('#shareTarget').textContent = p;
+      openM('m-share');
+    }
+    function tryCreateFolderCurrent(){
+      const p = $('#path').textContent;
+      const folder = window.__mockData.folders[p];
+      if(!folder) return;
+      const manageable = canManageItem({deptId: folder.deptId});
+      if(!manageable){ alert('不同部門：不可在此新增資料夾'); return; }
+      $('#createFolderPath').textContent = p;
+      $('#createFolderName').value = '';
+      $('#createFolderInherit').checked = true;
+      openM('m-create-folder');
+    }
+    function confirmCreateFolder(){
+      const parentPath = $('#createFolderPath').textContent;
+      const name = ($('#createFolderName').value||'').trim();
+      const inherit = $('#createFolderInherit').checked;
+      if(!name){ alert('請輸入資料夾名稱'); return; }
+      createFolder(parentPath, name, inherit);
+      closeM('m-create-folder');
+      renderFolderFileList(parentPath);
+      alert('已建立');
+    }
+    function createFolder(parentPath, name, inherit){
+      const folder = window.__mockData.folders[parentPath];
+      if(!folder){ alert('路徑不存在'); return; }
+      const newId = 'd_' + Math.random().toString(36).slice(2,8);
+      const newItem = { id:newId, name:name, type:'folder', updated:'剛剛', visibility: inherit ? '繼承' : '白名單', tags:[], deptId: folder.deptId };
+      folder.items.unshift(newItem);
+      const newPath = parentPath + '/' + name;
+      window.__mockData.folders[newPath] = { path:newPath, inherit:inherit, deptId: folder.deptId, items:[] };
+    }
+
+    // 搜尋中心
+    const state = { q:'', filters:{ dept:new Set(), type:new Set(), vis:new Set(), acts:new Set(), since:'', tags:new Set() }, sortBy:'relevance', viewMode:'table' };
+    document.getElementById('globalQ')?.addEventListener('keydown', e => { if(e.key==='Enter'){ goto('search'); doSearch(); } });
+
+    function buildFacetDept(){
+      const host = document.getElementById('facetDept'); host.innerHTML = '';
+      window.__mockData.departments.forEach(d=>{
+        const id = 'dept_'+d.id;
+        const row = document.createElement('div'); row.className='row';
+        row.innerHTML = `<label class="row" style="justify-content:space-between;width:100%"><span class="row"><input type="checkbox" id="${id}" value="${d.id}" onchange="facetChange()"> ${d.name}</span></label>`;
+        host.appendChild(row);
+      });
+    }
+    function buildFacetTags(){
+      const host = document.getElementById('facetTags'); host.innerHTML = '';
+      window.__mockData.tags.popular.forEach(t=>{
+        const id = 'tag_'+t.tag;
+        const el = document.createElement('div'); el.className='row';
+        el.innerHTML = `<label class="row"><input type="checkbox" id="${id}" value="${t.tag}" onchange="facetChange()"> #${t.tag} <span class="mut">(${t.count})</span></label>`;
+        host.appendChild(el);
+      });
+    }
+    function facetChange(){
+      state.filters.dept = new Set(Array.from(document.querySelectorAll('#facetDept input:checked')).map(i=>i.value));
+      state.filters.type = new Set(Array.from(document.querySelectorAll('[value="file"]:checked, [value="folder"]:checked')).map(i=>i.value));
+      state.filters.vis  = new Set(Array.from(document.querySelectorAll('[value="whitelist"]:checked, [value="blacklist"]:checked, [value="inherit"]:checked')).map(i=>i.value));
+      state.filters.acts = new Set(Array.from(document.querySelectorAll('[value="view"]:checked, [value="download"]:checked')).map(i=>i.value));
+      state.filters.since = document.getElementById('facetSince').value;
+      state.filters.tags = new Set(Array.from(document.querySelectorAll('#facetTags input:checked')).map(i=>i.value));
+      doSearch();
+    }
+    function clearFilters(){
+      document.querySelectorAll('#facetDept input, #facetTags input').forEach(i=>i.checked=false);
+      document.querySelectorAll('[value="file"],[value="folder"],[value="whitelist"],[value="blacklist"],[value="inherit"],[value="view"],[value="download"]').forEach(i=>i.checked=false);
+      document.getElementById('facetSince').value='';
+      state.filters = { dept:new Set(), type:new Set(), vis:new Set(), acts:new Set(), since:'', tags:new Set() };
+      doSearch();
+    }
+    function doSearch(){
+      state.q = (document.getElementById('globalQ').value||'').trim().toLowerCase();
+      state.sortBy = document.getElementById('sortBy')?.value || 'relevance';
+      const items = window.__mockData.indexItems.slice();
+
+      const filtered = items.filter(it=>{
+        if(state.q){
+          const blob = `${displayName(it)} ${it.name} ${it.path} ${(it.tags||[]).join(' ')}`.toLowerCase();
+          if(!blob.includes(state.q)) return false;
+        }
+        if(state.filters.dept.size && !state.filters.dept.has(it.deptId)) return false;
+        if(state.filters.type.size && !state.filters.type.has(it.type)) return false;
+        if(state.filters.vis.size && !state.filters.vis.has(it.visibilityMode)) return false;
+        if(state.filters.acts.size && !Array.from(state.filters.acts).every(a=> (it.actionsAllowed||[]).includes(a))) return false;
+        if(state.filters.tags && state.filters.tags.size){
+          const ok = Array.from(state.filters.tags).every(t=> (it.tags||[]).includes(t));
+          if(!ok) return false;
+        }
+        if(state.filters.since){
+          const days = parseInt(state.filters.since,10);
+          const dt = new Date(it.updatedAt);
+          const diff = (Date.now() - dt.getTime())/86400000;
+          if(diff > days) return false;
+        }
+        return true;
+      });
+
+      filtered.sort((a,b)=>{
+        if(state.sortBy==='updated') return new Date(b.updatedAt)-new Date(a.updatedAt);
+        if(state.sortBy==='downloads') return (b.downloads||0)-(a.downloads||0);
+        const aHit = displayName(a).toLowerCase().includes(state.q)?1:0;
+        const bHit = displayName(b).toLowerCase().includes(state.q)?1:0;
+        return bHit - aHit;
+      });
+
+      renderResults(filtered);
+      renderActiveFilters();
+    }
+    function renderActiveFilters(){
+      const chips = [];
+      if(state.q) chips.push(`關鍵字: ${state.q}`);
+      if(state.filters.dept.size) chips.push(`部門: ${Array.from(state.filters.dept).join('、')}`);
+      if(state.filters.type.size) chips.push(`類型: ${Array.from(state.filters.type).join('、')}`);
+      if(state.filters.vis.size) chips.push(`可見性: ${Array.from(state.filters.vis).join('、')}`);
+      if(state.filters.acts.size) chips.push(`動作: ${Array.from(state.filters.acts).join('、')}`);
+      if(state.filters.tags && state.filters.tags.size) chips.push(`標籤: ${Array.from(state.filters.tags).join('、')}`);
+      if(state.filters.since) chips.push(`時間: 近 ${state.filters.since} 天`);
+      document.getElementById('activeFilters').textContent = chips.length? chips.join(' | ') : '無篩選';
+    }
+    function toggleViewMode(){
+      state.viewMode = state.viewMode==='table'?'cards':'table';
+      const tbl = document.getElementById('resultTable'); const cards = document.getElementById('resultCards');
+      if(state.viewMode==='cards'){ tbl.style.display='none'; cards.style.display='grid'; } else { tbl.style.display='table'; cards.style.display='none'; }
+    }
+    function renderResults(list){
+      const tbody = document.getElementById('resultBody'); const cards = document.getElementById('resultCards');
+      tbody.innerHTML = list.map(it=>{
+        const manageable = canManageItem(it);
+        const dlBtn = `<button class="btn" ${canDownload(it)?'':'disabled'} onclick='downloadItem(${JSON.stringify(it)})'>下載</button>`;
+        const tagsBtn = `<button class="btn" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可編輯'}" onclick="openTagsEditor(${JSON.stringify({ itemId:it.id, scope:'index', name:it.name, currentTags:it.tags||[], deptId:it.deptId, path:it.path })})">標籤</button>`;
+        const permBtn = `<button class="btn ghost" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可設定'}" onclick="${manageable?'openPerm()':'void(0)'}">權限</button>`;
+        const linkBtn = `<button class="btn ghost" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可分享'}" onclick="${manageable?'openM(\'m-share\')':'void(0)'}">連結</button>`;
+        return `
+        <tr>
+          <td><b>${displayName(it)}</b><div class="title-secondary">${it.name} · ${it.path}</div></td>
+          <td>${(it.tags||[]).map(t=>`<span class="pill">#${t}</span>`).join(' ') || '—'}</td>
+          <td>${it.deptId}</td>
+          <td>${it.type==='folder'?'資料夾':'檔案'}</td>
+          <td><span class="tag">${it.visibilityMode}</span> ${(it.actionsAllowed||[]).map(a=>`<span class="pill">${a}</span>`).join(' ')}</td>
+          <td>${new Date(it.updatedAt).toLocaleDateString()}</td>
+          <td class="row">${dlBtn}${tagsBtn}${permBtn}${linkBtn}</td>
+        </tr>`;
+      }).join('') || `<tr><td colspan="7" class="mut">沒有符合條件的結果</td></tr>`;
+
+      cards.innerHTML = list.map(it=>{
+        const manageable = canManageItem(it);
+        const dlBtn = `<button class="btn" ${canDownload(it)?'':'disabled'} onclick='downloadItem(${JSON.stringify(it)})'>下載</button>`;
+        const tagsBtn = `<button class="btn" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可編輯'}" onclick="openTagsEditor(${JSON.stringify({ itemId:it.id, scope:'index', name:it.name, currentTags:it.tags||[], deptId:it.deptId, path:it.path })})">標籤</button>`;
+        const permBtn = `<button class="btn ghost" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可設定'}" onclick="${manageable?'openPerm()':'void(0)'}">權限</button>`;
+        const linkBtn = `<button class="btn ghost" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可分享'}" onclick="${manageable?'openM(\'m-share\')':'void(0)'}">連結</button>`;
+        return `
+        <div style="border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff;box-shadow:var(--shadow)">
+          <div class="row space"><b>${displayName(it)}</b><span class="tag">${it.type}</span></div>
+          <div class="mut" style="margin:4px 0">${it.name} · ${it.path} · ${it.deptId}</div>
+          <div style="margin:6px 0">${(it.tags||[]).map(t=>`<span class="pill">#${t}</span>`).join(' ') || '—'}</div>
+          <div class="row" style="gap:6px"><span class="tag">${it.visibilityMode}</span>${(it.actionsAllowed||[]).map(a=>`<span class="pill">${a}</span>`).join(' ')}</div>
+          <div class="mut" style="margin-top:6px">更新：${new Date(it.updatedAt).toLocaleDateString()} · 下載：${it.downloads||0}</div>
+          <div class="row" style="margin-top:8px">${dlBtn}${tagsBtn}${permBtn}${linkBtn}</div>
+        </div>`;
+      }).join('');
+    }
+
+    // 標籤頁：修正點擊直接切頁並載入
+    function renderTags(){
+      const host = document.getElementById('tagCloud');
+      const popular = (window.__mockData.tags && window.__mockData.tags.popular) ? window.__mockData.tags.popular : [];
+      host.innerHTML = popular.map(t=>`<button class="btn" onclick="goto('tags'); openTag('${t.tag}')">#${t.tag} <span class="mut">(${t.count})</span></button>`).join(' ');
+      if(popular[0]) openTag(popular[0].tag);
+    }
+    function openTag(tag){
+      document.getElementById('tagTitle').textContent = '#'+tag;
+      const list = window.__mockData.indexItems.filter(it=> (it.tags||[]).includes(tag));
+      document.getElementById('tagResultBody').innerHTML = list.map(it=>{
+        const manageable = canManageItem(it);
+        const dlBtn = `<button class="btn" ${canDownload(it)?'':'disabled'} onclick='downloadItem(${JSON.stringify(it)})'>下載</button>`;
+        const tagsBtn = `<button class="btn" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可編輯'}" onclick="openTagsEditor(${JSON.stringify({ itemId:it.id, scope:'tag', name:it.name, currentTags:it.tags||[], deptId:it.deptId, path:it.path })})">標籤</button>`;
+        const permBtn = `<button class="btn ghost" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可設定'}" onclick="${manageable?'openPerm()':'void(0)'}">權限</button>`;
+        return `
+        <tr>
+          <td><b>${displayName(it)}</b><div class="title-secondary">${it.name} · ${it.path}</div></td>
+          <td>${(it.tags||[]).map(t=>`<span class="pill">#${t}</span>`).join(' ') || '—'}</td>
+          <td>${it.deptId}</td>
+          <td>${it.type==='folder'?'資料夾':'檔案'}</td>
+          <td>${new Date(it.updatedAt).toLocaleDateString()}</td>
+          <td class="row">${dlBtn}${tagsBtn}${permBtn}</td>
+        </tr>`;
+      }).join('') || `<tr><td colspan="6" class="mut">此標籤目前沒有項目</td></tr>`;
+    }
+
+    // 分享中心
+    function renderSharedLists(){
+      const withMeTbody = document.getElementById('withMeBody');
+      withMeTbody.innerHTML = window.__mockData.sharedWithMe.map(x => {
+        const manageable = canManageItem(x);
+        const dlBtn = `<button class="btn" ${(x.type==='file' && (x.perms||[]).includes('download'))?'':'disabled'} onclick="alert('下載（示意）')">下載</button>`;
+        const tagsBtn = `<button class="btn" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可編輯'}" onclick="openTagsEditor(${JSON.stringify({ itemId:x.id, scope:'sharedWithMe', name:x.name, currentTags:x.tags||[], deptId:x.deptId })})">標籤</button>`;
+        return `
+        <tr>
+          <td><b>${displayName(x)}</b></td>
+          <td>${(x.tags||[]).map(t=>`<span class="pill">${t}</span>`).join(' ') || '—'}</td>
+          <td>${x.type==='folder'?'資料夾':'檔案'}</td>
+          <td>${x.from}</td>
+          <td>${x.perms.join(', ')}</td>
+          <td>${x.updated}</td>
+          <td class="row">
+            ${dlBtn}${tagsBtn}
+            <button class="btn ghost" onclick="alert('已送出權限請求')">要求權限</button>
+            <button class="btn" disabled title="不同部門：不可設定">權限</button>
+          </td>
+        </tr>
+      `}).join('');
+      const byMeTbody = document.getElementById('byMeBody');
+      byMeTbody.innerHTML = window.__mockData.sharedByMe.map(x => {
+        const manageable = canManageItem(x);
+        const dlBtn = `<button class="btn" ${(x.type==='file' && (x.perms||[]).includes('download'))?'':'disabled'} onclick="alert('下載（示意）')">下載</button>`;
+        const tagsBtn = `<button class="btn" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可編輯'}" onclick="openTagsEditor(${JSON.stringify({ itemId:x.id, scope:'sharedByMe', name:x.name, currentTags:x.tags||[], deptId:x.deptId })})">標籤</button>`;
+        return `
+        <tr>
+          <td><b>${displayName(x)}</b></td>
+          <td>${(x.tags||[]).map(t=>`<span class="pill">${t}</span>`).join(' ') || '—'}</td>
+          <td>${x.type==='folder'?'資料夾':'檔案'}</td>
+          <td>${x.to.join('、')}</td>
+          <td>${x.perms.join(', ')}</td>
+          <td><span class="tag">${x.status}</span></td>
+          <td class="row">
+            ${dlBtn}${tagsBtn}
+            <button class="btn ghost" onclick="openPerm()">調整權限</button>
+            <button class="btn ghost" onclick="openM('m-share')">訪客連結</button>
+          </td>
+        </tr>
+      `}).join('');
+    }
+    function switchShareTab(which){
+      const a = document.getElementById('tabSharedWithMe');
+      const b = document.getElementById('tabSharedByMe');
+      const pa = document.getElementById('panelWithMe');
+      const pb = document.getElementById('panelByMe');
+      if(which==='withMe'){ a.classList.add('active'); b.classList.remove('active'); pa.style.display='block'; pb.style.display='none'; }
+      else { b.classList.add('active'); a.classList.remove('active'); pb.style.display='block'; pa.style.display='none'; }
+    }
+
+    // 我的
+    function renderMy(){
+      const idx = new Map(window.__mockData.indexItems.map(i=>[i.id,i]));
+      const recent = window.__mockData.meData.recent.map(id=>idx.get(id)).filter(Boolean);
+      const fav = window.__mockData.meData.favorites.map(id=>idx.get(id)).filter(Boolean);
+      document.getElementById('recentBody').innerHTML = recent.map(it=>{
+        const manageable = canManageItem(it);
+        const dlBtn = `<button class="btn" ${canDownload(it)?'':'disabled'} onclick='downloadItem(${JSON.stringify(it)})'>下載</button>`;
+        const tagsBtn = `<button class="btn" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可編輯'}" onclick="openTagsEditor(${JSON.stringify({ itemId:it.id, scope:'my_recent', name:it.name, currentTags:it.tags||[], deptId:it.deptId, path:it.path })})">標籤</button>`;
+        const permBtn = `<button class="btn ghost" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可設定'}" onclick="${manageable?'openPerm()':'void(0)'}">權限</button>`;
+        return `
+        <tr>
+          <td><b>${displayName(it)}</b><div class="title-secondary">${it.name} · ${it.path}</div></td>
+          <td>${(it.tags||[]).map(t=>`<span class="pill">#${t}</span>`).join(' ') || '—'}</td>
+          <td>${it.deptId}</td>
+          <td>${it.type==='folder'?'資料夾':'檔案'}</td>
+          <td>${new Date(it.updatedAt).toLocaleDateString()}</td>
+          <td class="row">${dlBtn}${tagsBtn}${permBtn}</td>
+        </tr>`;
+      }).join('') || `<tr><td colspan="6" class="mut">尚無紀錄</td></tr>`;
+      document.getElementById('favBody').innerHTML = fav.map(it=>{
+        const manageable = canManageItem(it);
+        const dlBtn = `<button class="btn" ${canDownload(it)?'':'disabled'} onclick='downloadItem(${JSON.stringify(it)})'>下載</button>`;
+        const tagsBtn = `<button class="btn" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可編輯'}" onclick="openTagsEditor(${JSON.stringify({ itemId:it.id, scope:'my_fav', name:it.name, currentTags:it.tags||[], deptId:it.deptId, path:it.path })})">標籤</button>`;
+        const permBtn = `<button class="btn ghost" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可設定'}" onclick="${manageable?'openPerm()':'void(0)'}">權限</button>`;
+        return `
+        <tr>
+          <td><b>${displayName(it)}</b><div class="title-secondary">${it.name} · ${it.path}</div></td>
+          <td>${(it.tags||[]).map(t=>`<span class="pill">#${t}</span>`).join(' ') || '—'}</td>
+          <td>${it.deptId}</td>
+          <td>${it.type==='folder'?'資料夾':'檔案'}</td>
+          <td>${new Date(it.updatedAt).toLocaleDateString()}</td>
+          <td class="row">${dlBtn}${tagsBtn}${permBtn}</td>
+        </tr>`;
+      }).join('') || `<tr><td colspan="6" class="mut">尚無收藏</td></tr>`;
+    }
+    function switchMyTab(which){
+      const a = document.getElementById('tabRecent');
+      const b = document.getElementById('tabFav');
+      const pa = document.getElementById('panelRecent');
+      const pb = document.getElementById('panelFav');
+      if(which==='recent'){ a.classList.add('active'); b.classList.remove('active'); pa.style.display='block'; pb.style.display='none'; }
+      else { b.classList.add('active'); a.classList.remove('active'); pb.style.display='block'; pa.style.display='none'; }
+    }
+
+    // 系統管理
+    function renderAdmin(){
+      if(!isAdmin()){ alert('僅系統管理者可存取'); goto('home'); return; }
+      const sel1 = document.getElementById('adminDeptSelect');
+      const sel2 = document.getElementById('adminAdjustDept');
+      sel1.innerHTML = window.__mockData.departments.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+      sel2.innerHTML = window.__mockData.departments.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+      const tbody = document.getElementById('adminSpaceBody');
+      tbody.innerHTML = window.__mockData.spaces.map(s=>`
+        <tr>
+          <td>${s.deptId}</td>
+          <td>${s.rootPath}</td>
+          <td>${s.managerUserId}</td>
+          <td>${s.usedGb} GB</td>
+          <td>${s.quotaGb} GB</td>
+        </tr>
+      `).join('');
+    }
+    function adminCreateSpace(){
+      if(!isAdmin()){ alert('僅系統管理者可操作'); return; }
+      const deptId = document.getElementById('adminDeptSelect').value;
+      const rootPath = (document.getElementById('adminRootPath').value||'').trim();
+      const quotaGb = parseInt(document.getElementById('adminQuota').value,10)||50;
+      const managerUserId = (document.getElementById('adminManagerId').value||'').trim();
+      if(!deptId || !rootPath || !managerUserId){ alert('請完整填寫部門、根路徑與管理員'); return; }
+      window.__mockData.spaces = window.__mockData.spaces.filter(s=>s.deptId!==deptId).concat([{ deptId, rootPath, managerUserId, quotaGb, usedGb:0 }]);
+      window.__mockData.departments = window.__mockData.departments.map(d=> d.id===deptId ? { ...d, rootPath, quotaGb, usedGb: d.usedGb||0 } : d);
+      alert('已建立');
+      renderAdmin();
+    }
+    function adminAdjustSpace(){
+      if(!isAdmin()){ alert('僅系統管理者可操作'); return; }
+      const deptId = document.getElementById('adminAdjustDept').value;
+      const newQuota = parseInt(document.getElementById('adminNewQuota').value,10)||0;
+      const newManager = (document.getElementById('adminNewManager').value||'').trim();
+      window.__mockData.spaces = window.__mockData.spaces.map(s=> s.deptId===deptId ? { ...s, quotaGb:newQuota||s.quotaGb, managerUserId:newManager||s.managerUserId } : s);
+      window.__mockData.departments = window.__mockData.departments.map(d=> d.id===deptId ? { ...d, quotaGb:newQuota||d.quotaGb } : d);
+      alert('已更新');
+      renderAdmin();
+    }
+
+    // 初始化
+    (function init(){
+      document.getElementById('meDeptChip').textContent = '我的部門：' + me().dept;
+      document.getElementById('meRoleChip').textContent = '角色：' + me().role;
+      document.getElementById('btnAdminNav').style.display = isAdmin() ? 'flex' : 'none';
+
+      document.getElementById('myDept').textContent = me().dept;
+
+      renderFolderFileList('HR/FAQ');
+
+      buildFacetDept();
+      buildFacetTags();
+      doSearch();
+    })();
+
+    // 對外
+    window.openTagsEditor = openTagsEditor;
+    function openUpload(){ openM('m-upload'); }
+    function openPerm(){ openM('m-perm'); }
+  </script>
+</body>
+</html>

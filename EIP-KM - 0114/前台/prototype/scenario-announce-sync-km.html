@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公告附件同步至 KM | 情境示意</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft JhengHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 24px;
+        }
+        
+        /* Prototype 標籤 */
+        .prototype-badge {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 99;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        
+        .page-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 32px;
+        }
+        
+        /* 流程示意 */
+        .flow-container {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+        
+        .flow-step {
+            flex: 1;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .step-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: #fff;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .step-header.step2 {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .step-header.step3 {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        }
+        
+        .step-number {
+            width: 28px;
+            height: 28px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .step-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        
+        .step-content {
+            padding: 20px;
+        }
+        
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #9ca3af;
+            padding-top: 60px;
+        }
+        
+        /* 表單模擬 */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            font-size: 13px;
+            color: #4b5563;
+            margin-bottom: 6px;
+            display: block;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        /* 附件區域 */
+        .attachment-section {
+            background: #f8fafc;
+            border: 1px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .attachment-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .attachment-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #4b5563;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .attachment-title i {
+            color: #6b7280;
+        }
+        
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .attachment-icon {
+            width: 32px;
+            height: 32px;
+            background: #fee2e2;
+            color: #ef4444;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .attachment-name {
+            flex: 1;
+            font-size: 13px;
+            color: #1a1a2e;
+        }
+        
+        .attachment-size {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+        
+        /* 同步選項 */
+        .sync-option {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        
+        .sync-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .sync-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: #3b82f6;
+        }
+        
+        .sync-checkbox-content {
+            flex: 1;
+        }
+        
+        .sync-checkbox-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1e40af;
+            margin-bottom: 4px;
+        }
+        
+        .sync-checkbox-desc {
+            font-size: 12px;
+            color: #3b82f6;
+        }
+        
+        .sync-settings {
+            padding-left: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .sync-setting-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sync-setting-label {
+            font-size: 12px;
+            color: #4b5563;
+            width: 70px;
+        }
+        
+        .sync-select {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 12px;
+            background: #fff;
+        }
+        
+        .tag-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background: #fff;
+            min-height: 32px;
+        }
+        
+        .tag-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        
+        .tag-item i {
+            cursor: pointer;
+            font-size: 10px;
+        }
+        
+        /* KM 結果預覽 */
+        .km-preview {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .km-preview-header {
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #4b5563;
+        }
+        
+        .km-preview-header i {
+            color: #f59e0b;
+        }
+        
+        .km-file-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+        }
+        
+        .km-file-icon {
+            width: 40px;
+            height: 40px;
+            background: #fee2e2;
+            color: #ef4444;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .km-file-info {
+            flex: 1;
+        }
+        
+        .km-file-name {
+            font-size: 14px;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+        
+        .km-file-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .km-file-meta .source {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #3b82f6;
+        }
+        
+        .km-file-meta .source i {
+            font-size: 10px;
+        }
+        
+        .km-file-tags {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .km-tag {
+            padding: 4px 10px;
+            background: #f3f4f6;
+            color: #4b5563;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        
+        /* 搜尋結果關聯 */
+        .search-relation {
+            margin-top: 40px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title i {
+            color: #8b5cf6;
+        }
+        
+        .relation-demo {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .search-bar-demo {
+            display: flex;
+            align-items: center;
+            background: #f5f7fa;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 0 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .search-bar-demo i {
+            color: #3b82f6;
+        }
+        
+        .search-bar-demo input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 12px;
+            font-size: 15px;
+            outline: none;
+        }
+        
+        .result-group {
+            margin-bottom: 20px;
+        }
+        
+        .result-group-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4b5563;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .result-group-header i {
+            color: #3b82f6;
+        }
+        
+        .result-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .result-row:hover {
+            background: #eff6ff;
+        }
+        
+        .result-row-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .result-row-icon.pdf {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+        
+        .result-row-icon.announce {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+        
+        .result-row-content {
+            flex: 1;
+        }
+        
+        .result-row-title {
+            font-size: 14px;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+        
+        .result-row-title .highlight {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        
+        .result-row-meta {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .result-row-link {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: #3b82f6;
+            background: #eff6ff;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .result-row-link i {
+            font-size: 10px;
+        }
+        
+        /* 說明區 */
+        .info-callout {
+            background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+            border: 1px solid #e879f9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+        }
+        
+        .info-callout-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #a21caf;
+            margin-bottom: 12px;
+        }
+        
+        .info-callout ul {
+            padding-left: 20px;
+            color: #86198f;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+        
+        .btn.primary {
+            background: #3b82f6;
+            color: #fff;
+        }
+        
+        .btn.secondary {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="prototype-badge">
+        <i class="fa-solid fa-flask"></i> 情境示意 - 公告附件同步 KM
+    </div>
+    
+    <h1 class="page-title">📎 公告附件同步至 KM 文件庫</h1>
+    <p class="page-subtitle">當新增公告包含附件時，可選擇自動同步至 KM 文件庫，讓檔案統一管理、搜尋更便利</p>
+    
+    <!-- 流程示意 -->
+    <div class="flow-container">
+        <!-- Step 1: 新增公告 -->
+        <div class="flow-step">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-title">新增公告 + 上傳附件</div>
+            </div>
+            <div class="step-content">
+                <div class="form-group">
+                    <label class="form-label">公告標題</label>
+                    <input type="text" class="form-input" value="2026年差旅報銷規定更新">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">公告內容</label>
+                    <textarea class="form-textarea">各位同仁好，因應公司政策調整，2026年起差旅報銷規定有所更新，請參閱附件說明...</textarea>
+                </div>
+                
+                <!-- 附件區域 -->
+                <div class="attachment-section">
+                    <div class="attachment-header">
+                        <div class="attachment-title">
+                            <i class="fa-solid fa-paperclip"></i>
+                            附件 (1)
+                        </div>
+                    </div>
+                    <div class="attachment-item">
+                        <div class="attachment-icon">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </div>
+                        <div class="attachment-name">差旅報銷規範_2026版.pdf</div>
+                        <div class="attachment-size">1.2 MB</div>
+                        <i class="fa-solid fa-xmark" style="color: #9ca3af; cursor: pointer;"></i>
+                    </div>
+                </div>
+                
+                <!-- 同步至 KM 選項 -->
+                <div class="sync-option">
+                    <div class="sync-checkbox">
+                        <input type="checkbox" id="syncToKm" checked>
+                        <div class="sync-checkbox-content">
+                            <div class="sync-checkbox-title">
+                                <i class="fa-solid fa-link"></i> 同步附件至 KM 文件庫
+                            </div>
+                            <div class="sync-checkbox-desc">
+                                附件將自動上傳至指定資料夾，並建立公告關聯
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sync-settings">
+                        <div class="sync-setting-row">
+                            <span class="sync-setting-label">存放位置</span>
+                            <select class="sync-select">
+                                <option value="HR/FAQ" selected>HR/FAQ</option>
+                                <option value="HR/SOP">HR/SOP</option>
+                                <option value="管理部/公告附件">管理部/公告附件</option>
+                            </select>
+                        </div>
+                        <div class="sync-setting-row">
+                            <span class="sync-setting-label">標籤</span>
+                            <div class="tag-input">
+                                <span class="tag-item">差旅 <i class="fa-solid fa-xmark"></i></span>
+                                <span class="tag-item">報銷 <i class="fa-solid fa-xmark"></i></span>
+                                <span class="tag-item">FAQ <i class="fa-solid fa-xmark"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button class="btn secondary">取消</button>
+                    <button class="btn primary"><i class="fa-solid fa-paper-plane"></i> 發布公告</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flow-arrow">
+            <i class="fa-solid fa-arrow-right"></i>
+        </div>
+        
+        <!-- Step 2: 自動同步 -->
+        <div class="flow-step">
+            <div class="step-header step2">
+                <div class="step-number">2</div>
+                <div class="step-title">系統自動同步至 KM</div>
+            </div>
+            <div class="step-content">
+                <div style="text-align: center; padding: 20px 0;">
+                    <i class="fa-solid fa-sync fa-spin" style="font-size: 48px; color: #10b981; margin-bottom: 16px;"></i>
+                    <p style="font-size: 14px; color: #4b5563; margin-bottom: 8px;">自動同步中...</p>
+                    <p style="font-size: 12px; color: #9ca3af;">附件正在上傳至 KM 文件庫</p>
+                </div>
+                
+                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin-top: 20px;">
+                    <div style="display: flex; align-items: center; gap: 8px; color: #16a34a; font-size: 14px; font-weight: 500; margin-bottom: 8px;">
+                        <i class="fa-solid fa-check-circle"></i>
+                        同步完成
+                    </div>
+                    <ul style="font-size: 12px; color: #166534; padding-left: 24px; margin: 0;">
+                        <li>檔案已上傳至：HR/FAQ</li>
+                        <li>已建立公告關聯連結</li>
+                        <li>已套用 3 個標籤</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flow-arrow">
+            <i class="fa-solid fa-arrow-right"></i>
+        </div>
+        
+        <!-- Step 3: KM 顯示結果 -->
+        <div class="flow-step">
+            <div class="step-header step3">
+                <div class="step-number">3</div>
+                <div class="step-title">KM 文件庫呈現</div>
+            </div>
+            <div class="step-content">
+                <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">
+                    附件已出現在 KM 文件庫，並顯示來源公告關聯：
+                </p>
+                
+                <div class="km-preview">
+                    <div class="km-preview-header">
+                        <i class="fa-solid fa-folder-open"></i>
+                        HR/FAQ
+                    </div>
+                    <div class="km-file-item">
+                        <div class="km-file-icon">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </div>
+                        <div class="km-file-info">
+                            <div class="km-file-name">差旅報銷規範_2026版.pdf</div>
+                            <div class="km-file-meta">
+                                <span>2026-01-15</span>
+                                <span class="source">
+                                    <i class="fa-solid fa-link"></i>
+                                    來源：[公告] 2026年差旅報銷規定更新
+                                </span>
+                            </div>
+                        </div>
+                        <div class="km-file-tags">
+                            <span class="km-tag">差旅</span>
+                            <span class="km-tag">報銷</span>
+                            <span class="km-tag">FAQ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 搜尋關聯示意 -->
+    <div class="search-relation">
+        <div class="section-title">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            搜尋結果關聯顯示
+        </div>
+        
+        <div class="relation-demo">
+            <div class="search-bar-demo">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" value="差旅報銷" readonly>
+            </div>
+            
+            <!-- KM 文件結果 -->
+            <div class="result-group">
+                <div class="result-group-header">
+                    <i class="fa-solid fa-folder"></i>
+                    KM 文件 (3)
+                </div>
+                
+                <div class="result-row">
+                    <div class="result-row-icon pdf">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <div class="result-row-content">
+                        <div class="result-row-title">
+                            <span class="highlight">差旅報銷</span>規範_2026版.pdf
+                        </div>
+                        <div class="result-row-meta">HR/FAQ • 2026-01-15</div>
+                    </div>
+                    <div class="result-row-link">
+                        <i class="fa-solid fa-link"></i>
+                        來源公告
+                    </div>
+                </div>
+                
+                <div class="result-row">
+                    <div class="result-row-icon pdf">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <div class="result-row-content">
+                        <div class="result-row-title">
+                            國內<span class="highlight">差旅</span>申請SOP.pdf
+                        </div>
+                        <div class="result-row-meta">HR/SOP • 2025-11-20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 公告結果 -->
+            <div class="result-group">
+                <div class="result-group-header">
+                    <i class="fa-solid fa-bullhorn" style="color: #f59e0b;"></i>
+                    公告 (1)
+                </div>
+                
+                <div class="result-row">
+                    <div class="result-row-icon announce">
+                        <i class="fa-solid fa-bullhorn"></i>
+                    </div>
+                    <div class="result-row-content">
+                        <div class="result-row-title">
+                            2026年<span class="highlight">差旅報銷</span>規定更新
+                        </div>
+                        <div class="result-row-meta">2026-01-15 • 已同步附件至 KM</div>
+                    </div>
+                    <div class="result-row-link">
+                        <i class="fa-solid fa-paperclip"></i>
+                        1 個附件
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 說明 Callout -->
+        <div class="info-callout">
+            <div class="info-callout-title">
+                <i class="fa-solid fa-lightbulb"></i>
+                設計重點
+            </div>
+            <ul>
+                <li><strong>雙向關聯</strong>：公告顯示「附件已同步至 KM」，KM 文件顯示「來源：[公告]...」</li>
+                <li><strong>搜尋整合</strong>：無論搜尋公告或 KM，都能找到相關內容並看到關聯</li>
+                <li><strong>一致的標籤</strong>：同步時自動套用標籤，便於分類與篩選</li>
+                <li><strong>權限同步</strong>：KM 文件繼承公告的可見範圍（可選）</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

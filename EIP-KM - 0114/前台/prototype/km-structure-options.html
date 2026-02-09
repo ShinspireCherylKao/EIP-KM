@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KM 架構呈現方案（非樹狀）</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+TC:wght@300;400;500;600;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1c2331;
+      --muted: #6d7280;
+      --paper: #f6f1ea;
+      --paper-2: #fffaf3;
+      --brand: #1e3d59;
+      --accent: #f29f67;
+      --accent-2: #4a7c7d;
+      --line: #e6dccf;
+      --shadow: 0 18px 40px rgba(28, 35, 49, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 500px at 15% -10%, #f8f3ea 0%, #f6f1ea 50%, #f3ede4 100%);
+      color: var(--ink);
+      font-family: "IBM Plex Sans TC", sans-serif;
+      letter-spacing: 0.2px;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 40px auto 80px;
+      padding: 0 28px;
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 32px;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      font-family: "ZCOOL XiaoWei", serif;
+      font-size: 38px;
+      font-weight: 400;
+      margin: 0 0 10px;
+      letter-spacing: 1px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--paper-2);
+      font-size: 13px;
+      color: var(--brand);
+    }
+
+    .grid {
+      display: grid;
+      gap: 26px;
+    }
+
+    .option-card {
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .option-title {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .option-title h2 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .option-title span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .option-pill {
+      background: rgba(242, 159, 103, 0.18);
+      border: 1px solid rgba(242, 159, 103, 0.6);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--brand);
+    }
+
+    .mock {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #ede2d1;
+      padding: 20px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .toolbar .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: var(--paper-2);
+      color: var(--brand);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    .btn.primary {
+      background: var(--brand);
+      color: #fff;
+      border: none;
+    }
+
+    .btn.accent {
+      background: var(--accent);
+      color: #3a2b1f;
+      border: none;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border: 1px dashed var(--accent-2);
+      color: var(--accent-2);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(74, 124, 125, 0.08);
+    }
+
+    .bu-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .bu-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fffdf9;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 90px;
+    }
+
+    .bu-card strong {
+      font-size: 15px;
+      color: var(--brand);
+    }
+
+    .bu-card span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .list {
+      border-top: 1px solid var(--line);
+    }
+
+    .list-item {
+      display: grid;
+      grid-template-columns: 1.4fr 0.6fr 0.4fr;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0e7da;
+      font-size: 13px;
+    }
+
+    .list-item span:last-child {
+      text-align: right;
+      color: var(--muted);
+    }
+
+    .drawer {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 16px;
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drawer-header strong {
+      font-size: 14px;
+    }
+
+    .drawer-body {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .drawer-card {
+      border-radius: 12px;
+      padding: 12px;
+      background: #f9f3ea;
+      border: 1px solid #efe2d0;
+      font-size: 12px;
+      color: var(--brand);
+    }
+
+    .tabs {
+      display: inline-flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: #f5efe6;
+      border-radius: 999px;
+      padding: 6px;
+      border: 1px solid var(--line);
+    }
+
+    .tab {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .tab.active {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .search {
+      flex: 1;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .option-note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .wide-panel {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 18px;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+    }
+
+    .panel-col {
+      display: grid;
+      gap: 10px;
+    }
+
+    .panel-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+
+    .bu-mini {
+      border: 1px solid #efe2d0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fffdf8;
+    }
+
+    .bu-mini strong {
+      font-size: 13px;
+      color: var(--brand);
+    }
+
+    .bu-mini span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .fav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .fav-card {
+      border: 1px dashed #e8d6c3;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fff7ec;
+      font-size: 12px;
+      color: var(--brand);
+    }
+
+    .belt {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      background: #fbf6ee;
+      border: 1px solid var(--line);
+      padding: 12px;
+      border-radius: 16px;
+    }
+
+    .belt-card {
+      background: #fff;
+      border: 1px solid #efe2d0;
+      border-radius: 14px;
+      padding: 12px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .belt-card strong {
+      font-size: 14px;
+      color: var(--brand);
+    }
+
+    .belt-card .meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .workspace {
+      display: grid;
+      gap: 16px;
+    }
+
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 14px;
+    }
+
+    .workspace-panel {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+      display: grid;
+      gap: 10px;
+    }
+
+    .workspace-panel h4 {
+      margin: 0;
+      font-size: 14px;
+      color: var(--brand);
+    }
+
+    .bu-matrix {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .bu-matrix-card {
+      border: 1px solid #efe2d0;
+      border-radius: 12px;
+      padding: 10px;
+      background: #f9f3ea;
+      font-size: 12px;
+      color: var(--brand);
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .panel-grid,
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .list-item {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .list-item span:last-child {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="hero">
+      <div>
+        <h1>KM 架構呈現方案（非樹狀）</h1>
+        <p>用於確認「經理可見 BU1/BU2/BU3 架構」與「常用資料夾放置」的視覺樣式。</p>
+      </div>
+      <div class="tag">更新日期：2026/02/04</div>
+    </div>
+
+    <div class="grid">
+      <!-- 方案 A -->
+      <section class="option-card">
+        <div class="option-header">
+          <div class="option-title">
+            <h2>方案 A｜全寬抽屜：KM 架構 + 常用資料夾</h2>
+            <span>點擊入口後，下拉全寬面板，左 BU 右常用</span>
+          </div>
+          <div class="option-pill">不使用樹狀圖</div>
+        </div>
+
+        <div class="mock">
+          <div class="toolbar">
+            <button class="btn accent">開啟 KM 架構</button>
+            <div class="actions">
+              <button class="btn">上傳檔案</button>
+              <button class="btn">新增資料夾</button>
+            </div>
+          </div>
+          <div class="wide-panel">
+            <div class="panel-grid">
+              <div class="panel-col">
+                <div class="panel-title">全公司 BU</div>
+                <div class="bu-mini"><strong>BU1｜人資部</strong><span>54 份文件</span></div>
+                <div class="bu-mini"><strong>BU2｜管理部</strong><span>41 份文件</span></div>
+                <div class="bu-mini"><strong>BU3｜行政部</strong><span>26 份文件</span></div>
+                <div class="bu-mini"><strong>BU4｜專案部門</strong><span>63 份文件</span></div>
+              </div>
+              <div class="panel-col">
+                <div class="panel-title">常用資料夾</div>
+                <div class="fav-grid">
+                  <div class="fav-card">HR/FAQ</div>
+                  <div class="fav-card">HR/SOP</div>
+                  <div class="fav-card">管理部/會議紀錄</div>
+                  <div class="fav-card">行政部/採購</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="list">
+            <div class="list-item">
+              <span>HR/FAQ</span><span>12 份文件</span><span>2026-02-03</span>
+            </div>
+            <div class="list-item">
+              <span>HR/表單/差旅</span><span>6 份文件</span><span>2026-02-01</span>
+            </div>
+            <div class="list-item">
+              <span>HR/政策公告</span><span>8 份文件</span><span>2026-01-28</span>
+            </div>
+          </div>
+        </div>
+        <div class="option-note">全寬抽屜把架構與常用集中在一個面板，資訊集中且不干擾主列表。</div>
+      </section>
+
+      <!-- 方案 B -->
+      <section class="option-card">
+        <div class="option-header">
+          <div class="option-title">
+            <h2>方案 B｜BU 概覽儀表帶</h2>
+            <span>一條資訊帶聚合 BU 重要指標，點卡片切換內容</span>
+          </div>
+          <div class="option-pill">不使用樹狀圖</div>
+        </div>
+
+        <div class="mock">
+          <div class="toolbar">
+            <div class="actions">
+              <button class="btn primary">近期存取</button>
+              <button class="btn">分享中心</button>
+              <a class="btn accent" href="km-structure-hub.html">KM 架構</a>
+            </div>
+            <div class="search">搜尋 KM 檔案或資料夾…</div>
+          </div>
+
+          <div class="belt">
+            <div class="belt-card">
+              <strong>BU1｜人資部</strong>
+              <div class="meta"><span>54 份文件</span><span>更新 2/03</span></div>
+            </div>
+            <div class="belt-card">
+              <strong>BU2｜管理部</strong>
+              <div class="meta"><span>41 份文件</span><span>更新 2/02</span></div>
+            </div>
+            <div class="belt-card">
+              <strong>BU3｜行政部</strong>
+              <div class="meta"><span>26 份文件</span><span>更新 2/01</span></div>
+            </div>
+            <div class="belt-card">
+              <strong>BU4｜專案部門</strong>
+              <div class="meta"><span>63 份文件</span><span>更新 1/30</span></div>
+            </div>
+          </div>
+
+          <div class="chips">
+            <div class="chip">常用：HR/FAQ</div>
+            <div class="chip">常用：HR/SOP</div>
+            <div class="chip">常用：管理部/會議紀錄</div>
+          </div>
+
+          <div class="list">
+            <div class="list-item">
+              <span>HR/FAQ</span><span>12 份文件</span><span>2026-02-03</span>
+            </div>
+            <div class="list-item">
+              <span>HR/表單/差旅</span><span>6 份文件</span><span>2026-02-01</span>
+            </div>
+            <div class="list-item">
+              <span>HR/政策公告</span><span>8 份文件</span><span>2026-01-28</span>
+            </div>
+          </div>
+        </div>
+        <div class="option-note">儀表帶讓 BU 架構一眼可見，並以指標驅動切換。</div>
+      </section>
+
+      <!-- 方案 C -->
+      <section class="option-card">
+        <div class="option-header">
+          <div class="option-title">
+            <h2>方案 C｜KM 架構工作台</h2>
+            <span>第一屏呈現常用 + BU 摘要，第二屏才是列表</span>
+          </div>
+          <div class="option-pill">不使用樹狀圖</div>
+        </div>
+
+        <div class="mock">
+          <div class="workspace">
+            <div class="workspace-grid">
+              <div class="workspace-panel">
+                <h4>常用資料夾</h4>
+                <div class="fav-grid">
+                  <div class="fav-card">HR/FAQ</div>
+                  <div class="fav-card">HR/SOP</div>
+                  <div class="fav-card">管理部/會議紀錄</div>
+                  <div class="fav-card">行政部/採購</div>
+                </div>
+              </div>
+              <div class="workspace-panel">
+                <h4>BU 摘要矩陣</h4>
+                <div class="bu-matrix">
+                  <div class="bu-matrix-card">BU1｜人資部<br>54 份文件</div>
+                  <div class="bu-matrix-card">BU2｜管理部<br>41 份文件</div>
+                  <div class="bu-matrix-card">BU3｜行政部<br>26 份文件</div>
+                  <div class="bu-matrix-card">BU4｜專案部門<br>63 份文件</div>
+                  <div class="bu-matrix-card">BU5｜財務部<br>22 份文件</div>
+                  <div class="bu-matrix-card">BU6｜法務部<br>18 份文件</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="workspace-panel">
+              <h4>最近更新</h4>
+              <div class="list">
+                <div class="list-item">
+                  <span>HR/FAQ</span><span>12 份文件</span><span>2026-02-03</span>
+                </div>
+                <div class="list-item">
+                  <span>管理部/流程</span><span>9 份文件</span><span>2026-02-02</span>
+                </div>
+                <div class="list-item">
+                  <span>行政部/採購</span><span>6 份文件</span><span>2026-02-01</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="option-note">工作台型態適合經理總覽：先看架構與常用，再進列表。</div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

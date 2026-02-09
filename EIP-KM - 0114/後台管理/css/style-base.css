@@ -1,0 +1,177 @@
+/* 
+ * style-base.css
+ * 基礎樣式表，定義整體網頁的基本樣式與變數
+ */
+
+/* 重置與基礎設定 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Microsoft JhengHei', '微軟正黑體', Arial, sans-serif;
+}
+
+/* CSS 變數定義 */
+:root {
+    /* 主要色彩 */
+    --primary-color: #3a6df0;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --info-color: #17a2b8;
+    --warning-color: #ffc107;
+    --danger-color: #f5576c;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --white-color: #ffffff;
+    
+    /* 背景色彩 */
+    --body-bg: #e8f0fe;
+    --sidebar-bg: #ffffff;
+    --header-bg: #ffffff;
+    --content-bg: #e8f0fe;
+    
+    /* 尺寸變數 */
+    --header-height: 60px;
+    --sidebar-width: 220px;
+    --sidebar-collapsed-width: 60px;
+    
+    /* 其他變數 */
+    --border-radius: 4px;
+    --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    --transition-speed: 0.3s;
+    
+    /* 文字色彩 */
+    --text-primary: #333333;
+    --text-secondary: #5a6a85;
+    --text-muted: #8a94a6;
+}
+
+/* 全域設定 */
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    background-color: var(--body-bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* 連結樣式 */
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: color var(--transition-speed);
+}
+
+a:hover {
+    color: #2a5cda;
+}
+
+/* 清單樣式重置 */
+ul, li {
+    list-style-type: none;
+}
+
+/* 按鈕基礎樣式 */
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 8px 16px;
+    font-size: 14px;
+    transition: all var(--transition-speed);
+    font-family: inherit;
+}
+
+/* 主要按鈕 */
+.primary-btn {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+}
+
+.primary-btn:hover {
+    background-color: #2a5cda;
+}
+
+/* 次要按鈕 */
+.secondary-btn {
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+}
+
+.secondary-btn:hover {
+    background-color: #5a6268;
+}
+
+/* 登出按鈕樣式 */
+.logout-btn {
+    background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+    color: var(--white-color);
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 20px;
+}
+
+.logout-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* 輸入欄位基礎樣式 */
+input, select, textarea {
+    border: 1px solid #ced4da;
+    border-radius: var(--border-radius);
+    padding: 8px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(58, 109, 240, 0.1);
+}
+
+/* 滾動條樣式 */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+/* 工具類別 */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }

@@ -1,0 +1,16 @@
+/* 
+ * style-km-tags.css
+ * 標籤頁專用樣式
+ */
+
+/* 標籤雲 */
+.tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag-cloud .btn {
+    font-size: 13px;
+    padding: 6px 12px;
+}

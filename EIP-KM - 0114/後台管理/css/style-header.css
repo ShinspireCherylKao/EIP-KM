@@ -1,0 +1,138 @@
+/* 
+ * style-header.css
+ * 頂部導航欄樣式表
+ */
+
+/* 頂部導航欄容器 */
+.top-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+    background-color: var(--header-bg);
+    box-shadow: var(--box-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 100;
+}
+
+/* 左側區域 */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* 漢堡選單按鈕 */
+.menu-toggle {
+    background: none;
+    border: none;
+    padding: 8px;
+    font-size: 20px;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition-speed);
+}
+
+.menu-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* 系統標題 */
+.header-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* 右側區域 */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* 語言選擇器 */
+.language-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition-speed);
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.language-selector:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.language-selector i {
+    font-size: 10px;
+}
+
+/* 使用者資訊 */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 使用者頭像 */
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white-color);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* 使用者名稱 */
+.user-name {
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* 響應式設計 */
+@media screen and (max-width: 768px) {
+    .header-title {
+        font-size: 16px;
+    }
+    
+    .language-selector span {
+        display: none;
+    }
+    
+    .user-name {
+        display: none;
+    }
+    
+    .header-right {
+        gap: 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .top-header {
+        padding: 0 10px;
+    }
+    
+    .header-title {
+        font-size: 14px;
+    }
+}

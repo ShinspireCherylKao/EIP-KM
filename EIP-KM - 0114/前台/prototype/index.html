@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EIP-KM 搜尋優化 Prototype 索引</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft JhengHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            color: #a1a1b5;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #3b82f6;
+        }
+        
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+        
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        
+        .card-header {
+            padding: 24px;
+            color: #fff;
+        }
+        
+        .card-header.plan-a {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-header.plan-b {
+            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+        }
+        
+        .card-header.plan-c {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .card-header.scenario {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+        }
+        
+        .card-header.search {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        
+        .card-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .card-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        .card-desc {
+            font-size: 14px;
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        
+        .card-features {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .card-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        
+        .card-features li i {
+            color: #10b981;
+            margin-top: 2px;
+        }
+        
+        .card-footer {
+            padding: 16px 24px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .view-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        
+        .view-btn:hover {
+            background: #2563eb;
+        }
+        
+        .card-meta {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        
+        .summary {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 32px;
+            margin-top: 32px;
+        }
+        
+        .summary h3 {
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .summary h3 i {
+            color: #f59e0b;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .comparison-table th {
+            color: #a1a1b5;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .comparison-table td {
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .comparison-table td:first-child {
+            font-weight: 500;
+        }
+        
+        .check {
+            color: #10b981;
+        }
+        
+        .cross {
+            color: #ef4444;
+        }
+        
+        .partial {
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 EIP-KM 搜尋優化 Prototype</h1>
+            <p>三個搜尋優化方案 + 情境示意頁面，點擊卡片查看詳情</p>
+        </div>
+        
+        <!-- 搜尋方案 -->
+        <div class="section-title">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            搜尋優化方案
+        </div>
+        
+        <div class="cards">
+            <!-- 方案 A -->
+            <a href="search-plan-a.html" class="card">
+                <div class="card-header plan-a">
+                    <div class="card-badge">
+                        <i class="fa-solid fa-flask"></i>
+                        Prototype
+                    </div>
+                    <div class="card-title">方案 A - 智慧分類搜尋</div>
+                    <div class="card-subtitle">單一搜尋框，結果自動分類顯示</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-desc">
+                        只保留 Header 的全站搜尋框，搜尋結果依類型（KM文件、公告、表單、會議）自動分類呈現。
+                    </p>
+                    <ul class="card-features">
+                        <li><i class="fa-solid fa-check"></i> 用戶只需記住一個搜尋入口</li>
+                        <li><i class="fa-solid fa-check"></i> 結果全面，不會遺漏任何類型</li>
+                        <li><i class="fa-solid fa-check"></i> 可透過 Tab 快速切換類型</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <span class="view-btn">
+                        <i class="fa-solid fa-eye"></i> 查看 Prototype
+                    </span>
+                    <span class="card-meta">推薦指數：⭐⭐⭐⭐⭐</span>
+                </div>
+            </a>
+            
+            <!-- 方案 B -->
+            <a href="search-plan-b.html" class="card">
+                <div class="card-header plan-b">
+                    <div class="card-badge">
+                        <i class="fa-solid fa-flask"></i>
+                        Prototype
+                    </div>
+                    <div class="card-title">方案 B - 範圍選擇搜尋</div>
+                    <div class="card-subtitle">搜尋框 + 範圍下拉選單</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-desc">
+                        搜尋框旁邊加一個「搜尋範圍」下拉選單，進入特定模組時自動切換範圍。
+                    </p>
+                    <ul class="card-features">
+                        <li><i class="fa-solid fa-check"></i> 用戶可精準控制搜尋範圍</li>
+                        <li><i class="fa-solid fa-check"></i> 進入 KM 時自動切換為 KM 文件</li>
+                        <li><i class="fa-solid fa-check"></i> 減少不相關的搜尋結果</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <span class="view-btn">
+                        <i class="fa-solid fa-eye"></i> 查看 Prototype
+                    </span>
+                    <span class="card-meta">推薦指數：⭐⭐⭐⭐</span>
+                </div>
+            </a>
+            
+            <!-- 方案 C -->
+            <a href="search-plan-c.html" class="card">
+                <div class="card-header plan-c">
+                    <div class="card-badge">
+                        <i class="fa-solid fa-flask"></i>
+                        Prototype
+                    </div>
+                    <div class="card-title">方案 C - 資料夾過濾器</div>
+                    <div class="card-subtitle">保留兩個輸入框，明確區分功能</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-desc">
+                        Header 維持全站搜尋，KM 左側改為「資料夾過濾器」（即時篩選，非搜尋）。
+                    </p>
+                    <ul class="card-features">
+                        <li><i class="fa-solid fa-check"></i> 兩個輸入框功能定位清楚</li>
+                        <li><i class="fa-solid fa-check"></i> 過濾器是純前端即時篩選</li>
+                        <li><i class="fa-solid fa-check"></i> 不需後端架構調整</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <span class="view-btn">
+                        <i class="fa-solid fa-eye"></i> 查看 Prototype
+                    </span>
+                    <span class="card-meta">推薦指數：⭐⭐⭐</span>
+                </div>
+            </a>
+        </div>
+        
+        <!-- 情境示意 -->
+        <div class="section-title">
+            <i class="fa-solid fa-lightbulb"></i>
+            情境示意頁面
+        </div>
+        
+        <div class="cards">
+            <!-- 公告同步 KM -->
+            <a href="scenario-announce-sync-km.html" class="card">
+                <div class="card-header scenario">
+                    <div class="card-badge">
+                        <i class="fa-solid fa-link"></i>
+                        情境示意
+                    </div>
+                    <div class="card-title">公告附件同步至 KM</div>
+                    <div class="card-subtitle">新增公告時，附件自動同步到 KM 文件庫</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-desc">
+                        展示公告附件如何自動同步至 KM 文件庫，並在搜尋結果中顯示雙向關聯。
+                    </p>
+                    <ul class="card-features">
+                        <li><i class="fa-solid fa-check"></i> 新增公告時可勾選「同步至 KM」</li>
+                        <li><i class="fa-solid fa-check"></i> 自動設定存放位置與標籤</li>
+                        <li><i class="fa-solid fa-check"></i> 搜尋結果顯示來源關聯</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <span class="view-btn">
+                        <i class="fa-solid fa-eye"></i> 查看情境
+                    </span>
+                    <span class="card-meta">整合功能</span>
+                </div>
+            </a>
+            
+            <!-- 全站搜尋結果 -->
+            <a href="search-results-full.html" class="card">
+                <div class="card-header search">
+                    <div class="card-badge">
+                        <i class="fa-solid fa-search"></i>
+                        完整頁面
+                    </div>
+                    <div class="card-title">全站搜尋結果頁面</div>
+                    <div class="card-subtitle">整合所有類型的搜尋結果呈現</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-desc">
+                        完整的全站搜尋結果頁面，包含分類 Tab、篩選控制、關鍵字高亮等功能。
+                    </p>
+                    <ul class="card-features">
+                        <li><i class="fa-solid fa-check"></i> 分類 Tab 快速切換</li>
+                        <li><i class="fa-solid fa-check"></i> 排序與時間範圍篩選</li>
+                        <li><i class="fa-solid fa-check"></i> 關鍵字高亮顯示</li>
+                        <li><i class="fa-solid fa-check"></i> 各類型結果可直接操作</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <span class="view-btn">
+                        <i class="fa-solid fa-eye"></i> 查看頁面
+                    </span>
+                    <span class="card-meta">核心頁面</span>
+                </div>
+            </a>
+        </div>
+        
+        <!-- 方案比較 -->
+        <div class="summary">
+            <h3><i class="fa-solid fa-scale-balanced"></i> 三個方案快速比較</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>比較項目</th>
+                        <th>方案 A 智慧分類</th>
+                        <th>方案 B 範圍選擇</th>
+                        <th>方案 C 過濾器</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>搜尋入口數量</td>
+                        <td><span class="check">1 個</span></td>
+                        <td><span class="check">1 個</span></td>
+                        <td><span class="partial">2 個（但功能不同）</span></td>
+                    </tr>
+                    <tr>
+                        <td>用戶學習成本</td>
+                        <td><span class="check">低</span></td>
+                        <td><span class="partial">中</span></td>
+                        <td><span class="check">低</span></td>
+                    </tr>
+                    <tr>
+                        <td>搜尋精準度</td>
+                        <td><span class="partial">中</span></td>
+                        <td><span class="check">高</span></td>
+                        <td><span class="partial">中</span></td>
+                    </tr>
+                    <tr>
+                        <td>後端改動幅度</td>
+                        <td><span class="cross">大</span></td>
+                        <td><span class="partial">中</span></td>
+                        <td><span class="check">小</span></td>
+                    </tr>
+                    <tr>
+                        <td>推薦場景</td>
+                        <td>資料量大、類型多</td>
+                        <td>專業用戶、精準需求</td>
+                        <td>快速上線、低成本</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分享中心 - 文件庫管理</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-km-base.css">
+    <link rel="stylesheet" href="css/style-km-shares.css">
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <div id="header-container"></div>
+    
+    <!-- 側邊欄 -->
+    <div id="sidebar-container"></div>
+    
+    <!-- 主要內容區 -->
+    <div class="main-content">
+        <!-- KM 導航 -->
+        <div id="km-nav-container"></div>
+        
+        <!-- 分享中心內容 -->
+        <div class="km-container">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-share-nodes"></i> 分享中心</h2>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchShareTab('common')">共用</button>
+                <button class="tab-btn" onclick="switchShareTab('sharing')">分享</button>
+            </div>
+            
+            <!-- 共用（內部） -->
+            <div id="shareCommonPanel" style="display: block;">
+                <div class="share-section">
+                    <div class="share-section-header">
+                        <div>
+                            <h3 class="share-section-title">與我共用</h3>
+                            <div class="share-section-desc">內部權限控管與協作設定</div>
+                        </div>
+                    </div>
+                    <div class="km-table-container">
+                        <table class="km-table">
+                            <thead>
+                                <tr>
+                                    <th>項目名稱</th>
+                                    <th>標籤</th>
+                                    <th>類型</th>
+                                    <th>擁有者</th>
+                                    <th>權限</th>
+                                    <th>共用時間</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="withMeBody">
+                                <tr><td colspan="7" class="text-center">載入中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="share-section">
+                    <div class="share-section-header">
+                        <div>
+                            <h3 class="share-section-title">我共用的</h3>
+                            <div class="share-section-desc">內部成員依權限協作</div>
+                        </div>
+                    </div>
+                    <div class="km-table-container">
+                        <table class="km-table">
+                            <thead>
+                                <tr>
+                                    <th>項目名稱</th>
+                                    <th>標籤</th>
+                                    <th>類型</th>
+                                    <th>共用對象</th>
+                                    <th>權限</th>
+                                    <th>狀態</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="byMeBody">
+                                <tr><td colspan="7" class="text-center">載入中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 分享（外部） -->
+            <div id="shareLinkPanel" style="display: none;">
+                <div class="share-section">
+                    <div class="share-section-header">
+                        <div>
+                            <h3 class="share-section-title">分享連結</h3>
+                            <div class="share-section-desc">提供給特定對象的有效期限連結</div>
+                        </div>
+                        <button class="btn small" onclick="createShareLink()">
+                            <i class="fa-solid fa-plus"></i> 建立分享連結
+                        </button>
+                    </div>
+                    <div class="km-table-container">
+                        <table class="km-table">
+                            <thead>
+                                <tr>
+                                    <th>項目名稱</th>
+                                    <th>分享對象</th>
+                                    <th>權限</th>
+                                    <th>有效期限</th>
+                                    <th>狀態</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shareLinkBody">
+                                <tr><td colspan="6" class="text-center">載入中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast 通知 -->
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- JS 引用 -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="shared/layout-loader.js"></script>
+    <script src="js/km-base.js"></script>
+    <script src="js/km-shares.js"></script>
+</body>
+</html>

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>共享部門 - 文件庫管理</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-km-base.css">
+    <link rel="stylesheet" href="css/style-km-recent.css">
+    <style>
+        /* ===== 權限設定相關樣式 ===== */
+        .btn-perm {
+            background: #FFF7ED; color: #EA580C; border: 1px solid #FDBA74;
+            padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
+            cursor: pointer; display: none; align-items: center; gap: 6px; transition: all .2s;
+        }
+        .btn-perm:hover { background: #EA580C; color: #fff; }
+        .btn-perm.show { display: inline-flex; }
+
+        /* Modal 覆蓋 */
+        .perm-modal-overlay {
+            position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+            background: rgba(2,6,23,.45); z-index: 200; padding: 12px;
+        }
+        .perm-modal-overlay.show { display: flex; }
+        .perm-modal {
+            width: min(780px, 96vw); max-height: 90vh; overflow-y: auto;
+            background: #fff; border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,.18);
+        }
+        .perm-modal .pm-hd {
+            padding: 16px 20px; border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .perm-modal .pm-hd h3 { font-size: 16px; margin: 0; display: flex; align-items: center; gap: 8px; }
+        .perm-modal .pm-bd { padding: 20px; }
+        .perm-modal .pm-ft {
+            padding: 14px 20px; border-top: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+        }
+
+        /* 模式選擇 */
+        .perm-mode-switch {
+            display: flex; gap: 8px; margin-bottom: 18px;
+        }
+        .perm-mode-btn {
+            padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600;
+            cursor: pointer; border: 2px solid var(--border-color); background: #fff;
+            color: var(--text-secondary); transition: all .2s;
+        }
+        .perm-mode-btn.active-wl { border-color: #059669; background: #ECFDF5; color: #047857; }
+        .perm-mode-btn.active-bl { border-color: #DC2626; background: #FEF2F2; color: #B91C1C; }
+        .perm-mode-btn:hover { opacity: .85; }
+
+        /* 名單表格 */
+        .perm-list-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .perm-list-table th, .perm-list-table td {
+            padding: 8px 10px; border-bottom: 1px solid var(--border-color); text-align: left; font-size: 13px;
+        }
+        .perm-list-table th { background: #F8FAFC; color: var(--text-secondary); font-weight: 600; font-size: 12px; }
+        .perm-list-table tr:hover td { background: #F8FAFC; }
+        .perm-list-table .rm-btn {
+            color: #EF4444; cursor: pointer; background: none; border: none; font-size: 14px; padding: 2px 6px; border-radius: 4px;
+        }
+        .perm-list-table .rm-btn:hover { background: #FEF2F2; }
+
+        /* 新增列 */
+        .perm-add-row { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+        .perm-add-row input, .perm-add-row select {
+            padding: 7px 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px;
+        }
+        .perm-add-row input { flex: 1; }
+
+        /* 標籤 pill */
+        .pm-pill {
+            font-size: 11px; padding: 2px 8px; border-radius: 999px;
+            border: 1px solid var(--border-color); white-space: nowrap;
+        }
+        .pm-pill.wl { background: #ECFDF5; border-color: #A7F3D0; color: #047857; }
+        .pm-pill.bl { background: #FEF2F2; border-color: #FECACA; color: #B91C1C; }
+
+        /* 提示文字 */
+        .perm-hint { font-size: 12px; color: var(--text-muted); margin-top: 8px; display: flex; align-items: center; gap: 4px; }
+
+        /* 黑白名單查看卡片 */
+        .bw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        @media (max-width: 640px) { .bw-grid { grid-template-columns: 1fr; } }
+        .bw-card { border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; }
+        .bw-card-hd { padding: 10px 14px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+        .bw-card-hd.wl-hd { background: #ECFDF5; color: #047857; border-bottom: 2px solid #A7F3D0; }
+        .bw-card-hd.bl-hd { background: #FEF2F2; color: #B91C1C; border-bottom: 2px solid #FECACA; }
+        .bw-card-bd { padding: 10px 14px; }
+        .bw-entry { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid #F1F5F9; font-size: 13px; }
+        .bw-entry:last-child { border-bottom: none; }
+        .bw-entry .etype { font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #F1F5F9; color: var(--text-secondary); }
+        .bw-entry .ereason { color: var(--text-muted); font-size: 12px; margin-left: auto; }
+        .bw-empty { color: var(--text-muted); font-size: 13px; padding: 12px 0; text-align: center; }
+
+        /* 摘要卡 */
+        .perm-summary { background: #F8FAFC; border-radius: 10px; padding: 14px 16px; margin-top: 16px; }
+        .perm-summary h4 { font-size: 14px; margin: 0 0 6px; display: flex; align-items: center; gap: 6px; }
+        .perm-summary p { font-size: 13px; color: var(--text-secondary); line-height: 1.7; margin: 0; white-space: pre-line; }
+    </style>
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <div id="header-container"></div>
+    
+    <!-- 側邊欄 -->
+    <div id="sidebar-container"></div>
+    
+    <!-- 主要內容區 -->
+    <div class="main-content">
+        <!-- KM 導航 -->
+        <div id="km-nav-container"></div>
+        
+        <!-- 共享部門內容 -->
+        <div class="km-container">
+            <div class="km-layout km-layout-split">
+                <!-- 左側部門導航 -->
+                <div class="folder-nav-panel">
+                    <!-- 搜尋框 -->
+                    <div class="nav-search">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="folderSearch" placeholder="搜尋資料夾..." oninput="searchFolders(this.value)">
+                    </div>
+                    
+                    <!-- 部門樹 -->
+                    <div class="folder-tree-wrapper">
+                        <!-- 所有部門 -->
+                        <div class="nav-section">
+                            <div class="nav-section-header">
+                                <i class="fa-solid fa-building"></i>
+                                <span>所有部門</span>
+                            </div>
+                            <div class="nav-list" id="deptFoldersList">
+                                <!-- 動態生成 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右側檔案列表 -->
+                <div class="file-list-panel">
+                    <!-- 工具列 -->
+                    <div class="panel-toolbar">
+                        <div class="panel-title">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <span id="currentFolderName">所有部門</span>
+                        </div>
+                        <div class="panel-actions">
+                            <button id="btnSetPerm" class="btn-perm" onclick="openPermSetting()">
+                                <i class="fa-solid fa-shield-halved"></i> 設定權限
+                            </button>
+                            <button id="btnViewBW" class="btn-perm" onclick="openViewBW()" style="background:#EFF6FF;color:#2563EB;border-color:#93C5FD;">
+                                <i class="fa-solid fa-list-check"></i> 查看黑白名單
+                            </button>
+                            <button id="uploadBtn" class="btn primary" onclick="openUploadModal()">
+                                <i class="fa-solid fa-upload"></i> 上傳檔案
+                            </button>
+                            <button id="newFolderBtn" class="btn ghost">
+                                <i class="fa-solid fa-folder-plus"></i> 新增資料夾
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 垃圾桶提示列 -->
+                    <div id="trashNoticeBar" class="trash-notice">
+                        <div class="trash-notice-text">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>垃圾桶中的項目會在 <strong class="trash-notice-em">30 天</strong>後永久刪除</span>
+                        </div>
+                        <button class="trash-notice-action" onclick="emptyTrash()">清空垃圾桶</button>
+                    </div>
+                    
+                    <!-- 檔案列表 -->
+                    <div class="file-list-container">
+                        <table class="file-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-name">檔案名稱</th>
+                                    <th class="col-tags">標籤</th>
+                                    <th class="col-date">更新日期</th>
+                                    <th class="col-actions">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fileListBody">
+                                <tr><td colspan="4" class="empty-state">請選擇左側資料夾</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ===== Modal：設定黑白名單 ===== -->
+    <div class="perm-modal-overlay" id="permSettingModal">
+        <div class="perm-modal">
+            <div class="pm-hd">
+                <h3><i class="fa-solid fa-shield-halved" style="color:#EA580C;"></i> 權限設定：<span id="permTargetName">—</span></h3>
+                <button class="btn ghost" onclick="closePermSetting()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="pm-bd">
+                <!-- 模式選擇 -->
+                <div style="margin-bottom:6px;font-weight:600;font-size:13px;">存取策略</div>
+                <div class="perm-mode-switch">
+                    <button class="perm-mode-btn active-wl" id="modeWLBtn" onclick="setPermMode('whitelist')">
+                        <i class="fa-solid fa-check-circle"></i> 白名單模式
+                    </button>
+                    <button class="perm-mode-btn" id="modeBLBtn" onclick="setPermMode('blacklist')">
+                        <i class="fa-solid fa-ban"></i> 黑名單模式
+                    </button>
+                </div>
+
+                <!-- 名單表格 -->
+                <div style="font-weight:600;font-size:13px;margin-bottom:4px;" id="permListLabel">白名單（允許存取的對象）</div>
+                <table class="perm-list-table">
+                    <thead><tr><th>對象</th><th>類型</th><th>瀏覽</th><th>下載</th><th>原因/備註</th><th></th></tr></thead>
+                    <tbody id="permListBody"></tbody>
+                </table>
+
+                <!-- 新增 -->
+                <div class="perm-add-row">
+                    <input id="permAddName" placeholder="輸入人員姓名或部門名稱…">
+                    <select id="permAddType">
+                        <option value="人員">人員</option>
+                        <option value="部門">部門</option>
+                        <option value="群組">群組</option>
+                    </select>
+                    <button class="btn primary" onclick="addPermItem()"><i class="fa-solid fa-plus"></i> 新增</button>
+                </div>
+                <div class="perm-hint"><i class="fa-solid fa-circle-info"></i> 白名單：僅允許名單內的對象存取。黑名單：排除特定對象的存取權。</div>
+
+                <!-- 摘要 -->
+                <div class="perm-summary">
+                    <h4><i class="fa-solid fa-clipboard-list"></i> 權限摘要</h4>
+                    <p id="permSummaryText">—</p>
+                </div>
+            </div>
+            <div class="pm-ft">
+                <button class="btn ghost" onclick="closePermSetting()">取消</button>
+                <button class="btn primary" onclick="savePermSetting()"><i class="fa-solid fa-check"></i> 儲存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Modal：查看黑白名單 ===== -->
+    <div class="perm-modal-overlay" id="viewBWModal">
+        <div class="perm-modal">
+            <div class="pm-hd">
+                <h3><i class="fa-solid fa-list-check" style="color:#2563EB;"></i> 黑白名單查看：<span id="viewBWTargetName">—</span></h3>
+                <button class="btn ghost" onclick="closeViewBW()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="pm-bd">
+                <div class="bw-grid" id="bwViewGrid"></div>
+            </div>
+            <div class="pm-ft">
+                <button class="btn ghost" onclick="closeViewBW()">關閉</button>
+                <button class="btn primary" onclick="closeViewBW();openPermSetting();"><i class="fa-solid fa-pen"></i> 前往設定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分享 Modal -->
+    <div id="shareModal" class="modal-overlay">
+        <div class="modal-container share-modal">
+            <div class="modal-header">
+                <h3 id="shareModalTitle"><i class="fa-solid fa-share-nodes"></i> 共用檔案</h3>
+                <button class="modal-close" onclick="closeShareModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 檔案資訊 -->
+                <div class="share-file-info">
+                    <div id="shareFileName" class="file-name-display">
+                        <i class="fa-solid fa-file"></i>
+                        <span>檔案名稱</span>
+                    </div>
+                </div>
+                
+                <!-- 共用對象 -->
+                <div class="share-section">
+                    <label class="section-label">共用對象</label>
+                    <div id="shareTargets" class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="管理部">
+                            <span>管理部</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="行政部">
+                            <span>行政部</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="HR">
+                            <span>HR (人資部)</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="專案部門">
+                            <span>專案部門</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="全公司">
+                            <span>全公司</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- 權限設定 -->
+                <div class="share-section">
+                    <label class="section-label">權限設定</label>
+                    <div class="checkbox-group permissions">
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="permView" checked disabled>
+                            <span><i class="fa-solid fa-eye"></i> 瀏覽</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="permDownload">
+                            <span><i class="fa-solid fa-download"></i> 下載</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="permEdit">
+                            <span><i class="fa-solid fa-pen"></i> 管理</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn ghost" onclick="cancelShare()">取消共用</button>
+                <div class="footer-right">
+                    <button class="btn secondary" onclick="closeShareModal()">取消</button>
+                    <button id="shareSubmitBtn" class="btn primary" onclick="submitShare()">開始共用</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast 通知 -->
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- JS 引用 -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="shared/layout-loader.js"></script>
+    <script src="js/km-base.js"></script>
+    <script src="js/km-recent.js"></script>
+
+    <script>
+    /* ============================================================
+       共享部門 — 黑白名單權限設定
+       ============================================================ */
+
+    // ===== 假資料：各資料夾的黑白名單設定 =====
+    const _folderBWData = {
+        'HR': {
+            mode: 'whitelist',
+            whitelist: [
+                { name: 'HR', type: '部門', view: true, download: true, reason: 'HR 全員' },
+            ],
+            blacklist: []
+        },
+        'HR/FAQ': {
+            mode: 'whitelist',
+            whitelist: [
+                { name: 'HR', type: '部門', view: true, download: true, reason: 'HR 全員' },
+                { name: '全公司', type: '群組', view: true, download: false, reason: '公開 FAQ' },
+            ],
+            blacklist: []
+        },
+        'HR/SOP': {
+            mode: 'whitelist',
+            whitelist: [
+                { name: 'HR', type: '部門', view: true, download: true, reason: 'HR 全員' },
+                { name: '鄭總經理', type: '人員', view: true, download: true, reason: '跨部門主管查閱' },
+            ],
+            blacklist: []
+        },
+        'HR/培訓': {
+            mode: 'whitelist',
+            whitelist: [
+                { name: 'HR', type: '部門', view: true, download: true, reason: 'HR 全員' },
+                { name: '全公司', type: '群組', view: true, download: false, reason: '公開培訓資料' },
+            ],
+            blacklist: []
+        },
+        '管理部': {
+            mode: 'whitelist',
+            whitelist: [
+                { name: '管理部', type: '部門', view: true, download: true, reason: '管理部全員' },
+                { name: '鄭總經理', type: '人員', view: true, download: true, reason: '老闆查閱' },
+            ],
+            blacklist: []
+        },
+        '管理部/財務報表': {
+            mode: 'blacklist',
+            whitelist: [
+                { name: '管理部', type: '部門', view: true, download: true, reason: '管理部全員' },
+                { name: '鄭總經理', type: '人員', view: true, download: true, reason: '老闆查閱' },
+            ],
+            blacklist: [
+                { name: '周大衛', type: '人員', view: false, download: false, reason: '未滿試用期（到職日 2026-01-20）' },
+            ]
+        },
+        '管理部/採購合約': {
+            mode: 'whitelist',
+            whitelist: [
+                { name: '管理部', type: '部門', view: true, download: true, reason: '管理部全員' },
+                { name: '行政部', type: '部門', view: true, download: true, reason: '協助採購' },
+            ],
+            blacklist: []
+        },
+        '行政部': {
+            mode: 'whitelist',
+            whitelist: [
+                { name: '行政部', type: '部門', view: true, download: true, reason: '行政部全員' },
+            ],
+            blacklist: []
+        },
+        '專案': {
+            mode: 'whitelist',
+            whitelist: [
+                { name: '管理部', type: '部門', view: true, download: true, reason: '專案管理' },
+                { name: '鄭總經理', type: '人員', view: true, download: true, reason: '老闆查閱' },
+            ],
+            blacklist: []
+        },
+    };
+
+    // 模擬：目前使用者有完全控制權限的資料夾（根據 currentUserDept = 'HR'）
+    const _myManageableFolders = ['HR', 'HR/FAQ', 'HR/SOP', 'HR/表單', 'HR/表單/差旅', 'HR/表單/請假', 'HR/培訓'];
+
+    let _permCurrentFolder = null;
+    let _permCurrentMode = 'whitelist';
+
+    // ===== Hook selectFolder =====
+    (function() {
+        const _origSelectFolder = selectFolder;
+        selectFolder = function(folderPath) {
+            _origSelectFolder(folderPath);
+            _permCurrentFolder = folderPath;
+            updatePermButtons(folderPath);
+        };
+    })();
+
+    function updatePermButtons(folderPath) {
+        const canManage = _myManageableFolders.includes(folderPath);
+        const btnSet = document.getElementById('btnSetPerm');
+        const btnView = document.getElementById('btnViewBW');
+        if (btnSet) btnSet.classList.toggle('show', canManage);
+        if (btnView) btnView.classList.toggle('show', canManage);
+    }
+
+    // ===== 設定權限 Modal =====
+    function openPermSetting() {
+        if (!_permCurrentFolder) return;
+        const data = getOrCreateBWData(_permCurrentFolder);
+        _permCurrentMode = data.mode;
+
+        document.getElementById('permTargetName').textContent = _permCurrentFolder;
+        updateModeButtons();
+        renderPermList();
+        updatePermSummary();
+        document.getElementById('permSettingModal').classList.add('show');
+    }
+
+    function closePermSetting() {
+        document.getElementById('permSettingModal').classList.remove('show');
+    }
+
+    function getOrCreateBWData(folder) {
+        if (!_folderBWData[folder]) {
+            _folderBWData[folder] = { mode: 'whitelist', whitelist: [], blacklist: [] };
+        }
+        return _folderBWData[folder];
+    }
+
+    function setPermMode(mode) {
+        _permCurrentMode = mode;
+        updateModeButtons();
+        renderPermList();
+        updatePermSummary();
+    }
+
+    function updateModeButtons() {
+        const wlBtn = document.getElementById('modeWLBtn');
+        const blBtn = document.getElementById('modeBLBtn');
+        const label = document.getElementById('permListLabel');
+        wlBtn.className = 'perm-mode-btn' + (_permCurrentMode === 'whitelist' ? ' active-wl' : '');
+        blBtn.className = 'perm-mode-btn' + (_permCurrentMode === 'blacklist' ? ' active-bl' : '');
+        label.textContent = _permCurrentMode === 'whitelist' ? '白名單（允許存取的對象）' : '黑名單（排除存取的對象）';
+    }
+
+    function renderPermList() {
+        const data = getOrCreateBWData(_permCurrentFolder);
+        const tbody = document.getElementById('permListBody');
+        let rows = '';
+
+        if (_permCurrentMode === 'whitelist') {
+            rows = data.whitelist.map((e, i) => `<tr>
+                <td><b>${e.name}</b></td>
+                <td><span class="pm-pill wl">${e.type}</span></td>
+                <td><input type="checkbox" ${e.view ? 'checked' : ''} onchange="toggleBWProp('whitelist',${i},'view',this.checked)"></td>
+                <td><input type="checkbox" ${e.download ? 'checked' : ''} onchange="toggleBWProp('whitelist',${i},'download',this.checked)"></td>
+                <td style="font-size:12px;color:var(--text-muted);">${e.reason || ''}</td>
+                <td><button class="rm-btn" onclick="removeBWItem('whitelist',${i})"><i class="fa-solid fa-trash"></i></button></td>
+            </tr>`).join('');
+        } else {
+            // 黑名單模式：先顯示白名單（基礎允許），再顯示黑名單（排除）
+            rows += '<tr><td colspan="6" style="background:#ECFDF5;font-weight:600;font-size:12px;color:#047857;"><i class="fa-solid fa-check-circle"></i> 基礎允許（白名單）</td></tr>';
+            rows += data.whitelist.map((e, i) => `<tr>
+                <td>${e.name}</td>
+                <td><span class="pm-pill wl">${e.type}</span></td>
+                <td><input type="checkbox" ${e.view ? 'checked' : ''} onchange="toggleBWProp('whitelist',${i},'view',this.checked)"></td>
+                <td><input type="checkbox" ${e.download ? 'checked' : ''} onchange="toggleBWProp('whitelist',${i},'download',this.checked)"></td>
+                <td style="font-size:12px;color:var(--text-muted);">${e.reason || ''}</td>
+                <td><button class="rm-btn" onclick="removeBWItem('whitelist',${i})"><i class="fa-solid fa-trash"></i></button></td>
+            </tr>`).join('');
+            rows += '<tr><td colspan="6" style="background:#FEF2F2;font-weight:600;font-size:12px;color:#B91C1C;"><i class="fa-solid fa-ban"></i> 排除對象（黑名單）</td></tr>';
+            rows += data.blacklist.map((e, i) => `<tr style="background:#FFFBFB;">
+                <td><b style="color:#B91C1C;">${e.name}</b></td>
+                <td><span class="pm-pill bl">${e.type}</span></td>
+                <td><input type="checkbox" disabled></td>
+                <td><input type="checkbox" disabled></td>
+                <td style="font-size:12px;color:#B91C1C;">${e.reason || ''}</td>
+                <td><button class="rm-btn" onclick="removeBWItem('blacklist',${i})"><i class="fa-solid fa-trash"></i></button></td>
+            </tr>`).join('');
+        }
+        tbody.innerHTML = rows || '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:20px;">尚無設定，請使用下方輸入框新增</td></tr>';
+    }
+
+    function toggleBWProp(list, idx, prop, val) {
+        const data = getOrCreateBWData(_permCurrentFolder);
+        if (data[list] && data[list][idx]) data[list][idx][prop] = val;
+        updatePermSummary();
+    }
+
+    function removeBWItem(list, idx) {
+        const data = getOrCreateBWData(_permCurrentFolder);
+        if (data[list]) { data[list].splice(idx, 1); renderPermList(); updatePermSummary(); }
+    }
+
+    function addPermItem() {
+        const name = document.getElementById('permAddName').value.trim();
+        const type = document.getElementById('permAddType').value;
+        if (!name) { alert('請輸入名稱'); return; }
+        const data = getOrCreateBWData(_permCurrentFolder);
+        if (_permCurrentMode === 'blacklist') {
+            data.blacklist.push({ name, type, view: false, download: false, reason: '手動加入' });
+        } else {
+            data.whitelist.push({ name, type, view: true, download: true, reason: '' });
+        }
+        document.getElementById('permAddName').value = '';
+        renderPermList();
+        updatePermSummary();
+    }
+
+    function updatePermSummary() {
+        const data = getOrCreateBWData(_permCurrentFolder);
+        let text = `模式：${_permCurrentMode === 'blacklist' ? '黑名單' : '白名單'}\n`;
+        if (data.whitelist.length) text += `白名單：${data.whitelist.map(e => e.name + '(' + e.type + ')').join('、')}\n`;
+        if (data.blacklist.length) text += `黑名單排除：${data.blacklist.map(e => e.name + '(' + e.type + ')').join('、')}\n`;
+        document.getElementById('permSummaryText').textContent = text;
+    }
+
+    function savePermSetting() {
+        const data = getOrCreateBWData(_permCurrentFolder);
+        data.mode = _permCurrentMode;
+        closePermSetting();
+        // Toast
+        const container = document.getElementById('toastContainer');
+        if (container) {
+            const toast = document.createElement('div');
+            toast.style.cssText = 'padding:12px 18px;background:#fff;border:1px solid #A7F3D0;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.12);display:flex;align-items:center;gap:8px;font-size:14px;color:#047857;animation:slideIn .3s ease;';
+            toast.innerHTML = '<i class="fa-solid fa-check-circle"></i> 權限設定已儲存';
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 2500);
+        }
+    }
+
+    // ===== 查看黑白名單 Modal =====
+    function openViewBW() {
+        if (!_permCurrentFolder) return;
+        const data = getOrCreateBWData(_permCurrentFolder);
+        document.getElementById('viewBWTargetName').textContent = _permCurrentFolder;
+
+        const grid = document.getElementById('bwViewGrid');
+        grid.innerHTML = `
+            <div class="bw-card">
+                <div class="bw-card-hd wl-hd"><i class="fa-solid fa-check-circle"></i> 白名單（允許存取）</div>
+                <div class="bw-card-bd">${data.whitelist.length ? data.whitelist.map(e => `
+                    <div class="bw-entry">
+                        <span class="etype">${e.type}</span>
+                        <b>${e.name}</b>
+                        ${e.view ? '<span class="pm-pill wl">瀏覽</span>' : ''}
+                        ${e.download ? '<span class="pm-pill wl">下載</span>' : ''}
+                        <span class="ereason">${e.reason || ''}</span>
+                    </div>`).join('') : '<div class="bw-empty">尚無白名單設定</div>'}</div>
+            </div>
+            <div class="bw-card">
+                <div class="bw-card-hd bl-hd"><i class="fa-solid fa-ban"></i> 黑名單（排除存取）</div>
+                <div class="bw-card-bd">${data.blacklist.length ? data.blacklist.map(e => `
+                    <div class="bw-entry">
+                        <span class="etype">${e.type}</span>
+                        <b style="color:#B91C1C;">${e.name}</b>
+                        <span class="pm-pill bl">禁止存取</span>
+                        <span class="ereason">${e.reason || ''}</span>
+                    </div>`).join('') : '<div class="bw-empty">尚無黑名單設定</div>'}</div>
+            </div>
+        `;
+        document.getElementById('viewBWModal').classList.add('show');
+    }
+
+    function closeViewBW() {
+        document.getElementById('viewBWModal').classList.remove('show');
+    }
+    </script>
+</body>
+</html>

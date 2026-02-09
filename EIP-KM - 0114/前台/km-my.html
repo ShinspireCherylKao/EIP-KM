@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的 - 文件庫管理</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-km-base.css">
+    <link rel="stylesheet" href="css/style-km-my.css">
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <div id="header-container"></div>
+    
+    <!-- 側邊欄 -->
+    <div id="sidebar-container"></div>
+    
+    <!-- 主要內容區 -->
+    <div class="main-content">
+        <!-- KM 導航 -->
+        <div id="km-nav-container"></div>
+        
+        <!-- 我的內容 -->
+        <div class="km-container">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-user"></i> 我的</h2>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchMyTab('recent')">最近存取</button>
+                <button class="tab-btn" onclick="switchMyTab('fav')">我的收藏</button>
+            </div>
+            
+            <!-- 最近存取面板 -->
+            <div id="recentPanel" style="display: block;">
+                <div class="km-table-container">
+                    <table class="km-table">
+                        <thead>
+                            <tr>
+                                <th>項目名稱</th>
+                                <th>標籤</th>
+                                <th>部門</th>
+                                <th>類型</th>
+                                <th>更新時間</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentBody">
+                            <tr><td colspan="6" class="text-center">載入中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 我的收藏面板 -->
+            <div id="favPanel" style="display: none;">
+                <div class="km-table-container">
+                    <table class="km-table">
+                        <thead>
+                            <tr>
+                                <th>項目名稱</th>
+                                <th>標籤</th>
+                                <th>部門</th>
+                                <th>類型</th>
+                                <th>更新時間</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="favBody">
+                            <tr><td colspan="6" class="text-center">載入中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast 通知 -->
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- JS 引用 -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="shared/layout-loader.js"></script>
+    <script src="js/km-base.js"></script>
+    <script src="js/km-my.js"></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>近期存取 - 文件庫管理</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-km-base.css">
+    <link rel="stylesheet" href="css/style-km-recent.css">
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <div id="header-container"></div>
+    
+    <!-- 側邊欄 -->
+    <div id="sidebar-container"></div>
+    
+    <!-- 主要內容區 -->
+    <div class="main-content">
+        <!-- KM 導航 -->
+        <div id="km-nav-container"></div>
+        
+        <!-- 近期存取內容 -->
+        <div class="km-container">
+            <div class="km-layout km-layout-split">
+                <!-- 左側資料夾導航 -->
+                <div class="folder-nav-panel">
+                    <!-- 搜尋框 -->
+                    <div class="nav-search">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="folderSearch" placeholder="搜尋資料夾..." oninput="searchFolders(this.value)">
+                    </div>
+                    
+                    <!-- 資料夾樹 -->
+                    <div class="folder-tree-wrapper">
+                        <!-- 快速檢視 -->
+                        <div class="nav-section">
+                            <div class="nav-section-header">
+                                <i class="fa-solid fa-bolt"></i>
+                                <span>快速檢視</span>
+                            </div>
+                            <div class="nav-list">
+                                <div class="nav-item" data-view="fav" onclick="selectQuickView('fav')">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span>我的收藏</span>
+                                </div>
+                                <div class="nav-item" data-view="trash" onclick="selectQuickView('trash')">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                    <span>垃圾桶</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 最近資料夾 -->
+                        <div class="nav-section">
+                            <div class="nav-section-header">
+                                <i class="fa-solid fa-history"></i>
+                                <span>最近資料夾</span>
+                            </div>
+                            <div class="nav-list" id="recentFoldersList">
+                                <div class="nav-item" data-path="HR/表單/差旅" onclick="selectFolder('HR/表單/差旅')">
+                                    <i class="fa-solid fa-folder"></i>
+                                    <span>HR/表單/差旅</span>
+                                </div>
+                                <div class="nav-item" data-path="管理部/會議紀錄" onclick="selectFolder('管理部/會議紀錄')">
+                                    <i class="fa-solid fa-folder"></i>
+                                    <span>管理部/會議紀錄</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <!-- 右側檔案列表 -->
+                <div class="file-list-panel">
+                    <!-- 工具列 -->
+                    <div class="panel-toolbar">
+                        <div class="panel-title">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <span id="currentFolderName">HR/FAQ</span>
+                        </div>
+                        <div class="panel-actions">
+                            <button id="uploadBtn" class="btn primary" onclick="openUploadModal()">
+                                <i class="fa-solid fa-upload"></i> 上傳檔案
+                            </button>
+                            <button id="newFolderBtn" class="btn ghost">
+                                <i class="fa-solid fa-folder-plus"></i> 新增資料夾
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 垃圾桶提示列 -->
+                    <div id="trashNoticeBar" class="trash-notice">
+                        <div class="trash-notice-text">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>垃圾桶中的項目會在 <strong class="trash-notice-em">30 天</strong>後永久刪除</span>
+                        </div>
+                        <button class="trash-notice-action" onclick="emptyTrash()">清空垃圾桶</button>
+                    </div>
+                    
+                    <!-- 檔案列表 -->
+                    <div class="file-list-container">
+                        <table class="file-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-name">檔案名稱</th>
+                                    <th class="col-tags">標籤</th>
+                                    <th class="col-date">更新日期</th>
+                                    <th class="col-actions">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fileListBody">
+                                <tr><td colspan="4" class="empty-state">請選擇左側資料夾</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 分享 Modal -->
+    <div id="shareModal" class="modal-overlay">
+        <div class="modal-container share-modal">
+            <div class="modal-header">
+                <h3 id="shareModalTitle"><i class="fa-solid fa-share-nodes"></i> 共用檔案</h3>
+                <button class="modal-close" onclick="closeShareModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 檔案資訊 -->
+                <div class="share-file-info">
+                    <div id="shareFileName" class="file-name-display">
+                        <i class="fa-solid fa-file"></i>
+                        <span>檔案名稱</span>
+                    </div>
+                </div>
+                
+                <!-- 共用對象 -->
+                <div class="share-section">
+                    <label class="section-label">共用對象</label>
+                    <div id="shareTargets" class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="管理部">
+                            <span>管理部</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="行政部">
+                            <span>行政部</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="HR">
+                            <span>HR (人資部)</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="專案部門">
+                            <span>專案部門</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="全公司">
+                            <span>全公司</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- 權限設定 -->
+                <div class="share-section">
+                    <label class="section-label">權限設定</label>
+                    <div class="checkbox-group permissions">
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="permView" checked disabled>
+                            <span><i class="fa-solid fa-eye"></i> 瀏覽</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="permDownload">
+                            <span><i class="fa-solid fa-download"></i> 下載</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="permEdit">
+                            <span><i class="fa-solid fa-pen"></i> 管理</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn ghost" onclick="cancelShare()">取消共用</button>
+                <div class="footer-right">
+                    <button class="btn secondary" onclick="closeShareModal()">取消</button>
+                    <button id="shareSubmitBtn" class="btn primary" onclick="submitShare()">開始共用</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast 通知 -->
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- JS 引用 -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="shared/layout-loader.js"></script>
+    <script src="js/km-base.js"></script>
+    <script src="js/km-recent.js"></script>
+</body>
+</html>

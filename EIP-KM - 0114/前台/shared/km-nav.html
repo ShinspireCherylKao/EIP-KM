@@ -1,0 +1,40 @@
+<div class="km-nav">
+    <a href="km-recent.html" class="km-nav-btn" data-km-page="my-space">
+        <i class="fa-solid fa-folder"></i> 近期存取
+    </a>
+    <a href="km-tags.html" class="km-nav-btn" data-km-page="tags">
+        <i class="fa-solid fa-tags"></i> 標籤
+    </a>
+    <a href="km-my-org.html" class="km-nav-btn" data-km-page="org">
+        <i class="fa-solid fa-building"></i> 共享部門
+    </a>
+    <!-- 暫時隱藏「我的」按鈕
+    <a href="km-my.html" class="km-nav-btn" data-km-page="my">
+        <i class="fa-solid fa-user"></i> 我的
+    </a>
+    -->
+    <button class="km-nav-btn primary" onclick="openUploadModal()">
+        <i class="fa-solid fa-upload"></i> 上傳
+    </button>
+</div>
+
+<script>
+// 設置 KM 導航的 active 狀態
+(function() {
+    const currentPage = window.location.pathname.split('/').pop();
+    const pageMap = {
+        'km-recent.html': 'my-space',
+        'km-tags.html': 'tags',
+        'km-my-org.html': 'org',
+        'km-my.html': 'my'
+    };
+    
+    const currentKmPage = pageMap[currentPage];
+    if (currentKmPage) {
+        const activeBtn = document.querySelector(`.km-nav-btn[data-km-page="${currentKmPage}"]`);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+    }
+})();
+</script>

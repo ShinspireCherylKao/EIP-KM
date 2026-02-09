@@ -1,0 +1,192 @@
+/* 
+ * style-home.css
+ * 首頁專用樣式
+ */
+
+/* 警告橫幅 */
+.alert-banner {
+    background: linear-gradient(90deg, #FEE2E2 0%, #FEF3C7 100%);
+    border: 1px solid #FECACA;
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #DC2626;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.alert-banner i {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* 首頁佈局 */
+.home-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 16px;
+}
+
+.home-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.home-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* 輪播 Banner */
+.banner-carousel {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #1E293B;
+    box-shadow: var(--shadow);
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: 360px;
+}
+
+.carousel-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+}
+
+.carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all var(--transition);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.carousel-btn:hover {
+    background: var(--white-color);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.carousel-btn.prev {
+    left: 16px;
+}
+
+.carousel-btn.next {
+    right: 16px;
+}
+
+.carousel-dots {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.carousel-dot.active {
+    background: var(--white-color);
+    transform: scale(1.2);
+}
+
+/* 公佈欄卡片 */
+.announcement-card .tabs {
+    margin: 0 0 12px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.announcement-card .tab-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    border: 1px solid transparent;
+}
+
+.announcement-card .tab-btn.active {
+    background: var(--primary-color);
+    color: var(--white-color);
+    border-color: var(--primary-color);
+}
+
+/* 響應式設計 */
+@media screen and (max-width: 1200px) {
+    .home-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .home-sidebar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .home-sidebar {
+        grid-template-columns: 1fr;
+    }
+    
+    .carousel-container {
+        height: 240px;
+    }
+    
+    .carousel-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+    
+    .carousel-btn.prev {
+        left: 8px;
+    }
+    
+    .carousel-btn.next {
+        right: 8px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .carousel-container {
+        height: 180px;
+    }
+}

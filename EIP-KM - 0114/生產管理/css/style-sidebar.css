@@ -1,0 +1,184 @@
+/* 
+* style-sidebar.css
+* 側邊欄樣式表，定義側邊欄的外觀與行為
+*/
+
+/* 側邊欄基本樣式 */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    min-height: 100vh;
+    height: 100%;
+    box-shadow: var(--box-shadow);
+    transition: width var(--transition-speed);
+    z-index: 10;
+    overflow-y: auto;
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+/* 側邊欄標頭 */
+.sidebar-header {
+    height: var(--header-height);
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-header h1 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-left: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.menu-toggle {
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--dark-color);
+}
+
+/* 側邊欄功能選單 */
+.sidebar-menu {
+    padding: 10px 0;
+}
+
+.menu-item {
+    margin-bottom: 5px;
+}
+
+.menu-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.menu-header:hover {
+    background-color: rgba(58, 109, 240, 0.05);
+}
+
+.menu-header i:first-child {
+    font-size: 16px;
+    color: var(--secondary-color);
+    width: 24px;
+}
+
+.menu-header span {
+    flex-grow: 1;
+    margin-left: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.menu-header i.fa-chevron-down {
+    font-size: 12px;
+    color: var(--secondary-color);
+    transition: transform var(--transition-speed);
+}
+
+.menu-item.active .menu-header {
+    background-color: rgba(58, 109, 240, 0.1);
+}
+
+.menu-item.active .menu-header i:first-child {
+    color: var(--primary-color);
+}
+
+.menu-item.active .menu-header i.fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+/* 子選單 */
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--transition-speed);
+}
+
+.menu-item.active .submenu {
+    max-height: 500px; /* 一個足夠大的值，實際會由內容決定 */
+}
+
+.submenu-item {
+    display: block;
+    padding: 10px 20px 10px 54px;
+    color: var(--dark-color);
+    transition: all var(--transition-speed);
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.submenu-item:hover {
+    background-color: rgba(58, 109, 240, 0.05);
+}
+
+.submenu-item.active {
+    color: var(--primary-color);
+    background-color: rgba(58, 109, 240, 0.05);
+    font-weight: 500;
+}
+
+/* 側邊欄收合時的樣式 */
+.sidebar.collapsed .sidebar-header h1 {
+    display: none;
+}
+
+.sidebar.collapsed .menu-header span,
+.sidebar.collapsed .menu-header i.fa-chevron-down {
+    display: none;
+}
+
+.sidebar.collapsed .submenu {
+    display: none;
+}
+
+.sidebar.collapsed .menu-header {
+    justify-content: center;
+    padding: 15px;
+}
+
+.sidebar.collapsed .menu-header i:first-child {
+    margin: 0;
+    font-size: 18px;
+}
+
+/* 響應式設定 */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 80%;
+        z-index: 100;
+    }
+    
+    .sidebar.mobile-show {
+        left: 0;
+    }
+    
+    .menu-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 99;
+    }
+    
+    .menu-overlay.show {
+        display: block;
+    }
+    
+    .menu-toggle {
+        margin-right: 0;
+    }
+}

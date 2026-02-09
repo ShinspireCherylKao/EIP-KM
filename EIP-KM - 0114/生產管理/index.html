@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>製程與資產管理平台 - 生產管理</title>
+    <!-- 引入 Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 引入自定義 CSS -->
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-forms.css">
+    <link rel="stylesheet" href="css/style-tables.css">
+    <link rel="stylesheet" href="css/style-modal.css">
+</head>
+<body>
+    <!-- 主要容器 -->
+    <div class="container">
+        <!-- 側邊欄 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-bars menu-toggle"></i>
+                <h1>製程與資產管理平台</h1>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-item">
+                    <div class="menu-header">
+                        <i class="fa-solid fa-barcode"></i>
+                        <span>產品序號管理</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item active" data-section="serial-management">序號管理列表</a>
+                        <a href="#" class="submenu-item" data-section="serial-add">新增序號</a>
+                        <a href="#" class="submenu-item" data-section="serial-batch">批次匯入</a>
+                        <a href="#" class="submenu-item" data-section="serial-rules">序號規則設定</a>
+                        <a href="#" class="submenu-item" data-section="serial-approval">序號審核</a>
+                    </div>
+                </div>
+                
+                <div class="menu-item">
+                    <div class="menu-header">
+                        <i class="fa-solid fa-box"></i>
+                        <span>包裝號管理</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item" data-section="package-management">包裝號列表</a>
+                        <a href="#" class="submenu-item" data-section="package-add">新增包裝號</a>
+                        <a href="#" class="submenu-item" data-section="package-batch">批次匯入</a>
+                        <a href="#" class="submenu-item" data-section="package-approval">包裝號審核</a>
+                    </div>
+                </div>
+                
+                <div class="menu-item">
+                    <div class="menu-header">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                        <span>箱號管理</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item" data-section="box-management">箱號列表</a>
+                        <a href="#" class="submenu-item" data-section="box-add">新增箱號</a>
+                        <a href="#" class="submenu-item" data-section="box-batch">批次匯入</a>
+                        <a href="#" class="submenu-item" data-section="box-approval">箱號審核</a>
+                    </div>
+                </div>
+                
+                <div class="menu-item">
+                    <div class="menu-header">
+                        <i class="fa-solid fa-industry"></i>
+                        <span>製造廠商管理</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item" data-section="manufacturer-management">廠商列表</a>
+                        <a href="#" class="submenu-item" data-section="manufacturer-add">新增廠商</a>
+                    </div>
+                </div>
+                
+                <div class="menu-item">
+                    <div class="menu-header">
+                        <i class="fa-solid fa-microchip"></i>
+                        <span>固件版本管理</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item" data-section="firmware-management">版本列表</a>
+                        <a href="#" class="submenu-item" data-section="firmware-add">新增版本</a>
+                        <a href="#" class="submenu-item" data-section="firmware-history">版本歷史</a>
+                        <a href="#" class="submenu-item" data-section="firmware-test">測試記錄</a>
+                        <a href="#" class="submenu-item" data-section="firmware-approval">版本審核</a>
+                    </div>
+                </div>
+                
+                <div class="menu-item">
+                    <div class="menu-header">
+                        <i class="fa-solid fa-boxes-packing"></i>
+                        <span>產品管理</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item" data-section="product-management">產品列表</a>
+                        <a href="#" class="submenu-item" data-section="product-add">新增產品</a>
+                        <a href="#" class="submenu-item" data-section="product-image">產品圖像管理</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主要內容區 -->
+        <div class="main-content">
+            <div class="header">
+                <div class="breadcrumb">
+                    <span>生產管理</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                    <span>產品序號管理</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                    <span>序號管理列表</span>
+                </div>
+                <div class="user-info">
+                    <i class="fa-solid fa-bell notification-icon"></i>
+                    <div class="user-profile">
+                        <span>鄭庭維</span>
+                        <div class="user-avatar">
+                            <img src="https://i.pravatar.cc/150?img=3" alt="使用者照片">
+                        </div>
+                    </div>
+                    <button class="logout-btn">登出</button>
+                </div>
+            </div>
+            
+            <!-- 序號管理內容 -->
+            <div class="content-section active" id="serial-management">
+                <div class="section-header">
+                    <h2>產品序號管理</h2>
+                    <div class="action-buttons">
+                        <button class="primary-btn"><i class="fa-solid fa-plus"></i> 新增序號</button>
+                        <button class="secondary-btn"><i class="fa-solid fa-file-import"></i> 批次匯入</button>
+                        <button class="secondary-btn"><i class="fa-solid fa-file-export"></i> 匯出</button>
+                    </div>
+                </div>
+                
+                <div class="search-filter">
+                    <div class="filter-group">
+                        <div class="filter-item">
+                            <label for="product-filter">產品型號</label>
+                            <select id="product-filter">
+                                <option value="">全部</option>
+                                <option value="TPM-2000">TPM-2000</option>
+                                <option value="TPM-3000">TPM-3000</option>
+                                <option value="TPM-4000">TPM-4000</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label for="status-filter">狀態</label>
+                            <select id="status-filter">
+                                <option value="">全部</option>
+                                <option value="active">啟用</option>
+                                <option value="pending">待審核</option>
+                                <option value="rejected">拒絕</option>
+                                <option value="inactive">停用</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label for="date-range">日期範圍</label>
+                            <div class="date-range">
+                                <input type="date" id="start-date" placeholder="開始日期">
+                                <span>至</span>
+                                <input type="date" id="end-date" placeholder="結束日期">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-group">
+                        <input type="text" placeholder="搜尋序號、產品...">
+                        <button class="search-btn"><i class="fa-solid fa-search"></i> 搜尋</button>
+                    </div>
+                </div>
+                
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" class="select-all"></th>
+                                <th>序號</th>
+                                <th>產品型號</th>
+                                <th>序號格式</th>
+                                <th>製造日期</th>
+                                <th>製造廠商</th>
+                                <th>狀態</th>
+                                <th>建立日期</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" class="row-select"></td>
+                                <td>SN20250501001</td>
+                                <td>TPM-2000</td>
+                                <td>標準格式</td>
+                                <td>2025/05/01</td>
+                                <td>台灣製造廠</td>
+                                <td><span class="status-badge active">啟用</span></td>
+                                <td>2025/05/01</td>
+                                <td>
+                                    <div class="action-icons">
+                                        <i class="fa-solid fa-eye" title="查看"></i>
+                                        <i class="fa-solid fa-edit" title="編輯"></i>
+                                        <i class="fa-solid fa-trash" title="刪除"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="row-select"></td>
+                                <td>SN20250501002</td>
+                                <td>TPM-2000</td>
+                                <td>標準格式</td>
+                                <td>2025/05/01</td>
+                                <td>台灣製造廠</td>
+                                <td><span class="status-badge active">啟用</span></td>
+                                <td>2025/05/01</td>
+                                <td>
+                                    <div class="action-icons">
+                                        <i class="fa-solid fa-eye" title="查看"></i>
+                                        <i class="fa-solid fa-edit" title="編輯"></i>
+                                        <i class="fa-solid fa-trash" title="刪除"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="row-select"></td>
+                                <td>SN20250502001</td>
+                                <td>TPM-3000</td>
+                                <td>標準格式</td>
+                                <td>2025/05/02</td>
+                                <td>深圳製造廠</td>
+                                <td><span class="status-badge pending">待審核</span></td>
+                                <td>2025/05/02</td>
+                                <td>
+                                    <div class="action-icons">
+                                        <i class="fa-solid fa-eye" title="查看"></i>
+                                        <i class="fa-solid fa-edit" title="編輯"></i>
+                                        <i class="fa-solid fa-trash" title="刪除"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="row-select"></td>
+                                <td>SN20250503001</td>
+                                <td>TPM-4000</td>
+                                <td>特殊格式</td>
+                                <td>2025/05/03</td>
+                                <td>上海製造廠</td>
+                                <td><span class="status-badge rejected">拒絕</span></td>
+                                <td>2025/05/03</td>
+                                <td>
+                                    <div class="action-icons">
+                                        <i class="fa-solid fa-eye" title="查看"></i>
+                                        <i class="fa-solid fa-edit" title="編輯"></i>
+                                        <i class="fa-solid fa-trash" title="刪除"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="row-select"></td>
+                                <td>SN20250504001</td>
+                                <td>TPM-4000</td>
+                                <td>特殊格式</td>
+                                <td>2025/05/04</td>
+                                <td>上海製造廠</td>
+                                <td><span class="status-badge inactive">停用</span></td>
+                                <td>2025/05/04</td>
+                                <td>
+                                    <div class="action-icons">
+                                        <i class="fa-solid fa-eye" title="查看"></i>
+                                        <i class="fa-solid fa-edit" title="編輯"></i>
+                                        <i class="fa-solid fa-trash" title="刪除"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination">
+                    <span class="page-info">顯示 1 到 5 筆，共 24 筆資料</span>
+                    <div class="page-controls">
+                        <button class="page-btn" disabled><i class="fa-solid fa-angles-left"></i></button>
+                        <button class="page-btn" disabled><i class="fa-solid fa-angle-left"></i></button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">4</button>
+                        <button class="page-btn">5</button>
+                        <button class="page-btn"><i class="fa-solid fa-angle-right"></i></button>
+                        <button class="page-btn"><i class="fa-solid fa-angles-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 其他部分的內容會由 JavaScript 切換顯示 -->
+            <!-- 這裡只顯示序號管理作為範例 -->
+        </div>
+    </div>
+    
+    <!-- 浮動操作按鈕 -->
+    <div class="float-action-btn">
+        <i class="fa-solid fa-question"></i>
+    </div>
+    
+    <!-- 彈出窗口模板 -->
+    <div class="modal" id="generalModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">標題</h3>
+                <button class="close-btn"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <!-- 動態內容將在這裡加載 -->
+            </div>
+            <div class="modal-footer">
+                <button class="secondary-btn cancel-btn">取消</button>
+                <button class="primary-btn confirm-btn">確認</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 引入 JavaScript -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="js/table-script.js"></script>
+    <script src="js/modal-script.js"></script>
+</body>
+</html>

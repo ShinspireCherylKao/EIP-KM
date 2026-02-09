@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KM 知識管理 - 企業入口網站</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-km-base.css">
+    <style>
+        /* ===== 知識總覽頁面 ===== */
+        .km-welcome {
+            text-align: center;
+            padding: 36px 20px 20px;
+        }
+        .km-welcome h2 { font-size: 22px; color: var(--text-primary); margin-bottom: 4px; }
+        .km-welcome p { color: var(--text-secondary); font-size: 14px; margin-bottom: 0; }
+
+        /* 統計卡片 */
+        .km-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .km-stat-card {
+            background: var(--white-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all .2s;
+        }
+        .km-stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); transform: translateY(-2px); }
+        .stat-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0;
+        }
+        .stat-icon.blue { background: #EFF6FF; color: #2563EB; }
+        .stat-icon.green { background: #ECFDF5; color: #059669; }
+        .stat-icon.purple { background: #F5F3FF; color: #7C3AED; }
+        .stat-icon.orange { background: #FFF7ED; color: #EA580C; }
+        .stat-value { font-size: 24px; font-weight: 700; color: var(--text-primary); }
+        .stat-label { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+        /* 近期動態 */
+        .km-activity-section {
+            margin-top: 28px;
+        }
+        .km-activity-section h3 {
+            font-size: 16px; color: var(--text-primary); margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .activity-list {
+            background: var(--white-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+        .activity-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px; border-bottom: 1px solid var(--border-color);
+            font-size: 13px; transition: background .15s;
+        }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-item:hover { background: var(--hover-bg); }
+        .activity-icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; flex-shrink: 0;
+        }
+        .activity-icon.upload { background: #ECFDF5; color: #059669; }
+        .activity-icon.edit { background: #EFF6FF; color: #2563EB; }
+        .activity-icon.share { background: #F5F3FF; color: #7C3AED; }
+        .activity-icon.view { background: #FFF7ED; color: #EA580C; }
+        .activity-text { flex: 1; color: var(--text-primary); }
+        .activity-text b { font-weight: 600; }
+        .activity-time { color: var(--text-muted); font-size: 12px; white-space: nowrap; }
+
+        /* 功能卡片 */
+        .km-feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 28px;
+        }
+        .km-feature-card {
+            background: var(--white-color); border: 1px solid var(--border-color); border-radius: var(--radius);
+            padding: 24px 20px; text-align: left; cursor: pointer; transition: all .25s; text-decoration: none; color: inherit;
+            display: block; position: relative; overflow: hidden;
+        }
+        .km-feature-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: var(--radius) var(--radius) 0 0; }
+        .km-feature-card:hover { border-color: transparent; box-shadow: 0 8px 30px rgba(0,0,0,.12); transform: translateY(-3px); }
+        .km-feature-card.card-shares::before { background: linear-gradient(135deg,#6366F1,#8B5CF6); }
+        .km-feature-card.card-shares:hover { border-color: #8B5CF6; }
+        .km-feature-card.card-shares .feature-icon { background: linear-gradient(135deg,#EEF2FF,#EDE9FE); color: #6366F1; }
+        .km-feature-card.card-ai::before { background: linear-gradient(135deg,#EF4444,#F97316); }
+        .km-feature-card.card-ai:hover { border-color: #EF4444; }
+        .km-feature-card.card-ai .feature-icon { background: linear-gradient(135deg,#FEF2F2,#FFF7ED); color: #EF4444; }
+        .feature-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 14px; }
+        .feature-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+        .feature-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+        .feature-arrow { position: absolute; right: 20px; bottom: 22px; font-size: 16px; color: #CBD5E1; transition: all .25s; }
+        .km-feature-card:hover .feature-arrow { color: var(--primary-color); transform: translateX(4px); }
+    </style>
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <div id="header-container"></div>
+    
+    <!-- 側邊欄 -->
+    <div id="sidebar-container"></div>
+    
+    <!-- 主要內容區 -->
+    <div class="main-content">
+        <!-- KM 知識管理導航 -->
+        <div id="km-nav-container"></div>
+        
+        <!-- KM 知識管理首頁內容 -->
+        <div class="km-container">
+            <div class="km-welcome">
+                <h2><i class="fa-solid fa-brain"></i> KM 知識管理 — 知識總覽</h2>
+                <p>集中管理企業知識文件，提升團隊協作效率</p>
+            </div>
+
+            <!-- 統計卡片 -->
+            <div class="km-stats-grid">
+                <div class="km-stat-card">
+                    <div class="stat-icon blue"><i class="fa-solid fa-building"></i></div>
+                    <div>
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">部門空間</div>
+                    </div>
+                </div>
+                <div class="km-stat-card">
+                    <div class="stat-icon green"><i class="fa-solid fa-file-lines"></i></div>
+                    <div>
+                        <div class="stat-value">38</div>
+                        <div class="stat-label">知識文件</div>
+                    </div>
+                </div>
+                <div class="km-stat-card">
+                    <div class="stat-icon purple"><i class="fa-solid fa-share-nodes"></i></div>
+                    <div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">分享連結</div>
+                    </div>
+                </div>
+                <div class="km-stat-card">
+                    <div class="stat-icon orange"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                    <div>
+                        <div class="stat-value">6</div>
+                        <div class="stat-label">本週更新</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 近期動態 -->
+            <div class="km-activity-section">
+                <h3><i class="fa-solid fa-timeline"></i> 近期動態</h3>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon upload"><i class="fa-solid fa-upload"></i></div>
+                        <div class="activity-text"><b>李美玲</b> 上傳了 <b>差旅報銷規範_2026版.pdf</b> 至 HR/FAQ</div>
+                        <div class="activity-time">2 小時前</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon edit"><i class="fa-solid fa-pen"></i></div>
+                        <div class="activity-text"><b>張志豪</b> 更新了 <b>X專案進度報告_W4.pptx</b></div>
+                        <div class="activity-time">5 小時前</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon share"><i class="fa-solid fa-share"></i></div>
+                        <div class="activity-text"><b>吳佳蓉</b> 分享了 <b>2025年度財務報表.xlsx</b> 給管理部</div>
+                        <div class="activity-time">昨天 17:30</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon upload"><i class="fa-solid fa-upload"></i></div>
+                        <div class="activity-text"><b>蔡明達</b> 上傳了 <b>系統架構設計.pdf</b> 至 BU1/開發文件</div>
+                        <div class="activity-time">昨天 14:20</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon view"><i class="fa-solid fa-eye"></i></div>
+                        <div class="activity-text"><b>鄭總經理</b> 瀏覽了 <b>2026年1月份主管會議紀錄.docx</b></div>
+                        <div class="activity-time">昨天 10:15</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon edit"><i class="fa-solid fa-pen"></i></div>
+                        <div class="activity-text"><b>王小明</b> 更新了 <b>入職流程SOP.pdf</b> 的標籤</div>
+                        <div class="activity-time">2 天前</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部快捷卡片 -->
+            <div class="km-feature-grid">
+                <a href="km-shares.html" class="km-feature-card card-shares">
+                    <div class="feature-icon"><i class="fa-solid fa-share-nodes"></i></div>
+                    <div class="feature-title">分享中心</div>
+                    <div class="feature-desc">管理內部文件共用與外部分享連結</div>
+                    <div class="feature-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                </a>
+                <a href="km-ai.html" class="km-feature-card card-ai">
+                    <div class="feature-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <div class="feature-title">AI 加值</div>
+                    <div class="feature-desc">智能問答、文件比較、知識圖譜</div>
+                    <div class="feature-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast 通知 -->
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- JS 引用 -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="shared/layout-loader.js"></script>
+    <script src="js/km-base.js"></script>
+</body>
+</html>

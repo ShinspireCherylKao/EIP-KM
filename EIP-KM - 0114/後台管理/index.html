@@ -1,0 +1,2209 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>後台管理系統</title>
+    <!-- 引入 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 引入自定義 CSS -->
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+</head>
+<body>
+    <!-- 頂部導航欄 -->
+    <header class="top-header">
+        <!-- 左側漢堡選單與標題 -->
+        <div class="header-left">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <h1 class="header-title">後台管理系統</h1>
+        </div>
+        
+        <!-- 右側功能區 -->
+        <div class="header-right">
+            <!-- 語言切換 -->
+            <div class="language-selector">
+                <span>繁體中文</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            
+            <!-- 使用者資訊 -->
+            <div class="user-info">
+                <div class="user-avatar">
+                    <span>M</span>
+                </div>
+                <span class="user-name">Miranda</span>
+            </div>
+            
+            <!-- 登出按鈕 -->
+            <button class="logout-btn">登出</button>
+        </div>
+    </header>
+
+    <!-- 主要容器 -->
+    <div class="main-container">
+        <!-- 側邊欄 -->
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-nav">
+                <!-- 系統管理 -->
+                <div class="menu-item">
+                    <div class="menu-header" data-menu="system">
+                        <i class="fa-solid fa-gear"></i>
+                        <span class="menu-text">系統管理</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item">系統設定</a>
+                        <a href="#" class="submenu-item">參數設定</a>
+                    </div>
+                </div>
+
+                <!-- 首頁管理 -->
+                <div class="menu-item">
+                    <div class="menu-header" data-menu="home">
+                        <i class="fa-solid fa-gear"></i>
+                        <span class="menu-text">首頁管理</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item">首頁設定</a>
+                    </div>
+                </div>
+
+                <!-- 單元管理 -->
+                <div class="menu-item">
+                    <div class="menu-header" data-menu="unit">
+                        <i class="fa-solid fa-gear"></i>
+                        <span class="menu-text">單元管理</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item">單元設定</a>
+                    </div>
+                </div>
+
+                <!-- Banner管理 -->
+                <div class="menu-item">
+                    <div class="menu-header" data-menu="banner">
+                        <i class="fa-solid fa-gear"></i>
+                        <span class="menu-text">Banner管理</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item">Banner設定</a>
+                    </div>
+                </div>
+
+                <!-- 審核 -->
+                <div class="menu-item">
+                    <div class="menu-header" data-menu="review">
+                        <i class="fa-solid fa-gear"></i>
+                        <span class="menu-text">審核</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item">審核管理</a>
+                    </div>
+                </div>
+
+                <!-- 資源類別管理 -->
+                <div class="menu-item">
+                    <div class="menu-header" data-menu="resource">
+                        <i class="fa-solid fa-gear"></i>
+                        <span class="menu-text">資源類別管理</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item">類別設定</a>
+                    </div>
+                </div>
+
+                <!-- 跑馬燈管理 -->
+                <div class="menu-item">
+                    <div class="menu-header" data-menu="marquee">
+                        <i class="fa-solid fa-gear"></i>
+                        <span class="menu-text">跑馬燈管理</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item">跑馬燈設定</a>
+                    </div>
+                </div>
+
+                <!-- 組織圖 -->
+                <div class="menu-item">
+                    <div class="menu-header" data-menu="org">
+                        <i class="fa-solid fa-gear"></i>
+                        <span class="menu-text">組織圖</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item">組織圖設定</a>
+                    </div>
+                </div>
+
+                <!-- 電子表單管理 -->
+                <div class="menu-item">
+                    <div class="menu-header" data-menu="form">
+                        <i class="fa-solid fa-gear"></i>
+                        <span class="menu-text">電子表單管理</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item">表單設定</a>
+                    </div>
+                </div>
+
+                <!-- 文件庫管理 -->
+                <div class="menu-item">
+                    <div class="menu-header" data-menu="document">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <span class="menu-text">文件庫管理</span>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item" data-section="permission-management">瀏覽權限管理</a>
+                        <a href="#" class="submenu-item" data-section="file-record">檔案紀錄管理</a>
+                        <a href="#" class="submenu-item" data-section="file-tag">檔案標籤設定</a>
+                        <a href="#" class="submenu-item" data-section="file-search">篩選搜尋檔案</a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 主要內容區 -->
+        <main class="main-content">
+            <!-- 預設首頁內容 -->
+            <div class="content-section active" id="home-content">
+                <p class="welcome-text">home works!</p>
+            </div>
+
+            <!-- 瀏覽權限管理內容 -->
+            <div class="content-section" id="permission-management">
+                <div class="flex h-full gap-4 p-6 bg-gray-50">
+                    <!-- 左側：系統目錄樹狀結構 -->
+                    <div class="w-64 bg-white rounded-lg shadow-sm border border-gray-200 p-4 overflow-y-auto" style="max-height: calc(100vh - 140px);">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 pb-3 border-b border-gray-200">
+                            <i class="fa-solid fa-folder-tree text-blue-600 mr-2"></i>系統目錄
+                        </h3>
+                        <div class="space-y-1">
+                            <!-- HR 部門 -->
+                            <div class="folder-group">
+                                <div class="flex items-center py-2 px-2 hover:bg-blue-50 rounded cursor-pointer text-blue-700 font-bold" onclick="toggleFolder('hr-folder')">
+                                    <i class="fa-solid fa-chevron-down mr-2 text-xs transition-transform" id="hr-folder-icon"></i>
+                                    <i class="fa-solid fa-building text-blue-600 mr-2"></i>
+                                    <span>HR (人資部)</span>
+                                </div>
+                                <div class="ml-4 space-y-1" id="hr-folder">
+                                    <!-- FAQ -->
+                                    <div class="folder-item flex items-center py-2 px-2 hover:bg-gray-50 rounded cursor-pointer" onclick="selectFolder('HR', 'FAQ', this)">
+                                        <i class="fa-solid fa-folder text-yellow-500 mr-2"></i>
+                                        <span class="text-sm text-gray-700">FAQ</span>
+                                    </div>
+                                    <!-- SOP (可展開) -->
+                                    <div class="folder-sub-group">
+                                        <div class="flex items-center py-2 px-2 hover:bg-gray-50 rounded cursor-pointer" onclick="toggleFolder('sop-folder')">
+                                            <i class="fa-solid fa-chevron-right mr-1 text-xs transition-transform" id="sop-folder-icon"></i>
+                                            <i class="fa-solid fa-folder text-yellow-500 mr-2"></i>
+                                            <span class="text-sm text-gray-700">SOP</span>
+                                        </div>
+                                        <div class="ml-4 space-y-1 hidden" id="sop-folder">
+                                            <div class="folder-item flex items-center py-1 px-2 hover:bg-gray-50 rounded cursor-pointer" onclick="selectFolder('HR', 'SOP/人事規章', this)">
+                                                <i class="fa-solid fa-file text-gray-400 mr-2 text-xs"></i>
+                                                <span class="text-xs text-gray-600">人事規章</span>
+                                            </div>
+                                            <div class="folder-item flex items-center py-1 px-2 hover:bg-gray-50 rounded cursor-pointer" onclick="selectFolder('HR', 'SOP/行政流程', this)">
+                                                <i class="fa-solid fa-file text-gray-400 mr-2 text-xs"></i>
+                                                <span class="text-xs text-gray-600">行政流程</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 管理部 -->
+                            <div class="folder-group mt-2">
+                                <div class="flex items-center py-2 px-2 hover:bg-purple-50 rounded cursor-pointer text-purple-700 font-bold" onclick="toggleFolder('mgmt-folder')">
+                                    <i class="fa-solid fa-chevron-right mr-2 text-xs transition-transform" id="mgmt-folder-icon"></i>
+                                    <i class="fa-solid fa-building text-purple-600 mr-2"></i>
+                                    <span>管理部</span>
+                                </div>
+                                <div class="ml-4 space-y-1 hidden" id="mgmt-folder">
+                                    <div class="folder-item flex items-center py-2 px-2 hover:bg-gray-50 rounded cursor-pointer" onclick="selectFolder('管理部', '財務報表', this)">
+                                        <i class="fa-solid fa-folder text-green-500 mr-2"></i>
+                                        <span class="text-sm text-gray-700">財務報表</span>
+                                    </div>
+                                    <div class="folder-item flex items-center py-2 px-2 hover:bg-gray-50 rounded cursor-pointer" onclick="selectFolder('管理部', '經營策略', this)">
+                                        <i class="fa-solid fa-folder text-green-500 mr-2"></i>
+                                        <span class="text-sm text-gray-700">經營策略</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 行政部 -->
+                            <div class="folder-group mt-2">
+                                <div class="flex items-center py-2 px-2 hover:bg-orange-50 rounded cursor-pointer text-orange-700 font-bold" onclick="toggleFolder('admin-folder')">
+                                    <i class="fa-solid fa-chevron-right mr-2 text-xs transition-transform" id="admin-folder-icon"></i>
+                                    <i class="fa-solid fa-building text-orange-600 mr-2"></i>
+                                    <span>行政部</span>
+                                </div>
+                                <div class="ml-4 space-y-1 hidden" id="admin-folder">
+                                    <div class="folder-item flex items-center py-2 px-2 hover:bg-gray-50 rounded cursor-pointer" onclick="selectFolder('行政部', '採購合約', this)">
+                                        <i class="fa-solid fa-folder text-red-500 mr-2"></i>
+                                        <span class="text-sm text-gray-700">採購合約</span>
+                                    </div>
+                                    <div class="folder-item flex items-center py-2 px-2 hover:bg-gray-50 rounded cursor-pointer" onclick="selectFolder('行政部', '固定資產', this)">
+                                        <i class="fa-solid fa-folder text-red-500 mr-2"></i>
+                                        <span class="text-sm text-gray-700">固定資產</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右側：主內容區 -->
+                    <div class="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <!-- 麵包屑導航 -->
+                        <div class="mb-4 flex items-center text-sm text-gray-600">
+                            <i class="fa-solid fa-folder-open text-blue-600 mr-2"></i>
+                            <span id="currentPath">目前目錄：<span class="font-semibold text-gray-800">請選擇左側資料夾</span></span>
+                        </div>
+                        
+                        <!-- 標題 -->
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                                <i class="fa-solid fa-shield-halved text-blue-600 mr-2"></i>
+                                <span id="folderTitle">檔案與權限管理</span>
+                            </h2>
+                            <p class="text-sm text-gray-500" id="folderSubtitle">請從左側選擇資料夾以檢視檔案並設定權限</p>
+                        </div>
+
+                        <!-- 檔案列表 -->
+                        <div id="fileListContainer" class="mb-6">
+                            <div class="text-center py-12 text-gray-400">
+                                <i class="fa-solid fa-folder-open text-6xl mb-4"></i>
+                                <p class="text-lg">請從左側選擇一個資料夾查看內容</p>
+                            </div>
+                        </div>
+
+                        <!-- 權限設定區 (選擇資料夾後顯示) -->
+                        <div id="permissionSection" class="hidden">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+                                <i class="fa-solid fa-shield-check text-purple-600 mr-2"></i>
+                                存取規則設定 <span class="text-sm font-normal text-gray-500">(Access Control)</span>
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-4">
+                                <i class="fa-solid fa-info-circle text-blue-500 mr-1"></i>
+                                設定此資料夾的預設權限規則，資料夾內的所有檔案將繼承這些設定（除非個別檔案有例外設定）
+                            </p>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="p-4 border border-gray-200 rounded-lg">
+                                    <label class="block text-sm font-medium text-blue-700 mb-2">HR (人資部)</label>
+                                    <select id="permHR" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
+                                        <option value="view">僅瀏覽</option>
+                                        <option value="download">瀏覽+下載</option>
+                                        <option value="control">完全控制</option>
+                                        <option value="none">不可見</option>
+                                    </select>
+                                </div>
+                                <div class="p-4 border border-gray-200 rounded-lg">
+                                    <label class="block text-sm font-medium text-purple-700 mb-2">管理部</label>
+                                    <select id="permMgmt" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
+                                        <option value="view">僅瀏覽</option>
+                                        <option value="download">瀏覽+下載</option>
+                                        <option value="control">完全控制</option>
+                                        <option value="none">不可見</option>
+                                    </select>
+                                </div>
+                                <div class="p-4 border border-gray-200 rounded-lg">
+                                    <label class="block text-sm font-medium text-orange-700 mb-2">行政部</label>
+                                    <select id="permAdmin" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
+                                        <option value="view">僅瀏覽</option>
+                                        <option value="download">瀏覽+下載</option>
+                                        <option value="control">完全控制</option>
+                                        <option value="none">不可見</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex justify-end">
+                                <button onclick="saveCurrentFolderPermission()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                    <i class="fa-solid fa-save mr-2"></i>儲存權限設定
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 底部操作按鈕 -->
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button onclick="resetDatabase()" class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                                <i class="fa-solid fa-database mr-2"></i>重置數據庫
+                            </button>
+                            <button class="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                                <i class="fa-solid fa-rotate-left mr-2"></i>重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 檔案紀錄管理內容 -->
+            <div class="content-section" id="file-record">
+                <div class="p-6 bg-gray-50">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <!-- 標題 -->
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                                <i class="fa-solid fa-clock-rotate-left text-blue-600 mr-2"></i>檔案紀錄管理
+                            </h2>
+                            <p class="text-sm text-gray-500">追蹤所有檔案操作記錄，包含下載、瀏覽、刪除及權限變更</p>
+                        </div>
+
+                        <!-- 進階篩選列 -->
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <!-- 部門篩選 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fa-solid fa-building mr-1"></i>部門篩選
+                                    </label>
+                                    <select id="auditDeptFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                                        <option value="all" selected>全部</option>
+                                        <option value="HR">HR (人資)</option>
+                                        <option value="管理部">管理部</option>
+                                        <option value="行政部">行政部</option>
+                                    </select>
+                                </div>
+
+                                <!-- 日期範圍 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fa-solid fa-calendar mr-1"></i>開始日期
+                                    </label>
+                                    <input type="date" id="auditStartDate" value="2026-01-01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fa-solid fa-calendar mr-1"></i>結束日期
+                                    </label>
+                                    <input type="date" id="auditEndDate" value="2026-01-15" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                                </div>
+
+                                <!-- 關鍵字搜尋 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fa-solid fa-magnifying-glass mr-1"></i>關鍵字搜尋
+                                    </label>
+                                    <input type="text" id="auditKeyword" placeholder="搜尋人員或檔名..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                                </div>
+                            </div>
+
+                            <!-- 搜尋按鈕 -->
+                            <div class="mt-4 flex justify-end gap-3">
+                                <button onclick="resetAuditFilters()" class="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                                    <i class="fa-solid fa-rotate-right mr-2"></i>清除篩選
+                                </button>
+                                <button onclick="loadAuditLogs()" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                    <i class="fa-solid fa-magnifying-glass mr-2"></i>搜尋/過濾
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 表格標題與匯出按鈕 -->
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800">操作紀錄列表</h3>
+                                <p class="text-sm text-gray-500">共 <span id="auditLogCount">0</span> 筆記錄</p>
+                            </div>
+                            <button onclick="exportAuditLogs()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-file-excel"></i>
+                                匯出 Excel
+                            </button>
+                        </div>
+
+                        <!-- 紀錄列表表格 -->
+                        <div class="overflow-x-auto" id="auditLogTableContainer">
+                            <div class="text-center py-12 text-gray-400">
+                                <i class="fa-solid fa-spinner fa-spin text-4xl mb-4"></i>
+                                <p>正在載入操作記錄...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 檔案標籤設定內容 -->
+            <div class="content-section" id="file-tag">
+                <div class="p-6 bg-gray-50">
+                    <div class="max-w-7xl mx-auto">
+                        <!-- 標題與合併標籤按鈕 -->
+                        <div class="mb-4 flex justify-between items-center">
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                                    <i class="fa-solid fa-tags text-blue-600 mr-2"></i>檔案標籤設定
+                                </h2>
+                                <p class="text-sm text-gray-500">建立和管理檔案標籤，幫助組織和分類文件</p>
+                            </div>
+                            <button id="mergeTagsBtn" class="px-5 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fa-solid fa-code-merge"></i>
+                                合併選取標籤 (<span id="selectedCount">0</span>)
+                            </button>
+                        </div>
+
+                        <!-- 現有標籤管理列表 -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                <i class="fa-solid fa-list text-blue-600 mr-2"></i>現有標籤列表
+                                <span class="ml-3 px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm" id="tagCountBadge">共 0 個標籤</span>
+                            </h3>
+
+                            <!-- 標籤卡片網格 -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="tagCardsContainer">
+                                <!-- 由 JavaScript 動態生成 -->
+                            </div>
+                        </div>
+
+                        <!-- 新增標籤區塊 -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                <i class="fa-solid fa-plus-circle text-green-600 mr-2"></i>新增標籤
+                            </h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <!-- 標籤名稱輸入 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        標籤名稱 <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" placeholder="例如：機密文件" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+
+                                <!-- 顏色選擇器 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        選擇顏色 <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="flex gap-2 items-center">
+                                        <button class="w-10 h-10 rounded-full bg-red-500 border-2 border-gray-300 hover:border-blue-500 transition-colors" data-color="red"></button>
+                                        <button class="w-10 h-10 rounded-full bg-orange-500 border-2 border-gray-300 hover:border-blue-500 transition-colors" data-color="orange"></button>
+                                        <button class="w-10 h-10 rounded-full bg-yellow-500 border-2 border-gray-300 hover:border-blue-500 transition-colors" data-color="yellow"></button>
+                                        <button class="w-10 h-10 rounded-full bg-green-500 border-2 border-gray-300 hover:border-blue-500 transition-colors" data-color="green"></button>
+                                        <button class="w-10 h-10 rounded-full bg-blue-500 border-2 border-blue-500 hover:border-blue-700 transition-colors" data-color="blue"></button>
+                                        <button class="w-10 h-10 rounded-full bg-purple-500 border-2 border-gray-300 hover:border-blue-500 transition-colors" data-color="purple"></button>
+                                        <button class="w-10 h-10 rounded-full bg-pink-500 border-2 border-gray-300 hover:border-blue-500 transition-colors" data-color="pink"></button>
+                                    </div>
+                                </div>
+
+                                <!-- 建議適用部門 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        建議適用部門
+                                    </label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                                        <option value="all" selected>通用</option>
+                                        <option value="hr">HR (人資)</option>
+                                        <option value="management">管理部</option>
+                                        <option value="admin">行政部</option>
+                                    </select>
+                                </div>
+
+                                <!-- 新增按鈕 -->
+                                <div class="flex items-end">
+                                    <button class="w-full px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                                        <i class="fa-solid fa-plus mr-2"></i>新增標籤
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 預覽區 -->
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <p class="text-sm text-gray-600 mb-2">預覽：</p>
+                                <span class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                                    <i class="fa-solid fa-tag mr-2"></i>標籤範例
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 篩選搜尋檔案內容 -->
+            <div class="content-section" id="file-search">
+                <div class="flex h-full bg-gray-50">
+                    <!-- 左側：搜尋條件面板 -->
+                    <div class="w-80 bg-white border-r border-gray-200 p-6 overflow-y-auto">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fa-solid fa-filter text-blue-600 mr-2"></i>搜尋條件
+                        </h3>
+
+                        <!-- 檔案大小 -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fa-solid fa-hard-drive mr-1"></i>檔案大小
+                            </label>
+                            <select id="searchSizeFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm">
+                                <option value="">不限</option>
+                                <option value="small">小於 10MB</option>
+                                <option value="medium">10MB - 100MB</option>
+                                <option value="large">100MB - 500MB</option>
+                                <option value="xlarge" selected>大於 500MB</option>
+                            </select>
+                        </div>
+
+                        <!-- 閒置時間 -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fa-solid fa-clock mr-1"></i>閒置時間
+                            </label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm">
+                                <option value="">不限</option>
+                                <option value="month1">1 個月內</option>
+                                <option value="month3">3 個月內</option>
+                                <option value="month6">6 個月內</option>
+                                <option value="year1">超過 1 年</option>
+                                <option value="year2">超過 2 年</option>
+                            </select>
+                        </div>
+
+                        <!-- 擁有者部門 -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fa-solid fa-building mr-1"></i>擁有者部門
+                            </label>
+                            <div class="space-y-2" id="searchDeptFilters">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" value="HR">
+                                    <span class="ml-2 text-sm text-gray-700">HR (人資)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" value="管理部" checked>
+                                    <span class="ml-2 text-sm text-gray-700">管理部</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" value="行政部">
+                                    <span class="ml-2 text-sm text-gray-700">行政部</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 檔案類型 -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fa-solid fa-file mr-1"></i>檔案類型
+                            </label>
+                            <div class="space-y-2" id="searchTypeFilters">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" value="document">
+                                    <span class="ml-2 text-sm text-gray-700">文件 (doc, pdf, txt)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" value="image">
+                                    <span class="ml-2 text-sm text-gray-700">圖片 (jpg, png, gif)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" value="video">
+                                    <span class="ml-2 text-sm text-gray-700">影片 (mp4, avi, mov)</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" value="spreadsheet">
+                                    <span class="ml-2 text-sm text-gray-700">試算表 (xls, xlsx)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 搜尋按鈕 -->
+                        <div class="space-y-3">
+                            <button onclick="loadFileSearch()" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                <i class="fa-solid fa-magnifying-glass mr-2"></i>套用篩選
+                            </button>
+                            <button onclick="resetSearchFilters()" class="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                                <i class="fa-solid fa-rotate-right mr-2"></i>重置條件
+                            </button>
+                        </div>
+
+                        <!-- 當前篩選條件摘要 -->
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-2">目前篩選條件：</h4>
+                            <div class="space-y-1 text-xs text-gray-600">
+                                <p><i class="fa-solid fa-check text-green-600 mr-1"></i>檔案大小：大於 500MB</p>
+                                <p><i class="fa-solid fa-check text-green-600 mr-1"></i>部門：HR、管理部</p>
+                                <p><i class="fa-solid fa-check text-green-600 mr-1"></i>類型：影片檔案</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右側：搜尋結果列表 -->
+                    <div class="flex-1 p-6 overflow-y-auto">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <!-- 標題 -->
+                            <div class="mb-6">
+                                <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                                    <i class="fa-solid fa-search text-blue-600 mr-2"></i>搜尋結果
+                                </h2>
+                                <p class="text-sm text-gray-500">找到 <span id="searchResultCount" class="font-semibold text-blue-600">0</span> 個符合條件的檔案</p>
+                            </div>
+
+                            <!-- 批量操作工具列 -->
+                            <div id="bulkActionBar" class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg hidden">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fa-solid fa-check-circle text-blue-600"></i>
+                                        <span class="text-sm font-medium text-gray-700">已選取 <span id="selectedFileCount" class="font-bold text-blue-600">0</span> 個檔案</span>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium text-sm">
+                                            <i class="fa-solid fa-trash mr-1"></i>批量刪除
+                                        </button>
+                                        <button class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors font-medium text-sm">
+                                            <i class="fa-solid fa-user-tag mr-1"></i>轉移擁有者
+                                        </button>
+                                        <button class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium text-sm">
+                                            <i class="fa-solid fa-tags mr-1"></i>修改標籤
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 結果表格 -->
+                            <div id="searchResultsContainer" class="overflow-x-auto">
+                                <!-- 由 JavaScript 動態生成 -->
+                            </div>
+
+                            <!-- 統計資訊 -->
+                            <div id="searchStatsContainer" class="mt-6 pt-4 border-t border-gray-200">
+                                <!-- 由 JavaScript 動態生成 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JavaScript 處理批量操作 -->
+                <script>
+                    // 檔案選擇功能
+                    const fileCheckboxes = document.querySelectorAll('.file-checkbox');
+                    const selectAllCheckbox = document.getElementById('selectAll');
+                    const bulkActionBar = document.getElementById('bulkActionBar');
+                    const selectedFileCount = document.getElementById('selectedFileCount');
+
+                    function updateBulkActionBar() {
+                        const checkedCount = document.querySelectorAll('.file-checkbox:checked').length;
+                        selectedFileCount.textContent = checkedCount;
+                        
+                        if (checkedCount > 0) {
+                            bulkActionBar.classList.remove('hidden');
+                        } else {
+                            bulkActionBar.classList.add('hidden');
+                        }
+                    }
+
+                    // 單個檔案 checkbox 變更
+                    fileCheckboxes.forEach(checkbox => {
+                        checkbox.addEventListener('change', function() {
+                            updateBulkActionBar();
+                            
+                            // 更新全選按鈕狀態
+                            const allChecked = Array.from(fileCheckboxes).every(cb => cb.checked);
+                            const someChecked = Array.from(fileCheckboxes).some(cb => cb.checked);
+                            selectAllCheckbox.checked = allChecked;
+                            selectAllCheckbox.indeterminate = someChecked && !allChecked;
+                        });
+                    });
+
+                    // 全選 / 取消全選
+                    selectAllCheckbox.addEventListener('change', function() {
+                        fileCheckboxes.forEach(checkbox => {
+                            checkbox.checked = this.checked;
+                        });
+                        updateBulkActionBar();
+                    });
+                </script>
+            </div>
+        </main>
+    </div>
+
+    <!-- 引入 JavaScript -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+
+    <!-- localStorage 連動功能 -->
+    <script>
+        // ==================== 初始化 localStorage 數據庫 ====================
+        function initFileDatabase() {
+            const existingData = localStorage.getItem('fileDatabase');
+            const DB_VERSION = '2.0'; // 數據庫版本
+            
+            // 檢查是否需要重新初始化
+            let needsReinit = false;
+            if (existingData) {
+                const data = JSON.parse(existingData);
+                // 如果沒有版本號、版本號不匹配、或 files 數組為空，則重新初始化
+                if (!data.version || data.version !== DB_VERSION || !data.files || data.files.length === 0) {
+                    needsReinit = true;
+                    console.log('⚠️ 檢測到舊版本或不完整的數據，將重新初始化...');
+                }
+            }
+            
+            if (!existingData || needsReinit) {
+                // 初始化範例數據
+                const initialData = {
+                    files: [
+                        // HR/FAQ 資料夾 (3個檔案)
+                        {
+                            id: 'file_001',
+                            name: '新進員工FAQ.pdf',
+                            path: '/HR/FAQ/',
+                            folder: 'HR/FAQ',
+                            department: 'HR',
+                            size: '1.8 MB',
+                            sizeBytes: 1887436,
+                            uploadDate: '2024-01-10',
+                            tags: ['FAQ', '新人'],
+                            permissions: {
+                                'HR': '完全控制',
+                                '管理部': '僅瀏覽',
+                                '行政部': '僅瀏覽'
+                            }
+                        },
+                        {
+                            id: 'file_002',
+                            name: '請假問題匯整.docx',
+                            path: '/HR/FAQ/',
+                            folder: 'HR/FAQ',
+                            department: 'HR',
+                            size: '856 KB',
+                            sizeBytes: 876544,
+                            uploadDate: '2024-01-08',
+                            tags: ['FAQ', '請假'],
+                            permissions: {
+                                'HR': '完全控制',
+                                '管理部': '僅瀏覽',
+                                '行政部': '僅瀏覽'
+                            }
+                        },
+                        {
+                            id: 'file_003',
+                            name: '薪資常見問題.pdf',
+                            path: '/HR/FAQ/',
+                            folder: 'HR/FAQ',
+                            department: 'HR',
+                            size: '1.2 MB',
+                            sizeBytes: 1258291,
+                            uploadDate: '2024-01-05',
+                            tags: ['FAQ', '薪資'],
+                            permissions: {
+                                'HR': '完全控制',
+                                '管理部': '僅瀏覽',
+                                '行政部': '不可見'
+                            }
+                        },
+                        // HR/SOP/人事規章 資料夾 (3個檔案)
+                        {
+                            id: 'file_004',
+                            name: '員工手冊2025.pdf',
+                            path: '/HR/SOP/人事規章/',
+                            folder: 'HR/SOP/人事規章',
+                            department: 'HR',
+                            size: '2.5 MB',
+                            sizeBytes: 2621440,
+                            uploadDate: '2024-01-15',
+                            tags: ['SOP', '必讀'],
+                            permissions: {
+                                'HR': '完全控制',
+                                '管理部': '僅瀏覽',
+                                '行政部': '不可見'
+                            }
+                        },
+                        {
+                            id: 'file_005',
+                            name: '人事管理辦法.docx',
+                            path: '/HR/SOP/人事規章/',
+                            folder: 'HR/SOP/人事規章',
+                            department: 'HR',
+                            size: '1.5 MB',
+                            sizeBytes: 1572864,
+                            uploadDate: '2024-01-12',
+                            tags: ['SOP', '規章'],
+                            permissions: {
+                                'HR': '完全控制',
+                                '管理部': '僅瀏覽',
+                                '行政部': '不可見'
+                            }
+                        },
+                        {
+                            id: 'file_006',
+                            name: '考勤管理規範.pdf',
+                            path: '/HR/SOP/人事規章/',
+                            folder: 'HR/SOP/人事規章',
+                            department: 'HR',
+                            size: '980 KB',
+                            sizeBytes: 1003520,
+                            uploadDate: '2024-01-09',
+                            tags: ['SOP', '考勤'],
+                            permissions: {
+                                'HR': '完全控制',
+                                '管理部': '僅瀏覽',
+                                '行政部': '不可見'
+                            }
+                        },
+                        // HR/SOP/行政流程 資料夾 (3個檔案)
+                        {
+                            id: 'file_007',
+                            name: '出差申請SOP.docx',
+                            path: '/HR/SOP/行政流程/',
+                            folder: 'HR/SOP/行政流程',
+                            department: 'HR',
+                            size: '1.2 MB',
+                            sizeBytes: 1258291,
+                            uploadDate: '2024-01-08',
+                            tags: ['SOP', '差旅'],
+                            permissions: {
+                                'HR': '完全控制',
+                                '管理部': '瀏覽+下載',
+                                '行政部': '瀏覽+下載'
+                            }
+                        },
+                        {
+                            id: 'file_008',
+                            name: '公文簽核流程.pdf',
+                            path: '/HR/SOP/行政流程/',
+                            folder: 'HR/SOP/行政流程',
+                            department: 'HR',
+                            size: '1.8 MB',
+                            sizeBytes: 1887436,
+                            uploadDate: '2024-01-06',
+                            tags: ['SOP', '簽核'],
+                            permissions: {
+                                'HR': '完全控制',
+                                '管理部': '瀏覽+下載',
+                                '行政部': '瀏覽+下載'
+                            }
+                        },
+                        {
+                            id: 'file_009',
+                            name: '採購流程指南.pdf',
+                            path: '/HR/SOP/行政流程/',
+                            folder: 'HR/SOP/行政流程',
+                            department: 'HR',
+                            size: '2.1 MB',
+                            sizeBytes: 2202009,
+                            uploadDate: '2024-01-03',
+                            tags: ['SOP', '採購'],
+                            permissions: {
+                                'HR': '完全控制',
+                                '管理部': '瀏覽+下載',
+                                '行政部': '瀏覽+下載'
+                            }
+                        },
+                        // 管理部/財務報表 資料夾 (3個檔案)
+                        {
+                            id: 'file_010',
+                            name: '2024年度財報.xlsx',
+                            path: '/管理部/財務報表/',
+                            folder: '管理部/財務報表',
+                            department: '管理部',
+                            size: '5.8 MB',
+                            sizeBytes: 6082560,
+                            uploadDate: '2024-01-05',
+                            tags: ['財報', '機密'],
+                            permissions: {
+                                'HR': '不可見',
+                                '管理部': '完全控制',
+                                '行政部': '僅瀏覽'
+                            }
+                        },
+                        {
+                            id: 'file_011',
+                            name: 'Q4損益表.pdf',
+                            path: '/管理部/財務報表/',
+                            folder: '管理部/財務報表',
+                            department: '管理部',
+                            size: '3.2 MB',
+                            sizeBytes: 3355443,
+                            uploadDate: '2024-01-04',
+                            tags: ['財報', 'Q4'],
+                            permissions: {
+                                'HR': '不可見',
+                                '管理部': '完全控制',
+                                '行政部': '僅瀏覽'
+                            }
+                        },
+                        {
+                            id: 'file_012',
+                            name: '預算執行分析.xlsx',
+                            path: '/管理部/財務報表/',
+                            folder: '管理部/財務報表',
+                            department: '管理部',
+                            size: '2.8 MB',
+                            sizeBytes: 2936012,
+                            uploadDate: '2024-01-02',
+                            tags: ['財報', '預算'],
+                            permissions: {
+                                'HR': '不可見',
+                                '管理部': '完全控制',
+                                '行政部': '僅瀏覽'
+                            }
+                        },
+                        // 管理部/經營策略 資料夾 (2個檔案)
+                        {
+                            id: 'file_013',
+                            name: '2025策略規劃.pptx',
+                            path: '/管理部/經營策略/',
+                            folder: '管理部/經營策略',
+                            department: '管理部',
+                            size: '4.5 MB',
+                            sizeBytes: 4718592,
+                            uploadDate: '2024-01-12',
+                            tags: ['策略', '機密'],
+                            permissions: {
+                                'HR': '不可見',
+                                '管理部': '完全控制',
+                                '行政部': '不可見'
+                            }
+                        },
+                        {
+                            id: 'file_014',
+                            name: '市場分析報告.pdf',
+                            path: '/管理部/經營策略/',
+                            folder: '管理部/經營策略',
+                            department: '管理部',
+                            size: '6.2 MB',
+                            sizeBytes: 6501171,
+                            uploadDate: '2024-01-11',
+                            tags: ['策略', '市場'],
+                            permissions: {
+                                'HR': '不可見',
+                                '管理部': '完全控制',
+                                '行政部': '不可見'
+                            }
+                        },
+                        // 行政部/採購合約 資料夾 (3個檔案)
+                        {
+                            id: 'file_015',
+                            name: '辦公設備採購合約.pdf',
+                            path: '/行政部/採購合約/',
+                            folder: '行政部/採購合約',
+                            department: '行政部',
+                            size: '2.1 MB',
+                            sizeBytes: 2202009,
+                            uploadDate: '2024-01-03',
+                            tags: ['合約', '採購'],
+                            permissions: {
+                                'HR': '僅瀏覽',
+                                '管理部': '瀏覽+下載',
+                                '行政部': '完全控制'
+                            }
+                        },
+                        {
+                            id: 'file_016',
+                            name: '供應商合作協議.docx',
+                            path: '/行政部/採購合約/',
+                            folder: '行政部/採購合約',
+                            department: '行政部',
+                            size: '1.3 MB',
+                            sizeBytes: 1363148,
+                            uploadDate: '2024-01-02',
+                            tags: ['合約', '供應商'],
+                            permissions: {
+                                'HR': '僅瀏覽',
+                                '管理部': '瀏覽+下載',
+                                '行政部': '完全控制'
+                            }
+                        },
+                        {
+                            id: 'file_017',
+                            name: '廠商報價單.xlsx',
+                            path: '/行政部/採購合約/',
+                            folder: '行政部/採購合約',
+                            department: '行政部',
+                            size: '890 KB',
+                            sizeBytes: 911769,
+                            uploadDate: '2024-01-01',
+                            tags: ['採購', '報價'],
+                            permissions: {
+                                'HR': '僅瀏覽',
+                                '管理部': '瀏覽+下載',
+                                '行政部': '完全控制'
+                            }
+                        },
+                        // 行政部/固定資產 資料夾 (3個檔案)
+                        {
+                            id: 'file_018',
+                            name: '資產清冊2025.xlsx',
+                            path: '/行政部/固定資產/',
+                            folder: '行政部/固定資產',
+                            department: '行政部',
+                            size: '1.5 MB',
+                            sizeBytes: 1572864,
+                            uploadDate: '2024-01-01',
+                            tags: ['資產', '盤點'],
+                            permissions: {
+                                'HR': '不可見',
+                                '管理部': '瀏覽+下載',
+                                '行政部': '完全控制'
+                            }
+                        },
+                        {
+                            id: 'file_019',
+                            name: '設備折舊明細.pdf',
+                            path: '/行政部/固定資產/',
+                            folder: '行政部/固定資產',
+                            department: '行政部',
+                            size: '2.3 MB',
+                            sizeBytes: 2411724,
+                            uploadDate: '2023-12-30',
+                            tags: ['資產', '折舊'],
+                            permissions: {
+                                'HR': '不可見',
+                                '管理部': '瀏覽+下載',
+                                '行政部': '完全控制'
+                            }
+                        },
+                        {
+                            id: 'file_020',
+                            name: '資產盤點表.xlsx',
+                            path: '/行政部/固定資產/',
+                            folder: '行政部/固定資產',
+                            department: '行政部',
+                            size: '1.1 MB',
+                            sizeBytes: 1153433,
+                            uploadDate: '2023-12-28',
+                            tags: ['資產', '盤點'],
+                            permissions: {
+                                'HR': '不可見',
+                                '管理部': '瀏覽+下載',
+                                '行政部': '完全控制'
+                            }
+                        },
+                        // ========== 專案資料夾檔案 ==========
+                        // A 專案
+                        { id: 'file_pa1', name: 'A專案服務合約.pdf', path: '/專案/A專案/', folder: '專案/A專案', department: '專案', size: '3.1 MB', sizeBytes: 3250586, uploadDate: '2025-12-01', tags: ['合約', 'A專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pa2', name: 'A專案提案簡報.pptx', path: '/專案/A專案/', folder: '專案/A專案', department: '專案', size: '5.8 MB', sizeBytes: 6082560, uploadDate: '2025-11-15', tags: ['提案', 'A專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pa3', name: 'A專案需求規格書.docx', path: '/專案/A專案/', folder: '專案/A專案', department: '專案', size: '1.5 MB', sizeBytes: 1572864, uploadDate: '2025-11-20', tags: ['需求', 'A專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pa4', name: 'A專案報價單.xlsx', path: '/專案/A專案/', folder: '專案/A專案', department: '專案', size: '456 KB', sizeBytes: 467968, uploadDate: '2025-11-10', tags: ['帳務', 'A專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pa5', name: 'A專案技術架構圖.pdf', path: '/專案/A專案/', folder: '專案/A專案', department: '專案', size: '2.7 MB', sizeBytes: 2831155, uploadDate: '2026-01-05', tags: ['技術', 'A專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pa6', name: 'A專案進度報告_Q1.docx', path: '/專案/A專案/', folder: '專案/A專案', department: '專案', size: '1.8 MB', sizeBytes: 1887436, uploadDate: '2025-03-31', tags: ['進度', 'A專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pa7', name: 'A專案進度報告_Q2.docx', path: '/專案/A專案/', folder: '專案/A專案', department: '專案', size: '2.1 MB', sizeBytes: 2202009, uploadDate: '2025-06-30', tags: ['進度', 'A專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pa8', name: 'A專案測試計畫.xlsx', path: '/專案/A專案/', folder: '專案/A專案', department: '專案', size: '987 KB', sizeBytes: 1010688, uploadDate: '2025-08-15', tags: ['測試', 'A專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pa9', name: 'A專案使用者手冊.pdf', path: '/專案/A專案/', folder: '專案/A專案', department: '專案', size: '4.5 MB', sizeBytes: 4718592, uploadDate: '2025-11-25', tags: ['手冊', 'A專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '瀏覽+下載' } },
+                        { id: 'file_pa10', name: 'A專案驗收單.pdf', path: '/專案/A專案/', folder: '專案/A專案', department: '專案', size: '1.3 MB', sizeBytes: 1363148, uploadDate: '2025-12-20', tags: ['驗收', 'A專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '不可見' } },
+                        // B 專案
+                        { id: 'file_pb1', name: 'B專案外包合約.pdf', path: '/專案/B專案/', folder: '專案/B專案', department: '專案', size: '2.8 MB', sizeBytes: 2936012, uploadDate: '2025-12-05', tags: ['合約', 'B專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pb2', name: 'B專案結案報告.pptx', path: '/專案/B專案/', folder: '專案/B專案', department: '專案', size: '4.2 MB', sizeBytes: 4404019, uploadDate: '2025-12-10', tags: ['結案', 'B專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pb3', name: 'B專案費用明細.xlsx', path: '/專案/B專案/', folder: '專案/B專案', department: '專案', size: '678 KB', sizeBytes: 694272, uploadDate: '2025-12-08', tags: ['帳務', 'B專案'], permissions: { 'HR': '不可見', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pb4', name: 'B專案開發規範.docx', path: '/專案/B專案/', folder: '專案/B專案', department: '專案', size: '1.2 MB', sizeBytes: 1258291, uploadDate: '2025-03-10', tags: ['開發', 'B專案'], permissions: { 'HR': '不可見', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pb5', name: 'B專案原始碼交付清單.xlsx', path: '/專案/B專案/', folder: '專案/B專案', department: '專案', size: '543 KB', sizeBytes: 556032, uploadDate: '2025-09-25', tags: ['原始碼', 'B專案'], permissions: { 'HR': '不可見', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pb6', name: 'B專案需求變更記錄.docx', path: '/專案/B專案/', folder: '專案/B專案', department: '專案', size: '2.3 MB', sizeBytes: 2411724, uploadDate: '2025-08-20', tags: ['需求', 'B專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pb7', name: 'B專案測試報告.pdf', path: '/專案/B專案/', folder: '專案/B專案', department: '專案', size: '3.6 MB', sizeBytes: 3774873, uploadDate: '2025-09-10', tags: ['測試', 'B專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pb8', name: 'B專案部署文件.pdf', path: '/專案/B專案/', folder: '專案/B專案', department: '專案', size: '1.9 MB', sizeBytes: 1991934, uploadDate: '2025-09-28', tags: ['部署', 'B專案'], permissions: { 'HR': '不可見', '管理部': '完全控制', '行政部': '不可見' } },
+                        // C 專案
+                        { id: 'file_pc1', name: 'C專案合作備忘錄.pdf', path: '/專案/C專案/', folder: '專案/C專案', department: '專案', size: '1.9 MB', sizeBytes: 1991934, uploadDate: '2025-11-28', tags: ['合約', 'C專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pc2', name: 'C專案技術提案.pptx', path: '/專案/C專案/', folder: '專案/C專案', department: '專案', size: '6.1 MB', sizeBytes: 6396518, uploadDate: '2025-11-25', tags: ['提案', 'C專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '瀏覽+下載' } },
+                        { id: 'file_pc3', name: 'C專案表單需求.docx', path: '/專案/C專案/', folder: '專案/C專案', department: '專案', size: '923 KB', sizeBytes: 945152, uploadDate: '2025-12-02', tags: ['需求', 'C專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pc4', name: 'C專案請款單.xlsx', path: '/專案/C專案/', folder: '專案/C專案', department: '專案', size: '345 KB', sizeBytes: 353280, uploadDate: '2025-12-12', tags: ['帳務', 'C專案'], permissions: { 'HR': '不可見', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pc5', name: 'C專案會議紀錄.docx', path: '/專案/C專案/', folder: '專案/C專案', department: '專案', size: '567 KB', sizeBytes: 580608, uploadDate: '2025-12-14', tags: ['會議', 'C專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pc6', name: 'C專案資源規劃.xlsx', path: '/專案/C專案/', folder: '專案/C專案', department: '專案', size: '678 KB', sizeBytes: 694272, uploadDate: '2025-05-20', tags: ['資源', 'C專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pc7', name: 'C專案風險管理計畫.docx', path: '/專案/C專案/', folder: '專案/C專案', department: '專案', size: '1.4 MB', sizeBytes: 1468006, uploadDate: '2025-06-10', tags: ['風險', 'C專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pc8', name: 'C專案時程表.xlsx', path: '/專案/C專案/', folder: '專案/C專案', department: '專案', size: '823 KB', sizeBytes: 842752, uploadDate: '2026-01-10', tags: ['時程', 'C專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pc9', name: 'C專案交付檢核表.pdf', path: '/專案/C專案/', folder: '專案/C專案', department: '專案', size: '1.1 MB', sizeBytes: 1153433, uploadDate: '2025-12-20', tags: ['交付', 'C專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '不可見' } },
+                        // D 專案
+                        { id: 'file_pd1', name: 'D專案維護合約.pdf', path: '/專案/D專案/', folder: '專案/D專案', department: '專案', size: '2.4 MB', sizeBytes: 2516582, uploadDate: '2025-10-15', tags: ['合約', 'D專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pd2', name: 'D專案年度預算.xlsx', path: '/專案/D專案/', folder: '專案/D專案', department: '專案', size: '789 KB', sizeBytes: 808038, uploadDate: '2025-10-20', tags: ['帳務', 'D專案'], permissions: { 'HR': '不可見', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pd3', name: 'D專案驗收報告.pptx', path: '/專案/D專案/', folder: '專案/D專案', department: '專案', size: '3.5 MB', sizeBytes: 3670016, uploadDate: '2025-11-05', tags: ['驗收', 'D專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pd4', name: 'D專案系統監控報告.pdf', path: '/專案/D專案/', folder: '專案/D專案', department: '專案', size: '5.2 MB', sizeBytes: 5452595, uploadDate: '2026-01-05', tags: ['監控', 'D專案'], permissions: { 'HR': '不可見', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pd5', name: 'D專案問題追蹤清單.xlsx', path: '/專案/D專案/', folder: '專案/D專案', department: '專案', size: '1.8 MB', sizeBytes: 1887436, uploadDate: '2026-01-12', tags: ['問題', 'D專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pd6', name: 'D專案備份計畫.docx', path: '/專案/D專案/', folder: '專案/D專案', department: '專案', size: '967 KB', sizeBytes: 990208, uploadDate: '2025-08-15', tags: ['備份', 'D專案'], permissions: { 'HR': '不可見', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pd7', name: 'D專案SLA協議.pdf', path: '/專案/D專案/', folder: '專案/D專案', department: '專案', size: '1.6 MB', sizeBytes: 1677721, uploadDate: '2025-06-05', tags: ['SLA', 'D專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '不可見' } },
+                        // E 專案
+                        { id: 'file_pe1', name: 'E專案顧問合約.pdf', path: '/專案/E專案/', folder: '專案/E專案', department: '專案', size: '2.1 MB', sizeBytes: 2202009, uploadDate: '2025-12-01', tags: ['合約', 'E專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pe2', name: 'E專案商業提案.pptx', path: '/專案/E專案/', folder: '專案/E專案', department: '專案', size: '7.2 MB', sizeBytes: 7549747, uploadDate: '2025-11-30', tags: ['提案', 'E專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '瀏覽+下載' } },
+                        { id: 'file_pe3', name: 'E專案表單流程設計.docx', path: '/專案/E專案/', folder: '專案/E專案', department: '專案', size: '1.1 MB', sizeBytes: 1153433, uploadDate: '2025-12-08', tags: ['表單', 'E專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pe4', name: 'E專案付款時程.xlsx', path: '/專案/E專案/', folder: '專案/E專案', department: '專案', size: '423 KB', sizeBytes: 433152, uploadDate: '2025-12-10', tags: ['帳務', 'E專案'], permissions: { 'HR': '不可見', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pe5', name: 'E專案風險評估.docx', path: '/專案/E專案/', folder: '專案/E專案', department: '專案', size: '876 KB', sizeBytes: 897024, uploadDate: '2025-12-05', tags: ['風險', 'E專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pe6', name: 'E專案流程診斷報告.pdf', path: '/專案/E專案/', folder: '專案/E專案', department: '專案', size: '4.8 MB', sizeBytes: 5033164, uploadDate: '2025-05-15', tags: ['診斷', 'E專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pe7', name: 'E專案導入計畫.docx', path: '/專案/E專案/', folder: '專案/E專案', department: '專案', size: '2.3 MB', sizeBytes: 2411724, uploadDate: '2025-06-20', tags: ['導入', 'E專案'], permissions: { 'HR': '僅瀏覽', '管理部': '完全控制', '行政部': '不可見' } },
+                        { id: 'file_pe8', name: 'E專案訪談記錄.docx', path: '/專案/E專案/', folder: '專案/E專案', department: '專案', size: '1.6 MB', sizeBytes: 1677721, uploadDate: '2025-04-25', tags: ['訪談', 'E專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } },
+                        { id: 'file_pe9', name: 'E專案優化建議書.pptx', path: '/專案/E專案/', folder: '專案/E專案', department: '專案', size: '5.4 MB', sizeBytes: 5662310, uploadDate: '2025-08-30', tags: ['優化', 'E專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '瀏覽+下載' } },
+                        { id: 'file_pe10', name: 'E專案成效評估報告.pdf', path: '/專案/E專案/', folder: '專案/E專案', department: '專案', size: '3.2 MB', sizeBytes: 3355443, uploadDate: '2025-12-28', tags: ['成效', 'E專案'], permissions: { 'HR': '瀏覽+下載', '管理部': '完全控制', '行政部': '僅瀏覽' } }
+                    ],
+                    folders: [
+                        {
+                            name: 'HR/FAQ',
+                            permissions: {
+                                'HR': '完全控制',
+                                '管理部': '僅瀏覽',
+                                '行政部': '僅瀏覽'
+                            }
+                        },
+                        {
+                            name: 'HR/SOP/人事規章',
+                            permissions: {
+                                'HR': '完全控制',
+                                '管理部': '僅瀏覽',
+                                '行政部': '不可見'
+                            }
+                        },
+                        {
+                            name: 'HR/SOP/行政流程',
+                            permissions: {
+                                'HR': '完全控制',
+                                '管理部': '瀏覽+下載',
+                                '行政部': '瀏覽+下載'
+                            }
+                        },
+                        {
+                            name: '管理部/財務報表',
+                            permissions: {
+                                'HR': '不可見',
+                                '管理部': '完全控制',
+                                '行政部': '僅瀏覽'
+                            }
+                        },
+                        {
+                            name: '管理部/經營策略',
+                            permissions: {
+                                'HR': '不可見',
+                                '管理部': '完全控制',
+                                '行政部': '不可見'
+                            }
+                        },
+                        {
+                            name: '行政部/採購合約',
+                            permissions: {
+                                'HR': '僅瀏覽',
+                                '管理部': '瀏覽+下載',
+                                '行政部': '完全控制'
+                            }
+                        },
+                        {
+                            name: '行政部/固定資產',
+                            permissions: {
+                                'HR': '不可見',
+                                '管理部': '瀏覽+下載',
+                                '行政部': '完全控制'
+                            }
+                        },
+                        // 專案資料夾
+                        {
+                            name: '專案/A專案',
+                            permissions: {
+                                'HR': '瀏覽+下載',
+                                '管理部': '完全控制',
+                                '行政部': '僅瀏覽'
+                            }
+                        },
+                        {
+                            name: '專案/B專案',
+                            permissions: {
+                                'HR': '僅瀏覽',
+                                '管理部': '完全控制',
+                                '行政部': '僅瀏覽'
+                            }
+                        },
+                        {
+                            name: '專案/C專案',
+                            permissions: {
+                                'HR': '瀏覽+下載',
+                                '管理部': '完全控制',
+                                '行政部': '僅瀏覽'
+                            }
+                        },
+                        {
+                            name: '專案/D專案',
+                            permissions: {
+                                'HR': '僅瀏覽',
+                                '管理部': '完全控制',
+                                '行政部': '不可見'
+                            }
+                        },
+                        {
+                            name: '專案/E專案',
+                            permissions: {
+                                'HR': '瀏覽+下載',
+                                '管理部': '完全控制',
+                                '行政部': '瀏覽+下載'
+                            }
+                        }
+                    ],
+                    auditLogs: [
+                        {
+                            id: 1,
+                            timestamp: '2026-01-15 14:23:15',
+                            userName: '王小明',
+                            userDept: 'HR',
+                            action: '下載',
+                            targetFile: '2025年度薪資表.xlsx',
+                            targetType: 'file',
+                            ip: '192.168.1.105'
+                        },
+                        {
+                            id: 2,
+                            timestamp: '2026-01-15 13:45:22',
+                            userName: '李美玲',
+                            userDept: '管理部',
+                            action: '瀏覽',
+                            targetFile: '公司規章2026版.pdf',
+                            targetType: 'file',
+                            ip: '192.168.1.112'
+                        },
+                        {
+                            id: 3,
+                            timestamp: '2026-01-15 12:18:47',
+                            userName: '張志強',
+                            userDept: '行政部',
+                            action: '下載',
+                            targetFile: '員工個資檔案_HR專用.xlsx',
+                            targetType: 'file',
+                            ip: '192.168.1.89',
+                            isWarning: true,
+                            warningReason: '跨部門存取'
+                        },
+                        {
+                            id: 4,
+                            timestamp: '2026-01-15 11:30:09',
+                            userName: '陳雅婷',
+                            userDept: 'HR',
+                            action: '權限變更',
+                            targetFile: '人資表單 (資料夾)',
+                            targetType: 'folder',
+                            ip: '192.168.1.105'
+                        },
+                        {
+                            id: 5,
+                            timestamp: '2026-01-15 10:15:33',
+                            userName: '林佳慧',
+                            userDept: '管理部',
+                            action: '下載',
+                            targetFile: '採購合約範本.docx',
+                            targetType: 'file',
+                            ip: '192.168.1.123'
+                        },
+                        {
+                            id: 6,
+                            timestamp: '2026-01-15 09:42:18',
+                            userName: '黃建國',
+                            userDept: '行政部',
+                            action: '刪除',
+                            targetFile: '過期文件_2024.pdf',
+                            targetType: 'file',
+                            ip: '192.168.1.98'
+                        },
+                        {
+                            id: 7,
+                            timestamp: '2026-01-14 16:55:41',
+                            userName: '吳文華',
+                            userDept: '管理部',
+                            action: '瀏覽',
+                            targetFile: '季度報告Q4.pptx',
+                            targetType: 'file',
+                            ip: '192.168.1.145'
+                        },
+                        {
+                            id: 8,
+                            timestamp: '2026-01-14 15:20:12',
+                            userName: '劉玉珍',
+                            userDept: 'HR',
+                            action: '下載',
+                            targetFile: '出勤記錄表.xlsx',
+                            targetType: 'file',
+                            ip: '192.168.1.107'
+                        },
+                        {
+                            id: 9,
+                            timestamp: '2026-01-14 14:08:55',
+                            userName: '鄭宗翰',
+                            userDept: '行政部',
+                            action: '權限變更',
+                            targetFile: '供應商合約.docx',
+                            targetType: 'file',
+                            ip: '192.168.1.89'
+                        }
+                    ],
+                    version: DB_VERSION,
+                    lastUpdate: new Date().toISOString(),
+                    updateSource: 'backend'
+                };
+                
+                localStorage.setItem('fileDatabase', JSON.stringify(initialData));
+                console.log('✅ localStorage 已初始化 (版本 ' + DB_VERSION + '):', initialData);
+                console.log('📊 數據統計: ' + initialData.files.length + ' 個檔案, ' + initialData.folders.length + ' 個資料夾, ' + initialData.auditLogs.length + ' 條記錄');
+                return initialData;
+            } else {
+                const data = JSON.parse(existingData);
+                console.log('📂 從 localStorage 載入數據:', data);
+                return data;
+            }
+        }
+
+        // ==================== 更新權限到 localStorage ====================
+        function updatePermissionToStorage(folderName, department, permission) {
+            const data = JSON.parse(localStorage.getItem('fileDatabase'));
+            
+            // 更新資料夾權限
+            const folder = data.folders.find(f => f.name === folderName);
+            if (folder) {
+                folder.permissions[department] = permission;
+            }
+            
+            // 同步更新該資料夾下的所有檔案權限
+            data.files.forEach(file => {
+                if (file.folder === folderName) {
+                    file.permissions[department] = permission;
+                }
+            });
+            
+            data.lastUpdate = new Date().toISOString();
+            data.updateSource = 'backend';
+            
+            localStorage.setItem('fileDatabase', JSON.stringify(data));
+            
+            // 觸發 storage 事件讓前台知道數據已更新
+            window.dispatchEvent(new Event('storage'));
+            
+            console.log(`✅ 已更新權限: ${folderName} - ${department} = ${permission}`);
+            return data;
+        }
+
+        // ==================== 頁面載入時初始化 ====================
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 後台管理系統啟動 (localStorage 模式)');
+            
+            // 初始化數據庫
+            const dbData = initFileDatabase();
+            
+            // 監聽側邊欄點擊，自動載入對應功能數據
+            const permissionManagementLink = document.querySelector('[data-section="permission-management"]');
+            const fileRecordLink = document.querySelector('[data-section="file-record"]');
+            const fileTagLink = document.querySelector('[data-section="file-tag"]');
+            const fileSearchLink = document.querySelector('[data-section="file-search"]');
+            
+            if (fileRecordLink) {
+                fileRecordLink.addEventListener('click', function() {
+                    setTimeout(() => loadAuditLogs(), 100);
+                });
+            }
+            
+            if (fileTagLink) {
+                fileTagLink.addEventListener('click', function() {
+                    setTimeout(() => {
+                        loadFileTags();
+                        // 滾動到頂部
+                        const fileTagSection = document.getElementById('file-tag');
+                        if (fileTagSection) {
+                            fileTagSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }, 100);
+                });
+            }
+            
+            if (fileSearchLink) {
+                fileSearchLink.addEventListener('click', function() {
+                    setTimeout(() => {
+                        // 執行篩選搜尋
+                        loadFileSearch();
+                    }, 100);
+                });
+            }
+            
+            console.log('✅ 後台管理系統初始化完成，請從左側選擇功能');
+        });
+
+        // ==================== 儲存單一資料夾權限 (保留舊函數相容性) ====================
+        function savePermissionRow(button, folderName) {
+            const row = button.closest('tr');
+            const selects = row.querySelectorAll('select');
+            
+            if (selects.length < 3) return;
+            
+            const hrValue = selects[0].value;
+            const mgmtValue = selects[1].value;
+            const adminValue = selects[2].value;
+            
+            // 將 value 轉換為中文權限名稱
+            const valueMap = {
+                'view': '僅瀏覽',
+                'download': '瀏覽+下載',
+                'control': '完全控制',
+                'none': '不可見'
+            };
+            
+            const hrPerm = valueMap[hrValue] || hrValue;
+            const mgmtPerm = valueMap[mgmtValue] || mgmtValue;
+            const adminPerm = valueMap[adminValue] || adminValue;
+            
+            // 更新到 localStorage
+            updatePermissionToStorage(folderName, 'HR', hrPerm);
+            updatePermissionToStorage(folderName, '管理部', mgmtPerm);
+            updatePermissionToStorage(folderName, '行政部', adminPerm);
+            
+            // 顯示成功訊息
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fa-solid fa-check mr-1"></i>已儲存';
+            button.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+            button.classList.add('bg-green-500');
+            
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+                button.classList.remove('bg-green-500');
+                button.classList.add('bg-blue-500', 'hover:bg-blue-600');
+            }, 2000);
+            
+            // 顯示通知
+            showNotification(`✅ ${folderName} 權限已更新並同步到前台！`);
+            
+            console.log(`✅ 已儲存: ${folderName}`, {
+                HR: hrPerm,
+                管理部: mgmtPerm,
+                行政部: adminPerm
+            });
+        }
+
+        // ==================== 顯示通知 ====================
+        function showNotification(message) {
+            // 創建通知元素
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: white;
+                padding: 20px 28px;
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(16, 185, 129, 0.4);
+                z-index: 9999;
+                animation: bounceIn 0.5s ease-out;
+                font-size: 16px;
+                font-weight: 500;
+                min-width: 400px;
+            `;
+            notification.innerHTML = `
+                <div style="display: flex; items-center; gap: 12px;">
+                    <i class="fa-solid fa-check-circle" style="font-size: 28px;"></i>
+                    <div>
+                        <div style="font-weight: bold; margin-bottom: 4px;">${message}</div>
+                        <div style="font-size: 13px; opacity: 0.9;">✨ 前台系統將即時收到更新通知</div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // 添加動畫樣式
+            if (!document.getElementById('notificationStyles')) {
+                const style = document.createElement('style');
+                style.id = 'notificationStyles';
+                style.textContent = `
+                    @keyframes bounceIn {
+                        0% { transform: scale(0.3) translateY(-50px); opacity: 0; }
+                        50% { transform: scale(1.05); }
+                        70% { transform: scale(0.9); }
+                        100% { transform: scale(1) translateY(0); opacity: 1; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            // 5秒後移除
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.5s';
+                setTimeout(() => notification.remove(), 500);
+            }, 5000);
+        }
+
+        // ==================== 重置數據庫 (開發用) ====================
+        function resetDatabase() {
+            if (confirm('⚠️ 確定要重置數據庫嗎？這將清除所有自訂權限設定。')) {
+                localStorage.removeItem('fileDatabase');
+                location.reload();
+            }
+        }
+
+        // ==================== 目錄樹控制函數 ====================
+        
+        // 全域變數：目前選擇的資料夾
+        let currentSelectedFolder = null;
+        
+        // 資料夾檔案數據 (模擬各資料夾內的檔案)
+        const folderFiles = {
+            'HR/FAQ': [
+                { name: '新進員工FAQ.pdf', type: 'pdf' },
+                { name: '請假問題匯整.docx', type: 'word' },
+                { name: '薪資常見問題.pdf', type: 'pdf' }
+            ],
+            'HR/SOP/人事規章': [
+                { name: '員工手冊2025.pdf', type: 'pdf' },
+                { name: '人事管理辦法.docx', type: 'word' },
+                { name: '考勤管理規範.pdf', type: 'pdf' }
+            ],
+            'HR/SOP/行政流程': [
+                { name: '公文簽核流程.pdf', type: 'pdf' },
+                { name: '出差申請SOP.docx', type: 'word' },
+                { name: '採購流程指南.pdf', type: 'pdf' }
+            ],
+            '管理部/財務報表': [
+                { name: '2024年度財報.xlsx', type: 'excel' },
+                { name: 'Q4損益表.pdf', type: 'pdf' },
+                { name: '預算執行分析.xlsx', type: 'excel' }
+            ],
+            '管理部/經營策略': [
+                { name: '2025策略規劃.pptx', type: 'ppt' },
+                { name: '市場分析報告.pdf', type: 'pdf' },
+                { name: '營運KPI設定.xlsx', type: 'excel' }
+            ],
+            '行政部/採購合約': [
+                { name: '辦公設備採購合約.pdf', type: 'pdf' },
+                { name: '供應商合作協議.docx', type: 'word' },
+                { name: '廠商報價單.xlsx', type: 'excel' }
+            ],
+            '行政部/固定資產': [
+                { name: '資產清冊2025.xlsx', type: 'excel' },
+                { name: '設備折舊明細.pdf', type: 'pdf' },
+                { name: '資產盤點表.xlsx', type: 'excel' }
+            ]
+        };
+        
+        // 檔案類型圖標對應
+        const fileIcons = {
+            'pdf': 'fa-file-pdf text-red-500',
+            'word': 'fa-file-word text-blue-600',
+            'excel': 'fa-file-excel text-green-600',
+            'ppt': 'fa-file-powerpoint text-orange-500'
+        };
+        
+        // 切換資料夾展開/收合
+        function toggleFolder(folderId) {
+            const folderContent = document.getElementById(folderId);
+            const chevron = event.target.closest('.cursor-pointer').querySelector('.fa-chevron-right, .fa-chevron-down');
+            
+            if (folderContent && chevron) {
+                folderContent.classList.toggle('hidden');
+                chevron.classList.toggle('fa-chevron-right');
+                chevron.classList.toggle('fa-chevron-down');
+            }
+        }
+        
+        // 選擇資料夾並載入內容
+        function selectFolder(dept, folderPath, element) {
+            // 移除所有資料夾的 active 狀態
+            document.querySelectorAll('.folder-item').forEach(item => {
+                item.classList.remove('bg-blue-50', 'text-blue-700');
+                item.classList.add('text-gray-700');
+            });
+            
+            // 標記目前選擇的資料夾
+            element.classList.add('bg-blue-50', 'text-blue-700');
+            element.classList.remove('text-gray-700');
+            
+            // 更新目前路徑
+            currentSelectedFolder = `${dept}/${folderPath}`;
+            document.getElementById('currentPath').innerHTML = `
+                <i class="fa-solid fa-folder-open mr-2"></i>目前目錄：${dept} / ${folderPath}
+            `;
+            
+            // 更新標題，明確顯示正在設定的資料夾
+            document.getElementById('folderTitle').innerHTML = `
+                <i class="fa-solid fa-shield-halved text-blue-600 mr-2"></i>
+                權限管理：<span class="text-blue-600">${folderPath}</span>
+            `;
+            document.getElementById('folderSubtitle').textContent = 
+                `正在設定「${folderPath}」資料夾的通用存取權限，此設定將套用到資料夾內的所有檔案`;
+            
+            // 載入檔案列表
+            loadFileList(currentSelectedFolder);
+            
+            // 載入現有權限
+            loadCurrentPermissions(currentSelectedFolder);
+            
+            // 顯示權限設定區塊
+            document.getElementById('permissionSection').classList.remove('hidden');
+        }
+        
+        // 載入檔案列表
+        function loadFileList(folderPath) {
+            const container = document.getElementById('fileListContainer');
+            const files = folderFiles[folderPath] || [];
+            
+            if (files.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="fa-solid fa-folder-open text-6xl mb-4"></i>
+                        <p>此資料夾目前沒有檔案</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '<div class="space-y-3">';
+            files.forEach((file, index) => {
+                const iconClass = fileIcons[file.type] || 'fa-file text-gray-500';
+                // 模擬某些檔案有例外權限設定
+                const isCustom = index === 0; // 第一個檔案設為例外
+                const permissionStatus = isCustom ? 
+                    '<span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium"><i class="fa-solid fa-star mr-1"></i>例外 (Custom)</span>' :
+                    '<span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium"><i class="fa-solid fa-arrow-down mr-1"></i>繼承 (Inherited)</span>';
+                
+                html += `
+                    <div class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-sm transition-all">
+                        <i class="fa-solid ${iconClass} text-2xl mr-4"></i>
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-800 mb-1">${file.name}</p>
+                            <div class="flex items-center gap-3 text-xs text-gray-500">
+                                <span><i class="fa-solid fa-database mr-1"></i>檔案大小：${Math.floor(Math.random() * 500 + 100)} KB</span>
+                                <span class="text-gray-300">|</span>
+                                <span><i class="fa-solid fa-shield-halved mr-1"></i>權限狀態：</span>
+                                ${permissionStatus}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${isCustom ? '<button class="px-3 py-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors text-sm"><i class="fa-solid fa-pen-to-square mr-1"></i>編輯例外</button>' : ''}
+                            <button class="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                <i class="fa-solid fa-eye mr-2"></i>預覽
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
+        
+        // 載入目前權限設定
+        function loadCurrentPermissions(folderPath) {
+            const db = JSON.parse(localStorage.getItem('fileDatabase') || '{}');
+            const folders = db.folders || [];
+            
+            // 找到對應的資料夾
+            const folder = folders.find(f => f.name === folderPath);
+            
+            // 值對應表 (中文 → HTML value)
+            const valueMap = {
+                '僅瀏覽': 'view',
+                '瀏覽+下載': 'download',
+                '完全控制': 'control',
+                '不可見': 'none'
+            };
+            
+            if (folder && folder.permissions) {
+                // 設定各部門的權限
+                const hrSelect = document.getElementById('permHR');
+                const mgmtSelect = document.getElementById('permMgmt');
+                const adminSelect = document.getElementById('permAdmin');
+                
+                if (hrSelect && folder.permissions.HR) {
+                    hrSelect.value = valueMap[folder.permissions.HR] || 'view';
+                }
+                if (mgmtSelect && folder.permissions.管理部) {
+                    mgmtSelect.value = valueMap[folder.permissions.管理部] || 'view';
+                }
+                if (adminSelect && folder.permissions.行政部) {
+                    adminSelect.value = valueMap[folder.permissions.行政部] || 'view';
+                }
+            } else {
+                // 如果沒有設定，預設為「僅瀏覽」
+                document.getElementById('permHR').value = 'view';
+                document.getElementById('permMgmt').value = 'view';
+                document.getElementById('permAdmin').value = 'view';
+            }
+        }
+        
+        // 儲存目前資料夾的權限
+        function saveCurrentFolderPermission() {
+            if (!currentSelectedFolder) {
+                alert('請先選擇一個資料夾');
+                return;
+            }
+            
+            const hrValue = document.getElementById('permHR').value;
+            const mgmtValue = document.getElementById('permMgmt').value;
+            const adminValue = document.getElementById('permAdmin').value;
+            
+            // 值對應表
+            const valueMap = {
+                'view': '僅瀏覽',
+                'download': '瀏覽+下載',
+                'control': '完全控制',
+                'none': '不可見'
+            };
+            
+            // 更新到 localStorage
+            updatePermissionToStorage(currentSelectedFolder, 'HR', valueMap[hrValue]);
+            updatePermissionToStorage(currentSelectedFolder, '管理部', valueMap[mgmtValue]);
+            updatePermissionToStorage(currentSelectedFolder, '行政部', valueMap[adminValue]);
+            
+            // 顯示通知
+            showNotification(`✅ ${currentSelectedFolder} 權限已更新並同步到前台！`);
+            
+            // 添加操作記錄
+            addAuditLog('權限變更', currentSelectedFolder, 'folder');
+        }
+
+        // ==================== 檔案紀錄管理功能 ====================
+        
+        // 添加操作記錄
+        function addAuditLog(action, targetFile, targetType = 'file') {
+            const db = JSON.parse(localStorage.getItem('fileDatabase') || '{}');
+            if (!db.auditLogs) db.auditLogs = [];
+            
+            const newLog = {
+                id: (db.auditLogs.length + 1),
+                timestamp: new Date().toLocaleString('zh-TW', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit', 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit',
+                    hour12: false
+                }).replace(/\//g, '-'),
+                userName: 'Miranda', // 當前管理員
+                userDept: '系統管理員',
+                action: action,
+                targetFile: targetFile,
+                targetType: targetType,
+                ip: '192.168.1.100'
+            };
+            
+            db.auditLogs.unshift(newLog); // 最新記錄在前面
+            db.lastUpdate = new Date().toISOString();
+            localStorage.setItem('fileDatabase', JSON.stringify(db));
+        }
+        
+        // 載入檔案操作記錄
+        function loadAuditLogs() {
+            const db = JSON.parse(localStorage.getItem('fileDatabase') || '{}');
+            const logs = db.auditLogs || [];
+            
+            // 獲取篩選條件
+            const deptFilter = document.getElementById('auditDeptFilter')?.value || 'all';
+            const startDate = document.getElementById('auditStartDate')?.value;
+            const endDate = document.getElementById('auditEndDate')?.value;
+            const keyword = document.getElementById('auditKeyword')?.value.toLowerCase() || '';
+            
+            // 篩選記錄
+            let filteredLogs = logs.filter(log => {
+                // 部門篩選
+                if (deptFilter !== 'all' && log.userDept !== deptFilter) return false;
+                
+                // 日期篩選
+                if (startDate && log.timestamp.split(' ')[0] < startDate) return false;
+                if (endDate && log.timestamp.split(' ')[0] > endDate) return false;
+                
+                // 關鍵字篩選
+                if (keyword && !log.userName.toLowerCase().includes(keyword) && 
+                    !log.targetFile.toLowerCase().includes(keyword)) return false;
+                
+                return true;
+            });
+            
+            const container = document.getElementById('auditLogTableContainer');
+            document.getElementById('auditLogCount').textContent = filteredLogs.length;
+            
+            if (filteredLogs.length === 0) {
+                container.innerHTML = '<div class="text-center py-12 text-gray-400"><i class="fa-solid fa-inbox text-4xl mb-4"></i><p>沒有符合條件的操作記錄</p></div>';
+                return;
+            }
+            
+            // 部門顏色映射
+            const deptStyles = {
+                'HR': { bg: '#DBEAFE', text: '#1E40AF' },
+                '管理部': { bg: '#E9D5FF', text: '#6B21A8' },
+                '行政部': { bg: '#FED7AA', text: '#C2410C' },
+                '系統管理員': { bg: '#D1FAE5', text: '#065F46' }
+            };
+            
+            // 動作顏色映射
+            const actionStyles = {
+                '下載': { bg: '#D1FAE5', text: '#065F46', icon: 'fa-download' },
+                '瀏覽': { bg: '#DBEAFE', text: '#1E40AF', icon: 'fa-eye' },
+                '刪除': { bg: '#FEE2E2', text: '#991B1B', icon: 'fa-trash' },
+                '權限變更': { bg: '#FEF3C7', text: '#92400E', icon: 'fa-shield-halved' }
+            };
+            
+            // 頭像顏色
+            const avatarColors = [
+                '#3B82F6', '#8B5CF6', '#F97316', '#10B981', 
+                '#EC4899', '#6366F1', '#14B8A6', '#06B6D4', '#EF4444'
+            ];
+            
+            // 姓名首字映射
+            const nameInitials = {
+                '王小明': '王', '李美玲': '李', '張志強': '張', '陳雅婷': '陳',
+                '林佳慧': '林', '黃建國': '黃', '吳文華': '吳', '劉玉珍': '劉',
+                '鄭宗翰': '鄭', 'Miranda': 'M'
+            };
+            
+            // 生成表格
+            let html = '<table class="w-full border-collapse text-sm"><thead><tr class="bg-blue-600 text-white">';
+            html += '<th class="py-3 px-4 text-left font-semibold border border-blue-700 whitespace-nowrap">時間戳記</th>';
+            html += '<th class="py-3 px-4 text-left font-semibold border border-blue-700 whitespace-nowrap">操作者姓名</th>';
+            html += '<th class="py-3 px-4 text-center font-semibold border border-blue-700 whitespace-nowrap">所屬部門</th>';
+            html += '<th class="py-3 px-4 text-center font-semibold border border-blue-700 whitespace-nowrap">動作類型</th>';
+            html += '<th class="py-3 px-4 text-left font-semibold border border-blue-700">目標檔案名稱</th>';
+            html += '<th class="py-3 px-4 text-left font-semibold border border-blue-700 whitespace-nowrap">IP 位址</th>';
+            html += '</tr></thead><tbody class="bg-white">';
+            
+            filteredLogs.forEach(log => {
+                const isWarning = log.isWarning || false;
+                const rowClass = isWarning ? 'bg-red-50 hover:bg-red-100 transition-colors border-l-4 border-l-red-500' : 'hover:bg-gray-50 transition-colors';
+                
+                const deptStyle = deptStyles[log.userDept] || { bg: '#F3F4F6', text: '#374151' };
+                const actionStyle = actionStyles[log.action] || { bg: '#F3F4F6', text: '#374151', icon: 'fa-file' };
+                
+                const initial = nameInitials[log.userName] || log.userName[0];
+                const avatarColor = avatarColors[log.id % avatarColors.length];
+                
+                // 檔案圖標
+                const ext = log.targetFile.split('.').pop().toLowerCase();
+                let fileIconClass = 'fa-file text-gray-400';
+                if (log.targetType === 'folder') fileIconClass = 'fa-folder text-blue-500';
+                else if (ext === 'pdf') fileIconClass = 'fa-file-pdf text-red-500';
+                else if (['xlsx', 'xls'].includes(ext)) fileIconClass = 'fa-file-excel text-green-600';
+                else if (['docx', 'doc'].includes(ext)) fileIconClass = 'fa-file-word text-blue-600';
+                else if (['pptx', 'ppt'].includes(ext)) fileIconClass = 'fa-file-powerpoint text-orange-500';
+                
+                html += `<tr class="${rowClass}">`;
+                html += `<td class="py-3 px-4 border border-gray-200 whitespace-nowrap">${log.timestamp}</td>`;
+                html += `<td class="py-3 px-4 border border-gray-200 whitespace-nowrap">`;
+                html += `<div class="flex items-center">`;
+                html += `<div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs mr-2" style="background-color: ${avatarColor}">${initial}</div>`;
+                html += `<span class="font-medium">${log.userName}</span>`;
+                html += `</div></td>`;
+                html += `<td class="py-3 px-4 border border-gray-200 text-center">`;
+                html += `<span class="px-3 py-1 rounded-full text-sm font-medium" style="background-color: ${deptStyle.bg}; color: ${deptStyle.text}">${log.userDept}</span>`;
+                html += `</td>`;
+                html += `<td class="py-3 px-4 border border-gray-200 text-center">`;
+                html += `<span class="px-3 py-1 rounded-full text-sm font-medium" style="background-color: ${actionStyle.bg}; color: ${actionStyle.text}">`;
+                html += `<i class="fa-solid ${actionStyle.icon} mr-1"></i>${log.action}`;
+                if (isWarning) html += '<i class="fa-solid fa-exclamation-triangle ml-1"></i>';
+                html += `</span></td>`;
+                html += `<td class="py-3 px-4 border border-gray-200">`;
+                html += `<div class="flex items-center justify-between">`;
+                html += `<span><i class="fa-solid ${fileIconClass} mr-2"></i>${log.targetFile}</span>`;
+                if (isWarning) html += `<span class="px-2 py-1 bg-red-200 text-red-800 rounded text-xs font-bold">${log.warningReason}</span>`;
+                html += `</div></td>`;
+                html += `<td class="py-3 px-4 border border-gray-200 whitespace-nowrap">${log.ip}</td>`;
+                html += `</tr>`;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+        
+        // 重置篩選條件
+        function resetAuditFilters() {
+            document.getElementById('auditDeptFilter').value = 'all';
+            document.getElementById('auditStartDate').value = '2026-01-01';
+            document.getElementById('auditEndDate').value = '2026-01-15';
+            document.getElementById('auditKeyword').value = '';
+            loadAuditLogs();
+        }
+        
+        // 匯出操作記錄
+        function exportAuditLogs() {
+            alert('📊 匯出功能：將生成 Excel 檔案並下載\n\n(實際應用中會呼叫後端 API 生成檔案)');
+        }
+
+        // ==================== 檔案標籤管理功能 ====================
+        
+        // 載入標籤統計
+        function loadFileTags() {
+            const db = JSON.parse(localStorage.getItem('fileDatabase') || '{}');
+            const files = db.files || [];
+            
+            // 統計所有標籤
+            const tagStats = {};
+            files.forEach(file => {
+                (file.tags || []).forEach(tag => {
+                    if (!tagStats[tag]) {
+                        tagStats[tag] = { count: 0, departments: new Set() };
+                    }
+                    tagStats[tag].count++;
+                    tagStats[tag].departments.add(file.department);
+                });
+            });
+            
+            const container = document.getElementById('tagCardsContainer');
+            const tags = Object.keys(tagStats);
+            
+            document.getElementById('tagCountBadge').textContent = `共 ${tags.length} 個標籤`;
+            
+            if (tags.length === 0) {
+                container.innerHTML = '<div class="text-center py-12 text-gray-400 col-span-full"><i class="fa-solid fa-tags text-4xl mb-4"></i><p>尚無檔案標籤</p></div>';
+                return;
+            }
+            
+            // 標籤顏色映射（使用 inline styles）
+            const tagColorStyles = {
+                'SOP': { bg: '#DBEAFE', text: '#1E40AF' },
+                'FAQ': { bg: '#D1FAE5', text: '#065F46' },
+                '必讀': { bg: '#FEE2E2', text: '#991B1B' },
+                '新人': { bg: '#F3E8FF', text: '#6B21A8' },
+                '請假': { bg: '#FFEDD5', text: '#C2410C' },
+                '薪資': { bg: '#FCE7F3', text: '#9F1239' },
+                '規章': { bg: '#CFFAFE', text: '#0E7490' },
+                '考勤': { bg: '#ECFCCB', text: '#4D7C0F' },
+                '差旅': { bg: '#FFEDD5', text: '#C2410C' },
+                '簽核': { bg: '#E0E7FF', text: '#4338CA' },
+                '採購': { bg: '#CCFBF1', text: '#0F766E' },
+                '財報': { bg: '#FEE2E2', text: '#991B1B' },
+                '機密': { bg: '#FEE2E2', text: '#991B1B' },
+                'Q4': { bg: '#F3E8FF', text: '#6B21A8' },
+                '預算': { bg: '#DBEAFE', text: '#1E40AF' },
+                '策略': { bg: '#FEE2E2', text: '#991B1B' },
+                '市場': { bg: '#CFFAFE', text: '#0E7490' },
+                '合約': { bg: '#E0E7FF', text: '#4338CA' },
+                '供應商': { bg: '#CCFBF1', text: '#0F766E' },
+                '報價': { bg: '#FEF9C3', text: '#854D0E' },
+                '資產': { bg: '#D1FAE5', text: '#065F46' },
+                '盤點': { bg: '#DBEAFE', text: '#1E40AF' },
+                '折舊': { bg: '#FFEDD5', text: '#C2410C' }
+            };
+            
+            let html = '';
+            tags.forEach((tag, index) => {
+                const stat = tagStats[tag];
+                const colorStyle = tagColorStyles[tag] || { bg: '#F3F4F6', text: '#4B5563' };
+                const deptText = Array.from(stat.departments).join(', ') || '通用';
+                
+                html += `<div class="group relative border-2 border-gray-200 rounded-xl p-5 hover:shadow-xl hover:border-blue-400 transition-all duration-300 bg-white">`;
+                
+                // 選擇框與標籤名稱
+                html += `<div class="flex items-center gap-3 mb-4">`;
+                html += `<input type="checkbox" class="tag-checkbox w-5 h-5 text-blue-600 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all" data-tag-name="${tag}">`;
+                html += `<div class="flex-1">`;
+                html += `<span class="inline-flex items-center px-4 py-2 rounded-lg text-base font-bold shadow-sm" style="background-color: ${colorStyle.bg}; color: ${colorStyle.text}">`;
+                html += `<i class="fa-solid fa-tag mr-2 text-lg"></i>${tag}</span>`;
+                html += `</div></div>`;
+                
+                // 統計資訊
+                html += `<div class="space-y-3 mb-4 pl-2">`;
+                html += `<div class="flex items-center text-sm">`;
+                html += `<div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mr-3">`;
+                html += `<i class="fa-solid fa-file-lines text-blue-600 text-lg"></i></div>`;
+                html += `<div><p class="text-gray-500 text-xs">關聯檔案</p>`;
+                html += `<p class="text-gray-800 font-bold text-lg">${stat.count} 個</p></div></div>`;
+                
+                html += `<div class="flex items-center text-sm">`;
+                html += `<div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center mr-3">`;
+                html += `<i class="fa-solid fa-building text-purple-600 text-lg"></i></div>`;
+                html += `<div><p class="text-gray-500 text-xs">使用部門</p>`;
+                html += `<p class="text-purple-700 font-semibold text-sm">${deptText}</p></div></div>`;
+                html += `</div>`;
+                
+                // 操作按鈕
+                html += `<div class="flex gap-2 pt-3 border-t border-gray-100">`;
+                html += `<button onclick="editTag('${tag}')" class="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 font-medium text-sm shadow-sm hover:shadow-md transform hover:-translate-y-0.5">`;
+                html += `<i class="fa-solid fa-edit mr-1"></i> 編輯</button>`;
+                html += `<button onclick="deleteTag('${tag}')" class="flex-1 px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 font-medium text-sm shadow-sm hover:shadow-md transform hover:-translate-y-0.5">`;
+                html += `<i class="fa-solid fa-trash mr-1"></i> 刪除</button>`;
+                html += `</div></div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            // 重新綁定 checkbox 事件
+            attachTagCheckboxEvents();
+        }
+        
+        // 綁定標籤 checkbox 事件
+        function attachTagCheckboxEvents() {
+            document.querySelectorAll('.tag-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const checkedCount = document.querySelectorAll('.tag-checkbox:checked').length;
+                    const mergeBtn = document.getElementById('mergeTagsBtn');
+                    const countSpan = document.getElementById('selectedCount');
+                    
+                    countSpan.textContent = checkedCount;
+                    mergeBtn.disabled = checkedCount < 2;
+                });
+            });
+        }
+        
+        // 編輯標籤
+        function editTag(tagName) {
+            const newName = prompt(`重新命名標籤「${tagName}」：`, tagName);
+            if (!newName || newName === tagName) return;
+            
+            const db = JSON.parse(localStorage.getItem('fileDatabase') || '{}');
+            let updateCount = 0;
+            
+            db.files.forEach(file => {
+                if (file.tags && file.tags.includes(tagName)) {
+                    const index = file.tags.indexOf(tagName);
+                    file.tags[index] = newName;
+                    updateCount++;
+                }
+            });
+            
+            db.lastUpdate = new Date().toISOString();
+            localStorage.setItem('fileDatabase', JSON.stringify(db));
+            
+            showNotification(`✅ 已將標籤「${tagName}」重新命名為「${newName}」，共更新 ${updateCount} 個檔案！`);
+            loadFileTags();
+        }
+        
+        // 刪除標籤
+        function deleteTag(tagName) {
+            if (!confirm(`確定要刪除標籤「${tagName}」嗎？\n此操作將從所有檔案中移除該標籤。`)) return;
+            
+            const db = JSON.parse(localStorage.getItem('fileDatabase') || '{}');
+            let removeCount = 0;
+            
+            db.files.forEach(file => {
+                if (file.tags && file.tags.includes(tagName)) {
+                    file.tags = file.tags.filter(t => t !== tagName);
+                    removeCount++;
+                }
+            });
+            
+            db.lastUpdate = new Date().toISOString();
+            localStorage.setItem('fileDatabase', JSON.stringify(db));
+            
+            showNotification(`✅ 已刪除標籤「${tagName}」，共從 ${removeCount} 個檔案中移除！`);
+            loadFileTags();
+        }
+
+        // ==================== 篩選搜尋檔案功能 ====================
+        
+        // 載入篩選搜尋結果
+        function loadFileSearch() {
+            const db = JSON.parse(localStorage.getItem('fileDatabase') || '{}');
+            let files = db.files || [];
+            
+            // 獲取篩選條件
+            const sizeFilter = document.getElementById('searchSizeFilter')?.value || '';
+            const deptCheckboxes = document.querySelectorAll('#searchDeptFilters input[type="checkbox"]:checked');
+            const typeCheckboxes = document.querySelectorAll('#searchTypeFilters input[type="checkbox"]:checked');
+            
+            const selectedDepts = Array.from(deptCheckboxes).map(cb => cb.value);
+            const selectedTypes = Array.from(typeCheckboxes).map(cb => cb.value);
+            
+            // 篩選檔案
+            let filteredFiles = files.filter(file => {
+                // 大小篩選
+                if (sizeFilter === 'small' && file.sizeBytes >= 10 * 1024 * 1024) return false;
+                if (sizeFilter === 'medium' && (file.sizeBytes < 10 * 1024 * 1024 || file.sizeBytes >= 100 * 1024 * 1024)) return false;
+                if (sizeFilter === 'large' && (file.sizeBytes < 100 * 1024 * 1024 || file.sizeBytes >= 500 * 1024 * 1024)) return false;
+                if (sizeFilter === 'xlarge' && file.sizeBytes < 500 * 1024 * 1024) return false;
+                
+                // 部門篩選
+                if (selectedDepts.length > 0 && !selectedDepts.includes(file.department)) return false;
+                
+                // 類型篩選
+                if (selectedTypes.length > 0) {
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    let matchType = false;
+                    selectedTypes.forEach(type => {
+                        if (type === 'document' && ['pdf', 'doc', 'docx', 'txt'].includes(ext)) matchType = true;
+                        if (type === 'image' && ['jpg', 'jpeg', 'png', 'gif'].includes(ext)) matchType = true;
+                        if (type === 'video' && ['mp4', 'avi', 'mov'].includes(ext)) matchType = true;
+                        if (type === 'spreadsheet' && ['xls', 'xlsx'].includes(ext)) matchType = true;
+                    });
+                    if (!matchType) return false;
+                }
+                
+                return true;
+            });
+            
+            displaySearchResults(filteredFiles);
+        }
+        
+        // 顯示搜尋結果
+        function displaySearchResults(files) {
+            const container = document.getElementById('searchResultsContainer');
+            document.getElementById('searchResultCount').textContent = files.length;
+            
+            if (files.length === 0) {
+                container.innerHTML = '<div class="text-center py-12 text-gray-400"><i class="fa-solid fa-search text-4xl mb-4"></i><p>沒有符合條件的檔案</p></div>';
+                return;
+            }
+            
+            let html = '<table class="w-full border-collapse text-sm"><thead><tr class="bg-blue-600 text-white">';
+            html += '<th class="py-3 px-4 text-center font-semibold border border-blue-700 w-12"><input type="checkbox" id="selectAllFiles" class="w-4 h-4 rounded"></th>';
+            html += '<th class="py-3 px-4 text-left font-semibold border border-blue-700">檔名</th>';
+            html += '<th class="py-3 px-4 text-center font-semibold border border-blue-700 whitespace-nowrap">大小</th>';
+            html += '<th class="py-3 px-4 text-center font-semibold border border-blue-700 whitespace-nowrap">部門</th>';
+            html += '<th class="py-3 px-4 text-center font-semibold border border-blue-700 whitespace-nowrap">上傳日期</th>';
+            html += '<th class="py-3 px-4 text-left font-semibold border border-blue-700">標籤</th>';
+            html += '</tr></thead><tbody class="bg-white">';
+            
+            files.forEach(file => {
+                const fileIcon = file.name.endsWith('.pdf') ? 'fa-file-pdf text-red-500' :
+                                file.name.endsWith('.xlsx') || file.name.endsWith('.xls') ? 'fa-file-excel text-green-600' :
+                                file.name.endsWith('.docx') || file.name.endsWith('.doc') ? 'fa-file-word text-blue-600' :
+                                file.name.endsWith('.pptx') || file.name.endsWith('.ppt') ? 'fa-file-powerpoint text-orange-500' :
+                                'fa-file text-gray-400';
+                
+                const deptStyles = {
+                    'HR': 'background-color: #DBEAFE; color: #1E40AF',
+                    '管理部': 'background-color: #F3E8FF; color: #6B21A8',
+                    '行政部': 'background-color: #FFEDD5; color: #C2410C'
+                };
+                const deptStyle = deptStyles[file.department] || 'background-color: #F3F4F6; color: #4B5563';
+                
+                const sizeClass = file.sizeBytes >= 500 * 1024 * 1024 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700';
+                
+                html += `<tr class="hover:bg-gray-50 transition-colors">`;
+                html += `<td class="py-3 px-4 border border-gray-200 text-center"><input type="checkbox" class="file-search-checkbox w-4 h-4 rounded" data-file-id="${file.id}"></td>`;
+                html += `<td class="py-3 px-4 border border-gray-200"><div class="flex items-center">`;
+                html += `<i class="fa-solid ${fileIcon} mr-2 text-lg"></i><span class="font-medium">${file.name}</span></div></td>`;
+                html += `<td class="py-3 px-4 border border-gray-200 text-center"><span class="px-2 py-1 ${sizeClass} rounded text-xs font-semibold">${file.size}</span></td>`;
+                html += `<td class="py-3 px-4 border border-gray-200 text-center"><span style="${deptStyle}" class="px-3 py-1 rounded-full text-sm font-medium">${file.department}</span></td>`;
+                html += `<td class="py-3 px-4 border border-gray-200 text-center whitespace-nowrap text-xs">${file.uploadDate}</td>`;
+                html += `<td class="py-3 px-4 border border-gray-200">`;
+                (file.tags || []).forEach(tag => {
+                    html += `<span class="inline-block px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs mr-1 mb-1">${tag}</span>`;
+                });
+                html += `</td></tr>`;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+            
+            // 統計資訊
+            const totalSize = files.reduce((sum, f) => sum + f.sizeBytes, 0);
+            const totalSizeGB = (totalSize / (1024 * 1024 * 1024)).toFixed(2);
+            const deptCounts = {};
+            files.forEach(f => {
+                deptCounts[f.department] = (deptCounts[f.department] || 0) + 1;
+            });
+            
+            const statsContainer = document.getElementById('searchStatsContainer');
+            let statsHtml = '<div class="grid grid-cols-3 gap-4 text-center">';
+            statsHtml += `<div class="p-3 bg-blue-50 rounded-lg"><p class="text-2xl font-bold text-blue-600">${files.length}</p><p class="text-xs text-gray-600">檔案總數</p></div>`;
+            statsHtml += `<div class="p-3 bg-red-50 rounded-lg"><p class="text-2xl font-bold text-red-600">${totalSizeGB} GB</p><p class="text-xs text-gray-600">總檔案大小</p></div>`;
+            statsHtml += `<div class="p-3 bg-purple-50 rounded-lg"><p class="text-2xl font-bold text-purple-600">${Object.keys(deptCounts).length}</p><p class="text-xs text-gray-600">涉及部門數</p></div>`;
+            statsHtml += '</div>';
+            statsContainer.innerHTML = statsHtml;
+            
+            // 綁定全選事件
+            document.getElementById('selectAllFiles')?.addEventListener('change', function() {
+                document.querySelectorAll('.file-search-checkbox').forEach(cb => {
+                    cb.checked = this.checked;
+                });
+            });
+        }
+        
+        // 重置搜尋條件
+        function resetSearchFilters() {
+            document.getElementById('searchSizeFilter').value = '';
+            document.querySelectorAll('#searchDeptFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.querySelectorAll('#searchTypeFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
+            displaySearchResults([]);
+        }
+
+        console.log('✅ localStorage 連動功能已啟動');
+        console.log('💡 提示：可在控制台執行 resetDatabase() 重置數據庫');
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,31 @@
+<div class="km-nav">
+    <a href="km-knowledge.html" class="km-nav-btn" data-km-page="km-home">
+        <i class="fa-solid fa-brain"></i> 知識總覽
+    </a>
+    <a href="km-shares.html" class="km-nav-btn" data-km-page="shares">
+        <i class="fa-solid fa-share-nodes"></i> 分享中心
+    </a>
+    <a href="km-ai.html" class="km-nav-btn ai-btn" data-km-page="ai">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> AI 加值
+    </a>
+</div>
+
+<script>
+// 設置 KM 知識管理導航的 active 狀態
+(function() {
+    const currentPage = window.location.pathname.split('/').pop();
+    const pageMap = {
+        'km-knowledge.html': 'km-home',
+        'km-shares.html': 'shares',
+        'km-ai.html': 'ai'
+    };
+    
+    const currentKmPage = pageMap[currentPage];
+    if (currentKmPage) {
+        const activeBtn = document.querySelector(`.km-nav-btn[data-km-page="${currentKmPage}"]`);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+    }
+})();
+</script>
