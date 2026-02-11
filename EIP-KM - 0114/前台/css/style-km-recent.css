@@ -262,6 +262,10 @@
     background: #f9fafb;
 }
 
+.file-table tbody tr.folder-row:hover {
+    background: #FEF9C3;
+}
+
 .col-name { width: 45%; }
 .col-tags { width: 25%; }
 .col-date { width: 15%; }
@@ -393,6 +397,14 @@
 
 .toast i {
     color: #22c55e;
+}
+
+.toast-warning {
+    background: #7c2d12;
+}
+
+.toast-warning i {
+    color: #fb923c;
 }
 
 /* 響應式 */

@@ -151,9 +151,6 @@ const KM_NAV_FALLBACK_HTML = `<div class="km-nav">
         <i class="fa-solid fa-user"></i> 我的
     </a>
     -->
-    <button class="km-nav-btn primary" onclick="openUploadModal()">
-        <i class="fa-solid fa-upload"></i> 上傳
-    </button>
 </div>
 
 <script>

@@ -12,6 +12,201 @@
     <link rel="stylesheet" href="css/style-content.css">
     <link rel="stylesheet" href="css/style-km-base.css">
     <link rel="stylesheet" href="css/style-km-recent.css">
+    <style>
+        /* ===== 共用 perm-list-table ===== */
+        .perm-list-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .perm-list-table th, .perm-list-table td {
+            padding: 8px 10px; border-bottom: 1px solid var(--border-color); text-align: left; font-size: 13px;
+        }
+        .perm-list-table th { background: #F8FAFC; color: var(--text-secondary); font-weight: 600; font-size: 12px; }
+        .perm-list-table tr:hover td { background: #F8FAFC; }
+        .perm-list-table .rm-btn {
+            color: #EF4444; cursor: pointer; background: none; border: none; font-size: 14px; padding: 2px 6px; border-radius: 4px;
+        }
+        .perm-list-table .rm-btn:hover { background: #FEF2F2; }
+
+        /* ===== 共用開關 Toggle ===== */
+        .share-link-group {
+            border: 1px solid #E2E8F0; border-radius: 10px; overflow: hidden;
+            margin: -4px 0 14px; background: #F8FAFC;
+        }
+        .share-toggle-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 16px; background: #F8FAFC;
+            border: 1px solid #E2E8F0; border-radius: 10px;
+        }
+        .share-toggle-row .stl-label {
+            display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;
+        }
+        .share-toggle-row .stl-status {
+            font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px;
+        }
+        .share-toggle-row .stl-status.on { background: #ECFDF5; color: #059669; }
+        .share-toggle-row .stl-status.off { background: #FEF2F2; color: #DC2626; }
+        .share-toggle {
+            position: relative; width: 44px; height: 24px; flex-shrink: 0;
+        }
+        .share-toggle input { opacity: 0; width: 0; height: 0; }
+        .share-toggle .slider {
+            position: absolute; cursor: pointer; inset: 0;
+            background: #CBD5E1; border-radius: 24px; transition: .25s;
+        }
+        .share-toggle .slider::before {
+            content: ''; position: absolute; width: 18px; height: 18px;
+            left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .25s;
+            box-shadow: 0 1px 3px rgba(0,0,0,.15);
+        }
+        .share-toggle input:checked + .slider { background: #059669; }
+        .share-toggle input:checked + .slider::before { transform: translateX(20px); }
+        .share-body-disabled { opacity: .4; pointer-events: none; }
+        .share-link-item {
+            padding: 10px 16px 14px; border-top: 1px solid #E2E8F0;
+        }
+        .share-link-item.no-border { border-top: none; }
+
+        /* ===== Picker Modal ===== */
+        .picker-overlay {
+            position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+            background: rgba(2,6,23,.5); z-index: 10100; padding: 12px;
+        }
+        .picker-overlay.show { display: flex; }
+        .picker-modal {
+            width: min(560px, 96vw); max-height: 85vh; overflow: hidden;
+            background: #fff; border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,.22);
+            display: flex; flex-direction: column;
+        }
+        .picker-hd {
+            padding: 16px 20px; border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .picker-hd h3 { font-size: 15px; margin: 0; display: flex; align-items: center; gap: 8px; }
+        .picker-bd { padding: 16px 20px; overflow-y: auto; flex: 1; }
+        .picker-ft {
+            padding: 14px 20px; border-top: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+        }
+        .picker-tabs {
+            display: flex; gap: 0; border-bottom: 2px solid var(--border-color); margin-bottom: 14px;
+        }
+        .picker-tab {
+            padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer;
+            border: none; background: none; color: var(--text-secondary);
+            border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s;
+        }
+        .picker-tab:hover { color: var(--text-primary); }
+        .picker-tab.active { color: #2563EB; border-bottom-color: #2563EB; }
+        .picker-search { position: relative; margin-bottom: 12px; }
+        .picker-search i {
+            position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); font-size: 13px;
+        }
+        .picker-search input {
+            width: 100%; padding: 8px 12px 8px 32px; border: 1px solid var(--border-color);
+            border-radius: 8px; font-size: 13px; outline: none; transition: border-color .2s; box-sizing: border-box;
+        }
+        .picker-search input:focus { border-color: #2563EB; }
+        .picker-list { max-height: 220px; overflow-y: auto; }
+        .picker-item {
+            display: flex; align-items: center; gap: 10px; padding: 9px 10px;
+            border-radius: 8px; cursor: pointer; transition: background .15s; font-size: 13px;
+        }
+        .picker-item:hover { background: #F1F5F9; }
+        .picker-item.selected { background: #EFF6FF; }
+        .picker-item input[type="checkbox"] { accent-color: #2563EB; width: 16px; height: 16px; cursor: pointer; }
+        .picker-item .pi-icon {
+            width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 600; flex-shrink: 0;
+        }
+        .picker-item .pi-icon.dept { background: #DBEAFE; color: #2563EB; }
+        .picker-item .pi-icon.person { background: #F3E8FF; color: #7C3AED; }
+        .picker-item .pi-info { flex: 1; }
+        .picker-item .pi-name { font-weight: 600; }
+        .picker-item .pi-sub { font-size: 11px; color: var(--text-muted); }
+        .picker-selected-tags {
+            display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; min-height: 28px;
+        }
+        .picker-tag {
+            display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px;
+            border-radius: 999px; font-size: 12px; font-weight: 600;
+        }
+        .picker-tag.dept-tag { background: #DBEAFE; color: #2563EB; }
+        .picker-tag.person-tag { background: #F3E8FF; color: #7C3AED; }
+        .picker-tag .tag-rm { cursor: pointer; margin-left: 2px; font-size: 11px; opacity: .6; }
+        .picker-tag .tag-rm:hover { opacity: 1; }
+        .picker-type-hint {
+            font-size: 12px; color: var(--text-muted); margin-bottom: 10px;
+            display: flex; align-items: center; gap: 5px;
+            padding: 6px 10px; background: #F8FAFC; border-radius: 8px; border: 1px solid #E2E8F0;
+        }
+        .picker-type-hint.locked {
+            background: #EFF6FF; border-color: #BFDBFE; color: #1D4ED8;
+        }
+        .picker-type-toggle {
+            display: flex; align-items: center; gap: 0; margin-bottom: 14px;
+            border: 2px solid #E2E8F0; border-radius: 10px; overflow: hidden; background: #F8FAFC;
+        }
+        .picker-toggle-btn {
+            flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 600;
+            cursor: pointer; border: none; background: transparent;
+            color: var(--text-secondary); transition: all .2s; display: flex; align-items: center;
+            justify-content: center; gap: 6px;
+        }
+        .picker-toggle-btn:hover:not(.locked) { background: #F1F5F9; }
+        .picker-toggle-btn.active {
+            background: #2563EB; color: #fff; box-shadow: 0 2px 6px rgba(37,99,235,.25);
+        }
+        .picker-toggle-btn.active[data-tab="person"] {
+            background: #7C3AED; box-shadow: 0 2px 6px rgba(124,58,237,.25);
+        }
+        .picker-toggle-btn.locked {
+            opacity: .4; cursor: not-allowed; background: #F1F5F9;
+        }
+        .picker-toggle-divider {
+            font-size: 11px; color: var(--text-muted); font-weight: 600; padding: 0 4px;
+            flex-shrink: 0;
+        }
+        .picker-reason-section { margin-top: 14px; }
+        .picker-reason-section label {
+            font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px;
+        }
+        .picker-reason-section textarea {
+            width: 100%; height: 60px; padding: 8px 12px; border: 1px solid var(--border-color);
+            border-radius: 8px; font-size: 13px; resize: vertical; outline: none; font-family: inherit; box-sizing: border-box;
+        }
+        .picker-reason-section textarea:focus { border-color: #2563EB; }
+        .picker-count { font-size: 12px; color: var(--text-muted); margin-right: auto; }
+
+        /* ===== 新增資料夾 Modal ===== */
+        .new-folder-overlay {
+            position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+            background: rgba(2,6,23,.45); z-index: 10100; padding: 12px;
+        }
+        .new-folder-overlay.show { display: flex; }
+        .new-folder-modal {
+            width: min(420px, 92vw); background: #fff; border-radius: 14px;
+            box-shadow: 0 20px 50px rgba(0,0,0,.22); overflow: hidden;
+        }
+        .new-folder-modal .nf-hd {
+            padding: 18px 24px 14px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .new-folder-modal .nf-hd h4 { margin: 0; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+        .new-folder-modal .nf-bd { padding: 20px 24px; }
+        .new-folder-modal .nf-bd label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px; }
+        .new-folder-modal .nf-bd input {
+            width: 100%; padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 8px;
+            font-size: 13px; outline: none; box-sizing: border-box; transition: border-color .2s;
+        }
+        .new-folder-modal .nf-bd input:focus { border-color: #2563EB; }
+        .new-folder-modal .nf-parent {
+            margin-bottom: 12px; font-size: 12px; color: var(--text-muted);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .new-folder-modal .nf-ft {
+            padding: 14px 24px; border-top: 1px solid var(--border-color);
+            display: flex; justify-content: flex-end; gap: 8px;
+        }
+    </style>
 </head>
 <body>
     <!-- 頂部導航 -->
@@ -89,7 +284,7 @@
                             <button id="uploadBtn" class="btn primary" onclick="openUploadModal()">
                                 <i class="fa-solid fa-upload"></i> 上傳檔案
                             </button>
-                            <button id="newFolderBtn" class="btn ghost">
+                            <button id="newFolderBtn" class="btn ghost" onclick="openNewFolderModal()">
                                 <i class="fa-solid fa-folder-plus"></i> 新增資料夾
                             </button>
                         </div>
@@ -142,56 +337,69 @@
                         <span>檔案名稱</span>
                     </div>
                 </div>
-                
-                <!-- 共用對象 -->
+
+                <!-- 共用對象表格 -->
+                <div id="shareBodyWrapper">
                 <div class="share-section">
                     <label class="section-label">共用對象</label>
-                    <div id="shareTargets" class="checkbox-group">
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="管理部">
-                            <span>管理部</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="行政部">
-                            <span>行政部</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="HR">
-                            <span>HR (人資部)</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="專案部門">
-                            <span>專案部門</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="全公司">
-                            <span>全公司</span>
-                        </label>
+                    <table class="perm-list-table" id="sharePermTable">
+                        <thead><tr>
+                            <th>對象</th>
+                            <th>類型</th>
+                            <th>編輯者<br><span style="font-weight:400;font-size:11px;color:var(--text-muted);">(查看/修改檔名/上傳/刪除)</span></th>
+                            <th>檢視者<br><span style="font-weight:400;font-size:11px;color:var(--text-muted);">(查看/下載)</span></th>
+                            <th></th>
+                        </tr></thead>
+                        <tbody id="sharePermBody"></tbody>
+                    </table>
+                    <div style="margin-top:12px;">
+                        <button class="btn primary" onclick="openShareAddPicker()" style="gap:6px;"><i class="fa-solid fa-plus"></i> 新增</button>
                     </div>
                 </div>
-                
-                <!-- 權限設定 -->
-                <div class="share-section">
-                    <label class="section-label">權限設定</label>
-                    <div class="checkbox-group permissions">
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="permView" checked disabled>
-                            <span><i class="fa-solid fa-eye"></i> 瀏覽</span>
+                </div><!-- /shareBodyWrapper -->
+
+                <!-- 開啟共用連結 Toggle + 連結 -->
+                <div class="share-link-group" id="shareLinkGroup" style="margin-top:16px;">
+                    <div class="share-toggle-row">
+                        <div class="stl-label">
+                            <i class="fa-solid fa-link" style="color:#2563EB;"></i>
+                            <span>開啟共用連結</span>
+                            <span id="shareToggleStatus" class="stl-status on">已開啟</span>
+                        </div>
+                        <label class="share-toggle">
+                            <input type="checkbox" id="shareToggleInput" checked onchange="toggleShareEnabled()">
+                            <span class="slider"></span>
                         </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="permDownload">
-                            <span><i class="fa-solid fa-download"></i> 下載</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="permEdit">
-                            <span><i class="fa-solid fa-pen"></i> 管理</span>
-                        </label>
+                    </div>
+                    <!-- 內網 / 外網連結 -->
+                    <div class="share-link-item" id="shareLinkArea">
+                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                            <span style="font-size:12px;font-weight:600;color:#059669;background:#ECFDF5;border:1px solid #A7F3D0;padding:2px 8px;border-radius:6px;"><i class="fa-solid fa-building"></i> 內網</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <input type="text" id="shareLinkIntranet" readonly
+                                style="flex:1;padding:8px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:13px;color:var(--text-secondary);background:#F8FAFC;outline:none;cursor:text;">
+                            <button class="btn secondary" onclick="copyShareLink('intranet')" style="white-space:nowrap;gap:6px;display:inline-flex;align-items:center;">
+                                <i class="fa-regular fa-copy"></i> 複製
+                            </button>
+                        </div>
+                        <div style="margin-top:10px;">
+                            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                                <span style="font-size:12px;font-weight:600;color:#2563EB;background:#EFF6FF;border:1px solid #BFDBFE;padding:2px 8px;border-radius:6px;"><i class="fa-solid fa-globe"></i> 外網</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <input type="text" id="shareLinkExternal" readonly
+                                    style="flex:1;padding:8px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:13px;color:var(--text-secondary);background:#F8FAFC;outline:none;cursor:text;">
+                                <button class="btn secondary" onclick="copyShareLink('external')" style="white-space:nowrap;gap:6px;display:inline-flex;align-items:center;">
+                                    <i class="fa-regular fa-copy"></i> 複製
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn ghost" onclick="cancelShare()">取消共用</button>
-                <div class="footer-right">
+                <div class="footer-right" style="margin-left:auto;">
                     <button class="btn secondary" onclick="closeShareModal()">取消</button>
                     <button id="shareSubmitBtn" class="btn primary" onclick="submitShare()">開始共用</button>
                 </div>
@@ -199,6 +407,74 @@
         </div>
     </div>
     
+    <!-- ===== Modal：新增對象 Picker ===== -->
+    <div class="picker-overlay" id="addPickerModal">
+        <div class="picker-modal">
+            <div class="picker-hd">
+                <h3><i class="fa-solid fa-user-plus" style="color:#2563EB;"></i> 新增對象</h3>
+                <button class="btn ghost" onclick="closeAddPicker()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="picker-bd">
+                <!-- 已選取 -->
+                <div class="picker-selected-tags" id="pickerSelectedTags">
+                    <span style="font-size:12px;color:var(--text-muted);line-height:28px;">尚未選取對象</span>
+                </div>
+                <!-- 類型二選一 -->
+                <div class="picker-type-hint" id="pickerTypeHint">
+                    <i class="fa-solid fa-circle-info"></i> 請選擇共享對象類型（部門與人員只能擇一）
+                </div>
+                <div class="picker-type-toggle">
+                    <button class="picker-toggle-btn active" data-tab="dept" id="pickerToggleDept" onclick="switchPickerTab('dept')">
+                        <i class="fa-solid fa-building"></i> 選擇部門
+                    </button>
+                    <span class="picker-toggle-divider">或</span>
+                    <button class="picker-toggle-btn" data-tab="person" id="pickerTogglePerson" onclick="switchPickerTab('person')">
+                        <i class="fa-solid fa-user"></i> 選擇人員
+                    </button>
+                </div>
+                <!-- 搜尋 -->
+                <div class="picker-search">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="pickerSearchInput" placeholder="搜尋部門…" oninput="filterPickerList()">
+                </div>
+                <!-- 清單 -->
+                <div class="picker-list" id="pickerList"></div>
+                <!-- 原因/備註 -->
+                <div class="picker-reason-section">
+                    <label><i class="fa-solid fa-comment-dots"></i> 原因 / 備註</label>
+                    <textarea id="pickerReason" placeholder="請輸入新增原因或備註說明（選填）…"></textarea>
+                </div>
+            </div>
+            <div class="picker-ft">
+                <span class="picker-count" id="pickerCount">已選 0 項</span>
+                <button class="btn ghost" onclick="closeAddPicker()">取消</button>
+                <button class="btn primary" onclick="confirmAddPicker()"><i class="fa-solid fa-check"></i> 確認新增</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Modal：新增資料夾 ===== -->
+    <div class="new-folder-overlay" id="newFolderModal">
+        <div class="new-folder-modal">
+            <div class="nf-hd">
+                <h4><i class="fa-solid fa-folder-plus" style="color:#2563EB;"></i> 新增資料夾</h4>
+                <button class="btn ghost" onclick="closeNewFolderModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="nf-bd">
+                <div class="nf-parent">
+                    <i class="fa-solid fa-folder-open"></i>
+                    上層目錄：<b id="newFolderParent">—</b>
+                </div>
+                <label for="newFolderNameInput">資料夾名稱</label>
+                <input type="text" id="newFolderNameInput" placeholder="請輸入新資料夾名稱…" autocomplete="off">
+            </div>
+            <div class="nf-ft">
+                <button class="btn ghost" onclick="closeNewFolderModal()">取消</button>
+                <button class="btn primary" onclick="confirmNewFolder()"><i class="fa-solid fa-check"></i> 建立</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast 通知 -->
     <div id="toastContainer" class="toast-container"></div>
     
@@ -208,5 +484,229 @@
     <script src="shared/layout-loader.js"></script>
     <script src="js/km-base.js"></script>
     <script src="js/km-recent.js"></script>
+
+    <script>
+    /* ============================================================
+       近期存取 — Picker & 新增資料夾
+       ============================================================ */
+
+    // ===== 假資料：人員與部門清單 =====
+    const _pickableDepts = [
+        { name: 'HR', sub: '人資部，共 12 人' },
+        { name: '管理部', sub: '管理部，共 8 人' },
+        { name: '行政部', sub: '行政部，共 6 人' },
+        { name: '專案部門', sub: '專案部門，共 15 人' },
+        { name: '研發部', sub: '研發部，共 20 人' },
+        { name: '業務部', sub: '業務部，共 10 人' },
+        { name: '全公司', sub: '所有部門與人員' },
+    ];
+    const _pickablePersons = [
+        { name: '鄭總經理', sub: '管理部 · 總經理' },
+        { name: '王副總', sub: '管理部 · 副總經理' },
+        { name: '李經理', sub: 'HR · 人資經理' },
+        { name: '張小明', sub: 'HR · 人資專員' },
+        { name: '陳美玲', sub: 'HR · 人資專員' },
+        { name: '林志偉', sub: '行政部 · 行政主管' },
+        { name: '周大衛', sub: '管理部 · 管理師（試用期）' },
+        { name: '黃雅婷', sub: '專案部門 · PM' },
+        { name: '吳建宏', sub: '研發部 · 工程師' },
+        { name: '劉怡君', sub: '業務部 · 業務專員' },
+        { name: '蔡宗翰', sub: '研發部 · 資深工程師' },
+        { name: '許淑芬', sub: '行政部 · 行政專員' },
+    ];
+
+    let _pickerTab = 'dept';
+    let _pickerSelected = [];
+
+    function openAddPicker() {
+        _pickerSelected = [];
+        _pickerTab = 'dept';
+        document.getElementById('pickerSearchInput').value = '';
+        document.getElementById('pickerReason').value = '';
+        updatePickerTabs();
+        renderPickerList();
+        renderPickerTags();
+        document.getElementById('addPickerModal').classList.add('show');
+    }
+
+    function closeAddPicker() {
+        const modal = document.getElementById('addPickerModal');
+        modal.classList.remove('show');
+        delete modal.dataset.source;
+    }
+
+    function switchPickerTab(tab) {
+        if (_pickerTab === tab) return;
+        if (_pickerSelected.length > 0) {
+            if (!confirm('切換類型將清除目前已選取的項目，確定要切換嗎？')) return;
+        }
+        _pickerSelected = [];
+        _pickerTab = tab;
+        document.getElementById('pickerSearchInput').value = '';
+        updatePickerTabs();
+        renderPickerList();
+        renderPickerTags();
+    }
+
+    function updatePickerTabs() {
+        const deptBtn = document.getElementById('pickerToggleDept');
+        const personBtn = document.getElementById('pickerTogglePerson');
+        const hint = document.getElementById('pickerTypeHint');
+        if (deptBtn) {
+            deptBtn.classList.toggle('active', _pickerTab === 'dept');
+            deptBtn.classList.toggle('locked', _pickerTab === 'person' && _pickerSelected.length > 0);
+        }
+        if (personBtn) {
+            personBtn.classList.toggle('active', _pickerTab === 'person');
+            personBtn.classList.toggle('locked', _pickerTab === 'dept' && _pickerSelected.length > 0);
+        }
+        if (hint) {
+            if (_pickerSelected.length > 0) {
+                const label = _pickerTab === 'dept' ? '部門' : '人員';
+                hint.innerHTML = `<i class="fa-solid fa-lock" style="color:#2563EB;"></i> 已鎖定為 <b>${label}</b> 模式（清空選取後可切換）`;
+                hint.classList.add('locked');
+            } else {
+                hint.innerHTML = '<i class="fa-solid fa-circle-info"></i> 請選擇共享對象類型（部門與人員只能擇一）';
+                hint.classList.remove('locked');
+            }
+        }
+        document.getElementById('pickerSearchInput').placeholder =
+            _pickerTab === 'dept' ? '搜尋部門…' : '搜尋人員…';
+    }
+
+    function renderPickerList() {
+        const list = document.getElementById('pickerList');
+        const keyword = document.getElementById('pickerSearchInput').value.trim().toLowerCase();
+        const source = _pickerTab === 'dept' ? _pickableDepts : _pickablePersons;
+        const type = _pickerTab === 'dept' ? '部門' : '人員';
+        const iconClass = _pickerTab === 'dept' ? 'dept' : 'person';
+        const iconFA = _pickerTab === 'dept' ? 'fa-building' : 'fa-user';
+
+        const filtered = source.filter(item =>
+            !keyword || item.name.toLowerCase().includes(keyword) || (item.sub && item.sub.toLowerCase().includes(keyword))
+        );
+
+        if (!filtered.length) {
+            list.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px 0;font-size:13px;">找不到符合的結果</div>';
+            return;
+        }
+
+        list.innerHTML = filtered.map(item => {
+            const isSelected = _pickerSelected.some(s => s.name === item.name && s.type === type);
+            return `<div class="picker-item ${isSelected ? 'selected' : ''}" onclick="togglePickerItem('${item.name}','${type}','${(item.sub||'').replace(/'/g,"\\'")}')"><input type="checkbox" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation();togglePickerItem('${item.name}','${type}','${(item.sub||'').replace(/'/g,"\\'")}')"><div class="pi-icon ${iconClass}"><i class="fa-solid ${iconFA}"></i></div><div class="pi-info"><div class="pi-name">${item.name}</div><div class="pi-sub">${item.sub || ''}</div></div></div>`;
+        }).join('');
+    }
+
+    function togglePickerItem(name, type, sub) {
+        const idx = _pickerSelected.findIndex(s => s.name === name && s.type === type);
+        if (idx >= 0) {
+            _pickerSelected.splice(idx, 1);
+        } else {
+            _pickerSelected.push({ name, type, sub });
+        }
+        renderPickerList();
+        renderPickerTags();
+        updatePickerTabs();
+    }
+
+    function removePickerTag(name, type) {
+        _pickerSelected = _pickerSelected.filter(s => !(s.name === name && s.type === type));
+        renderPickerList();
+        renderPickerTags();
+        updatePickerTabs();
+    }
+
+    function renderPickerTags() {
+        const container = document.getElementById('pickerSelectedTags');
+        const countEl = document.getElementById('pickerCount');
+        if (!_pickerSelected.length) {
+            container.innerHTML = '<span style="font-size:12px;color:var(--text-muted);line-height:28px;">尚未選取對象</span>';
+            countEl.textContent = '已選 0 項';
+            return;
+        }
+        container.innerHTML = _pickerSelected.map(s => {
+            const cls = s.type === '部門' ? 'dept-tag' : 'person-tag';
+            const icon = s.type === '部門' ? 'fa-building' : 'fa-user';
+            return `<span class="picker-tag ${cls}"><i class="fa-solid ${icon}" style="font-size:10px;"></i> ${s.name}<i class="fa-solid fa-xmark tag-rm" onclick="event.stopPropagation();removePickerTag('${s.name}','${s.type}')"></i></span>`;
+        }).join('');
+        countEl.textContent = `已選 ${_pickerSelected.length} 項`;
+    }
+
+    function filterPickerList() {
+        renderPickerList();
+    }
+
+    function confirmAddPicker() {
+        if (!_pickerSelected.length) { alert('請至少選取一個對象'); return; }
+        const reason = document.getElementById('pickerReason').value.trim();
+
+        const source = document.getElementById('addPickerModal').dataset.source;
+        if (source === 'share') {
+            _pickerSelected.forEach(s => {
+                const entry = { name: s.name, type: s.type, edit: false, view: true, reason: reason };
+                if (!_sharePermList.some(e => e.name === s.name && e.type === s.type)) {
+                    _sharePermList.push(entry);
+                }
+            });
+            closeAddPicker();
+            renderSharePermTable();
+            return;
+        }
+
+        closeAddPicker();
+    }
+
+    // ===== 新增資料夾 =====
+    function openNewFolderModal() {
+        const parent = currentFolder || '';
+        document.getElementById('newFolderParent').textContent = parent || '（根目錄）';
+        document.getElementById('newFolderNameInput').value = '';
+        document.getElementById('newFolderModal').classList.add('show');
+        setTimeout(() => document.getElementById('newFolderNameInput').focus(), 100);
+    }
+
+    function closeNewFolderModal() {
+        document.getElementById('newFolderModal').classList.remove('show');
+    }
+
+    function confirmNewFolder() {
+        const name = document.getElementById('newFolderNameInput').value.trim();
+        if (!name) { alert('請輸入資料夾名稱'); return; }
+
+        const parent = currentFolder || '';
+        const fullPath = parent ? parent + '/' + name : name;
+
+        const data = localStorage.getItem('fileDatabase');
+        if (data) {
+            const db = JSON.parse(data);
+            const exists = db.folders.some(f => f.name === fullPath);
+            if (exists) { alert('此資料夾名稱已存在'); return; }
+            db.folders.push({
+                name: fullPath,
+                permissions: { [currentUserDept]: '完全控制' },
+                userCreated: true
+            });
+            localStorage.setItem('fileDatabase', JSON.stringify(db));
+        }
+
+        closeNewFolderModal();
+
+        if (currentFolder) loadFilesForFolder(currentFolder);
+
+        const container = document.getElementById('toastContainer');
+        if (container) {
+            const toast = document.createElement('div');
+            toast.style.cssText = 'padding:12px 18px;background:#fff;border:1px solid #A7F3D0;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.12);display:flex;align-items:center;gap:8px;font-size:14px;color:#047857;animation:slideIn .3s ease;';
+            toast.innerHTML = '<i class="fa-solid fa-check-circle"></i> 已建立資料夾「' + name + '」';
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 2500);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const inp = document.getElementById('newFolderNameInput');
+        if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') confirmNewFolder(); });
+    });
+    </script>
 </body>
 </html>
