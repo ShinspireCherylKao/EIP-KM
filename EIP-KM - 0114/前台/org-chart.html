@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>組織圖 - JoinTime</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-org-chart.css">
+</head>
+<body>
+    <!-- 共用 header -->
+    <div id="header-container"></div>
+    <!-- 共用 sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- 主要內容區 -->
+    <main class="main-content">
+        <div class="org-container">
+            <!-- 頂部工具列 -->
+            <div class="org-toolbar">
+                <div class="org-toolbar-left">
+                    <h2 class="org-page-title">
+                        <i class="fa-solid fa-sitemap"></i> 組織圖
+                    </h2>
+                    <span class="org-badge" id="totalCount">0 人</span>
+                </div>
+                <div class="org-toolbar-right">
+                    <!-- 搜尋 -->
+                    <div class="org-search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="orgSearch" placeholder="搜尋姓名、職稱或部門...">
+                        <button class="org-search-clear" id="searchClear" style="display:none;">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <!-- 視圖切換 -->
+                    <div class="org-view-switcher">
+                        <button class="org-view-btn active" data-view="tree" title="樹狀圖">
+                            <i class="fa-solid fa-sitemap"></i>
+                        </button>
+                        <button class="org-view-btn" data-view="list" title="清單檢視">
+                            <i class="fa-solid fa-list"></i>
+                        </button>
+                    </div>
+                    <!-- 全部展開/收合 -->
+                    <button class="org-action-btn" id="toggleAll" title="全部展開/收合">
+                        <i class="fa-solid fa-arrows-up-down"></i>
+                        <span>全部展開</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 搜尋結果提示 -->
+            <div class="org-search-result" id="searchResult" style="display:none;">
+                <i class="fa-solid fa-filter"></i>
+                <span id="searchResultText"></span>
+                <button class="org-search-result-clear" id="searchResultClear">清除篩選</button>
+            </div>
+
+            <!-- ====== 樹狀圖檢視 ====== -->
+            <div class="org-view active" id="view-tree">
+                <!-- 縮放控制 -->
+                <div class="org-zoom-controls">
+                    <button class="org-zoom-btn" id="zoomIn" title="放大">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <span class="org-zoom-level" id="zoomLevel">100%</span>
+                    <button class="org-zoom-btn" id="zoomOut" title="縮小">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <button class="org-zoom-btn" id="zoomReset" title="重設">
+                        <i class="fa-solid fa-expand"></i>
+                    </button>
+                </div>
+
+                <!-- 樹狀圖容器（可拖曳平移） -->
+                <div class="org-tree-viewport" id="treeViewport">
+                    <div class="org-tree" id="orgTree">
+                        <!-- JS 動態產生 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== 清單檢視 ====== -->
+            <div class="org-view" id="view-list">
+                <div class="org-list-panel">
+                    <table class="org-list-table">
+                        <thead>
+                            <tr>
+                                <th style="width:50px;"></th>
+                                <th>姓名</th>
+                                <th>職稱</th>
+                                <th>部門</th>
+                                <th>子組別</th>
+                                <th>E-mail</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orgListBody">
+                            <!-- JS 動態產生 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人員詳細資訊 Modal -->
+        <div class="org-detail-overlay" id="detailOverlay">
+            <div class="org-detail-modal" id="detailModal">
+                <div class="org-detail-header">
+                    <h3 id="detailTitle">人員資訊</h3>
+                    <button class="org-detail-close" id="detailClose">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="org-detail-body" id="detailBody">
+                    <!-- JS 動態產生 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="org-toast-container" id="toastContainer"></div>
+    </main>
+
+    <script src="shared/layout-loader.js"></script>
+    <script src="js/org-chart.js"></script>
+</body>
+</html>

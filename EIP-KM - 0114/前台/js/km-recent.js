@@ -445,11 +445,17 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
         thead.querySelectorAll('.col-date, .col-actions, .col-tags').forEach(th => th.style.display = '');
     }
 
-    // 還原上傳檔案與新增資料夾按鈕
+    // 還原上傳檔案與新增資料夾按鈕（若有權限控制函式則交由它決定）
     const uploadBtn = document.getElementById('uploadBtn');
     const newFolderBtn = document.getElementById('newFolderBtn');
-    if (uploadBtn) uploadBtn.style.display = '';
-    if (newFolderBtn) newFolderBtn.style.display = '';
+    if (typeof window._hasFolderEditPerm === 'function' && currentFolder) {
+        const canEdit = window._hasFolderEditPerm(currentFolder);
+        if (uploadBtn)    uploadBtn.style.display    = canEdit ? '' : 'none';
+        if (newFolderBtn) newFolderBtn.style.display  = canEdit ? '' : 'none';
+    } else {
+        if (uploadBtn) uploadBtn.style.display = '';
+        if (newFolderBtn) newFolderBtn.style.display = '';
+    }
     
     if (files.length === 0 && subFolders.length === 0) {
         tbody.innerHTML = '<tr><td colspan="4" class="empty-state">此資料夾沒有檔案</td></tr>';
@@ -458,6 +464,9 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
 
     // 子資料夾列
     const favFolders = JSON.parse(localStorage.getItem('favoriteFolders') || '[]');
+    // 權限判斷：當前資料夾是否可編輯
+    const _canEditCurrent = (typeof window._hasFolderEditPerm === 'function' && currentFolder)
+        ? window._hasFolderEditPerm(currentFolder) : true;
     let folderHtml = subFolders.map(sf => {
         const displayName = sf.name.split('/').pop();
         const safeName = sf.name.replace(/'/g, "\\'");
@@ -482,7 +491,7 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
                         <button class="btn small ghost ${folderFavClass}" onclick="event.stopPropagation(); toggleFolderFavorite('${safeName}')" title="${isFolderFav ? '取消收藏' : '加入收藏'}">
                             <i class="${folderFavIcon}"></i>
                         </button>
-                        <div class="more-menu-wrapper">
+                        ${_canEditCurrent ? `<div class="more-menu-wrapper">
                             <button class="btn small ghost" onclick="event.stopPropagation(); toggleMoreMenu(event, '${safeName}')" title="更多操作">
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </button>
@@ -497,7 +506,7 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
                                     <i class="fa-solid fa-trash-can"></i>刪除資料夾
                                 </button>
                             </div>
-                        </div>
+                        </div>` : ''}
                     </div>
                 </td>
             </tr>`;
@@ -543,7 +552,7 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
                         <button class="btn small ghost" onclick="downloadFile('${file.name}')" title="下載">
                             <i class="fa-solid fa-download"></i>
                         </button>
-                        <div class="more-menu-wrapper">
+                        ${_canEditCurrent ? `<div class="more-menu-wrapper">
                             <button class="btn small ghost" onclick="toggleMoreMenu(event, '${file.name.replace(/'/g, "\\'")}')" title="更多操作">
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </button>
@@ -558,7 +567,7 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
                                     <i class="fa-solid fa-trash-can"></i>移到垃圾桶
                                 </button>
                             </div>
-                        </div>
+                        </div>` : ''}
                     </div>
                 </td>
             </tr>
@@ -1148,11 +1157,210 @@ function downloadFile(fileName) {
     showToast('開始下載: ' + fileName);
 }
 
+// ==================== 上傳功能 ====================
+let uploadSelectedFiles = [];
+
 /**
  * 開啟上傳 Modal
  */
 function openUploadModal() {
-    showToast('上傳功能開發中...');
+    uploadSelectedFiles = [];
+    renderUploadFileList();
+    openModal('uploadModal');
+    initUploadDropzone();
+}
+
+/**
+ * 初始化拖曳上傳區
+ */
+function initUploadDropzone() {
+    const dropzone = document.getElementById('uploadDropzone');
+    const fileInput = document.getElementById('uploadFiles');
+    const uploadBtn = document.getElementById('uploadFileBtn');
+    if (!dropzone || !fileInput) return;
+
+    if (dropzone.dataset.bound) return;
+    dropzone.dataset.bound = '1';
+
+    dropzone.addEventListener('click', (e) => {
+        if (e.target.closest('.file-remove')) return;
+        fileInput.click();
+    });
+
+    if (uploadBtn) {
+        uploadBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        });
+    }
+
+    fileInput.addEventListener('change', (e) => {
+        addUploadFiles(e.target.files);
+        fileInput.value = '';
+    });
+
+    dropzone.addEventListener('dragenter', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        dropzone.classList.add('dragging');
+    });
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        dropzone.classList.add('dragging');
+    });
+    dropzone.addEventListener('dragleave', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        if (!dropzone.contains(e.relatedTarget)) dropzone.classList.remove('dragging');
+    });
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        dropzone.classList.remove('dragging');
+        if (e.dataTransfer.files.length > 0) addUploadFiles(e.dataTransfer.files);
+    });
+}
+
+/**
+ * 新增檔案到上傳列表
+ */
+function addUploadFiles(fileList) {
+    const maxFiles = 10;
+    if (uploadSelectedFiles.length + fileList.length > maxFiles) {
+        alert('⚠️ 一次最多上傳 ' + maxFiles + ' 個檔案');
+    }
+    for (const file of fileList) {
+        if (uploadSelectedFiles.length >= maxFiles) break;
+        if (!uploadSelectedFiles.find(f => f.name === file.name && f.size === file.size)) {
+            uploadSelectedFiles.push(file);
+        }
+    }
+    renderUploadFileList();
+}
+
+/**
+ * 移除上傳列表中的檔案
+ */
+function removeUploadFile(index) {
+    uploadSelectedFiles.splice(index, 1);
+    renderUploadFileList();
+}
+
+/**
+ * 格式化檔案大小
+ */
+function uploadFormatFileSize(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024, sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+/**
+ * 根據副檔名取得上傳檔案圖示
+ */
+function getUploadFileIcon(fileName) {
+    const ext = fileName.split('.').pop().toLowerCase();
+    const map = {
+        'pdf': 'fa-solid fa-file-pdf', 'doc': 'fa-solid fa-file-word', 'docx': 'fa-solid fa-file-word',
+        'xls': 'fa-solid fa-file-excel', 'xlsx': 'fa-solid fa-file-excel',
+        'ppt': 'fa-solid fa-file-powerpoint', 'pptx': 'fa-solid fa-file-powerpoint',
+        'jpg': 'fa-solid fa-file-image', 'jpeg': 'fa-solid fa-file-image', 'png': 'fa-solid fa-file-image',
+        'gif': 'fa-solid fa-file-image', 'svg': 'fa-solid fa-file-image',
+        'mp3': 'fa-solid fa-file-audio', 'wav': 'fa-solid fa-file-audio',
+        'mp4': 'fa-solid fa-file-video', 'zip': 'fa-solid fa-file-zipper', 'rar': 'fa-solid fa-file-zipper',
+        'txt': 'fa-solid fa-file-lines',
+    };
+    return map[ext] || 'fa-solid fa-file';
+}
+
+/**
+ * 渲染已選檔案列表
+ */
+function renderUploadFileList() {
+    const listEl = document.getElementById('uploadFileList');
+    const progressFill = document.getElementById('uploadProgressFill');
+    const progressText = document.getElementById('uploadProgressText');
+    const dropzoneContent = document.querySelector('.upload-dropzone-content');
+    if (!listEl) return;
+
+    const count = uploadSelectedFiles.length, max = 10;
+    if (progressFill) progressFill.style.width = Math.min((count / max) * 100, 100) + '%';
+    if (progressText) progressText.textContent = count + '/' + max;
+
+    if (count === 0) {
+        listEl.innerHTML = '';
+        if (dropzoneContent) dropzoneContent.style.display = '';
+        return;
+    }
+
+    if (dropzoneContent) dropzoneContent.style.display = 'none';
+    listEl.innerHTML = uploadSelectedFiles.map((file, idx) =>
+        `<div class="upload-file-item">
+            <i class="file-icon ${getUploadFileIcon(file.name)}"></i>
+            <span class="file-name" title="${file.name}">${file.name}</span>
+            <span class="file-size">${uploadFormatFileSize(file.size)}</span>
+            <button class="file-remove" onclick="event.stopPropagation(); removeUploadFile(${idx})"><i class="fa-solid fa-xmark"></i></button>
+        </div>`
+    ).join('');
+}
+
+/**
+ * 執行上傳
+ */
+function doUpload() {
+    if (uploadSelectedFiles.length === 0) {
+        alert('請先選擇要上傳的檔案');
+        return;
+    }
+
+    const targetFolder = currentFolder || 'HR/FAQ';
+    const currentUserDept = 'HR';
+
+    const data = localStorage.getItem('fileDatabase');
+    if (!data) {
+        alert('無法載入檔案資料庫');
+        return;
+    }
+
+    const db = JSON.parse(data);
+    const today = new Date().toISOString().split('T')[0];
+
+    uploadSelectedFiles.forEach(file => {
+        const exists = db.files.some(f => f.name === file.name && f.folder === targetFolder);
+        if (exists) {
+            console.log('⚠️ 同名檔案已存在，跳過:', file.name);
+            return;
+        }
+
+        const newFile = {
+            id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+            name: file.name,
+            path: '/' + targetFolder + '/',
+            folder: targetFolder,
+            department: currentUserDept,
+            size: uploadFormatFileSize(file.size),
+            sizeBytes: file.size,
+            uploadDate: today,
+            tags: [],
+            permissions: {
+                'HR': '完全控制',
+                '管理部': '僅瀏覽',
+                '行政部': '僅瀏覽'
+            }
+        };
+        db.files.push(newFile);
+    });
+
+    localStorage.setItem('fileDatabase', JSON.stringify(db));
+
+    const count = uploadSelectedFiles.length;
+    showToast('✅ 已成功上傳 ' + count + ' 個檔案到「' + targetFolder + '」');
+
+    uploadSelectedFiles = [];
+    renderUploadFileList();
+    closeModal('uploadModal');
+
+    if (currentFolder) {
+        loadFilesForFolder(currentFolder);
+    }
 }
 
 /**

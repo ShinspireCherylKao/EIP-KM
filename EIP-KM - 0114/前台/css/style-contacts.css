@@ -1,0 +1,348 @@
+/*
+ * style-contacts.css
+ * 通訊錄頁面專用樣式
+ */
+
+/* ===== 通訊錄頂部工具列 ===== */
+.contacts-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.contacts-toolbar .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.contacts-toolbar .toolbar-left h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.contacts-toolbar .toolbar-left h2 i {
+    color: var(--primary-color);
+}
+
+.contacts-count {
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: var(--hover-bg);
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+}
+
+/* 搜尋框 */
+.contacts-search {
+    position: relative;
+    width: 320px;
+}
+
+.contacts-search input {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    outline: none;
+    transition: border-color var(--transition);
+    background: var(--white-color);
+}
+
+.contacts-search input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.contacts-search i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* 篩選按鈕群 */
+.contacts-filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    background: var(--white-color);
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+}
+
+.filter-btn:hover {
+    background: var(--hover-bg);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.filter-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+/* ===== 部門分組 ===== */
+.contacts-group {
+    margin-bottom: 20px;
+}
+
+.contacts-group-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 100%);
+    border: 1px solid #DBEAFE;
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: all var(--transition);
+}
+
+.contacts-group-header:hover {
+    background: linear-gradient(135deg, #DBEAFE 0%, #E0F2FE 100%);
+}
+
+.contacts-group-header i.group-icon {
+    color: var(--primary-color);
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+.contacts-group-header .group-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.contacts-group-header .group-count {
+    font-size: 12px;
+    color: var(--text-secondary);
+    background: var(--white-color);
+    padding: 2px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.contacts-group-header .toggle-icon {
+    color: var(--text-muted);
+    font-size: 12px;
+    transition: transform var(--transition);
+}
+
+.contacts-group.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.contacts-group.collapsed .contacts-table-wrap {
+    display: none;
+}
+
+/* ===== 通訊錄表格 ===== */
+.contacts-table-wrap {
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.contacts-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.contacts-table thead th {
+    background: #F8FAFC;
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.contacts-table tbody tr {
+    transition: background var(--transition);
+}
+
+.contacts-table tbody tr:hover {
+    background: #F8FAFC;
+}
+
+.contacts-table tbody tr:not(:last-child) td {
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.contacts-table tbody td {
+    padding: 10px 16px;
+    font-size: 14px;
+    color: var(--text-primary);
+    vertical-align: middle;
+}
+
+/* 姓名欄 */
+.contact-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.contact-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.contact-name-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-name-zh {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.contact-name-en {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* 職稱 */
+.contact-title-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.contact-title-badge.level-exec {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.contact-title-badge.level-manager {
+    background: #DBEAFE;
+    color: #1E40AF;
+}
+
+.contact-title-badge.level-lead {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.contact-title-badge.level-senior {
+    background: #E0E7FF;
+    color: #3730A3;
+}
+
+.contact-title-badge.level-staff {
+    background: #F1F5F9;
+    color: #475569;
+}
+
+/* Email */
+.contact-email a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color var(--transition);
+}
+
+.contact-email a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+/* 子組別標籤 */
+.contact-sub-group {
+    font-size: 12px;
+    color: var(--text-secondary);
+    background: #F1F5F9;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* ===== 無結果 ===== */
+.contacts-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+
+.contacts-empty i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+    opacity: 0.5;
+}
+
+.contacts-empty p {
+    font-size: 15px;
+}
+
+/* ===== 頭像顏色 ===== */
+.avatar-bg-1 { background: #3B82F6; }
+.avatar-bg-2 { background: #8B5CF6; }
+.avatar-bg-3 { background: #EC4899; }
+.avatar-bg-4 { background: #F59E0B; }
+.avatar-bg-5 { background: #10B981; }
+.avatar-bg-6 { background: #06B6D4; }
+.avatar-bg-7 { background: #EF4444; }
+.avatar-bg-8 { background: #6366F1; }
+
+/* ===== RWD ===== */
+@media (max-width: 768px) {
+    .contacts-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .contacts-search {
+        width: 100%;
+    }
+
+    .contacts-table thead th:nth-child(4),
+    .contacts-table tbody td:nth-child(4) {
+        display: none;
+    }
+}

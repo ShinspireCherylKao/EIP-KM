@@ -63,7 +63,7 @@ const SIDEBAR_FALLBACK_HTML = `<!-- 側邊欄 -->
         </a>
 
         <!-- 通訊錄 -->
-        <a href="#" class="nav-item" data-page="contacts">
+        <a href="index.html?page=contacts" class="nav-item" data-page="contacts">
             <i class="fa-solid fa-address-book"></i>
             <span>通訊錄</span>
         </a>
@@ -81,9 +81,15 @@ const SIDEBAR_FALLBACK_HTML = `<!-- 側邊欄 -->
         </a>
 
         <!-- KM 知識管理 -->
-        <a href="km-knowledge.html" class="nav-item sub-item" data-page="km-knowledge">
+        <a href="km-knowledge.html" class="nav-item" data-page="km-knowledge">
             <i class="fa-solid fa-brain"></i>
             <span>KM 知識管理</span>
+        </a>
+
+        <!-- 組織圖 -->
+        <a href="org-chart.html" class="nav-item" data-page="org-chart">
+            <i class="fa-solid fa-sitemap"></i>
+            <span>組織圖</span>
         </a>
 
         <!-- 投影機 -->
@@ -298,6 +304,8 @@ function setActiveMenuItem() {
     const kmKnowledgePages = ['km-knowledge.html', 'km-shares.html', 'km-ai.html'];
     if (kmKnowledgePages.includes(currentPage)) {
         selector = '.nav-item[data-page="km-knowledge"]';
+    } else if (currentPage === 'org-chart.html') {
+        selector = '.nav-item[data-page="org-chart"]';
     } else if (currentPage.startsWith('km-')) {
         selector = '.nav-item[data-page="km"]';
     } else if (currentPage === 'index.html' || currentPage === '') {
@@ -313,4 +321,14 @@ function setActiveMenuItem() {
 }
 
 // 頁面載入時初始化
-document.addEventListener('DOMContentLoaded', initSharedLayout);
+document.addEventListener('DOMContentLoaded', async function() {
+    await initSharedLayout();
+    // 佈局載入完成，僅顯示主內容區（header/sidebar 容器一直可見）
+    const mc = document.querySelector('.main-content');
+    if (mc) mc.classList.add('layout-ready');
+
+    // 佈局載入完成後，重新初始化全站搜尋（因為 header 是動態載入的）
+    if (window.__globalSearch && typeof window.__globalSearch.initGlobalSearch === 'function') {
+        window.__globalSearch.initGlobalSearch();
+    }
+});

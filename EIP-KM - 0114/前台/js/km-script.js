@@ -1204,31 +1204,261 @@ function switchMyTab(which) {
 }
 
 /**
+ * 上傳 Modal - 已選檔案暫存
+ */
+let uploadSelectedFiles = [];
+
+/**
  * 開啟上傳 Modal
  */
 function openUploadModal() {
     const path = document.getElementById('currentPath')?.textContent || 'HR/FAQ';
     const targetPath = document.getElementById('uploadTargetPath');
     if (targetPath) targetPath.textContent = path;
+
+    // 清空已選檔案
+    uploadSelectedFiles = [];
+    renderUploadFileList();
     
     openModal('uploadModal');
+    initUploadDropzone();
+}
+
+/**
+ * 初始化拖曳上傳區
+ */
+function initUploadDropzone() {
+    const dropzone = document.getElementById('uploadDropzone');
+    const fileInput = document.getElementById('uploadFiles');
+    const uploadBtn = document.getElementById('uploadFileBtn');
+    if (!dropzone || !fileInput) return;
+
+    // 已綁定過就不再綁
+    if (dropzone.dataset.bound) return;
+    dropzone.dataset.bound = '1';
+
+    // 點擊拖曳區打開檔案選擇
+    dropzone.addEventListener('click', (e) => {
+        if (e.target.closest('.file-remove')) return;
+        fileInput.click();
+    });
+
+    // 點擊「上傳檔案」按鈕
+    if (uploadBtn) {
+        uploadBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        });
+    }
+
+    // 檔案選擇
+    fileInput.addEventListener('change', (e) => {
+        addUploadFiles(e.target.files);
+        fileInput.value = '';
+    });
+
+    // 拖曳事件
+    dropzone.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('dragging');
+    });
+
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('dragging');
+    });
+
+    dropzone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // 只在離開 dropzone 本身時移除
+        if (!dropzone.contains(e.relatedTarget)) {
+            dropzone.classList.remove('dragging');
+        }
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('dragging');
+        if (e.dataTransfer.files.length > 0) {
+            addUploadFiles(e.dataTransfer.files);
+        }
+    });
+}
+
+/**
+ * 新增檔案到上傳列表
+ */
+function addUploadFiles(fileList) {
+    const maxFiles = 10;
+    if (uploadSelectedFiles.length + fileList.length > maxFiles) {
+        alert('⚠️ 一次最多上傳 ' + maxFiles + ' 個檔案');
+    }
+    for (const file of fileList) {
+        if (uploadSelectedFiles.length >= maxFiles) break;
+        // 避免重複
+        if (!uploadSelectedFiles.find(f => f.name === file.name && f.size === file.size)) {
+            uploadSelectedFiles.push(file);
+        }
+    }
+    renderUploadFileList();
+}
+
+/**
+ * 移除上傳列表中的檔案
+ */
+function removeUploadFile(index) {
+    uploadSelectedFiles.splice(index, 1);
+    renderUploadFileList();
+}
+
+/**
+ * 格式化檔案大小
+ */
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+/**
+ * 根據副檔名取得檔案圖示
+ */
+function getUploadFileIcon(fileName) {
+    const ext = fileName.split('.').pop().toLowerCase();
+    const map = {
+        'pdf': 'fa-solid fa-file-pdf',
+        'doc': 'fa-solid fa-file-word',
+        'docx': 'fa-solid fa-file-word',
+        'xls': 'fa-solid fa-file-excel',
+        'xlsx': 'fa-solid fa-file-excel',
+        'ppt': 'fa-solid fa-file-powerpoint',
+        'pptx': 'fa-solid fa-file-powerpoint',
+        'jpg': 'fa-solid fa-file-image',
+        'jpeg': 'fa-solid fa-file-image',
+        'png': 'fa-solid fa-file-image',
+        'gif': 'fa-solid fa-file-image',
+        'svg': 'fa-solid fa-file-image',
+        'mp3': 'fa-solid fa-file-audio',
+        'wav': 'fa-solid fa-file-audio',
+        'mp4': 'fa-solid fa-file-video',
+        'zip': 'fa-solid fa-file-zipper',
+        'rar': 'fa-solid fa-file-zipper',
+        'txt': 'fa-solid fa-file-lines',
+    };
+    return map[ext] || 'fa-solid fa-file';
+}
+
+/**
+ * 渲染已選檔案列表
+ */
+function renderUploadFileList() {
+    const listEl = document.getElementById('uploadFileList');
+    const progressFill = document.getElementById('uploadProgressFill');
+    const progressText = document.getElementById('uploadProgressText');
+    const dropzoneContent = document.querySelector('.upload-dropzone-content');
+    if (!listEl) return;
+
+    const count = uploadSelectedFiles.length;
+    const max = 10;
+
+    // 進度條
+    if (progressFill) progressFill.style.width = Math.min((count / max) * 100, 100) + '%';
+    if (progressText) progressText.textContent = count + '/' + max;
+
+    if (count === 0) {
+        listEl.innerHTML = '';
+        if (dropzoneContent) dropzoneContent.style.display = '';
+        return;
+    }
+
+    // 有檔案時縮小拖曳提示
+    if (dropzoneContent) dropzoneContent.style.display = 'none';
+
+    listEl.innerHTML = uploadSelectedFiles.map((file, idx) => {
+        return `<div class="upload-file-item">
+            <i class="file-icon ${getUploadFileIcon(file.name)}"></i>
+            <span class="file-name" title="${file.name}">${file.name}</span>
+            <span class="file-size">${formatFileSize(file.size)}</span>
+            <button class="file-remove" onclick="event.stopPropagation(); removeUploadFile(${idx})"><i class="fa-solid fa-xmark"></i></button>
+        </div>`;
+    }).join('');
 }
 
 /**
  * 執行上傳
  */
 function doUpload() {
-    const title = document.getElementById('uploadTitle')?.value || '';
-    const tags = document.getElementById('uploadTags')?.value || '';
-    
-    alert('上傳成功（示意）\n標題: ' + (title || '未設定') + '\n標籤: ' + (tags || '無'));
-    
-    // 清空表單
-    if (document.getElementById('uploadTitle')) document.getElementById('uploadTitle').value = '';
-    if (document.getElementById('uploadTags')) document.getElementById('uploadTags').value = '';
-    if (document.getElementById('uploadDesc')) document.getElementById('uploadDesc').value = '';
-    
+    if (uploadSelectedFiles.length === 0) {
+        alert('請先選擇要上傳的檔案');
+        return;
+    }
+
+    // 取得當前資料夾路徑
+    const currentPath = document.getElementById('currentPath')?.textContent || 'HR/FAQ';
+    const currentUserDept = 'HR';
+
+    // 從 localStorage 取得資料庫
+    const data = localStorage.getItem('fileDatabase');
+    if (!data) {
+        alert('無法載入檔案資料庫');
+        return;
+    }
+
+    const db = JSON.parse(data);
+    const today = new Date().toISOString().split('T')[0];
+
+    // 將每個檔案加入 fileDatabase
+    uploadSelectedFiles.forEach(file => {
+        // 檢查同資料夾是否已有同名檔案
+        const exists = db.files.some(f => f.name === file.name && f.folder === currentPath);
+        if (exists) {
+            console.log('⚠️ 同名檔案已存在，跳過:', file.name);
+            return;
+        }
+
+        const newFile = {
+            id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+            name: file.name,
+            path: '/' + currentPath + '/',
+            folder: currentPath,
+            department: currentUserDept,
+            size: formatFileSize(file.size),
+            sizeBytes: file.size,
+            uploadDate: today,
+            tags: [],
+            permissions: {
+                'HR': '完全控制',
+                '管理部': '僅瀏覽',
+                '行政部': '僅瀏覽'
+            }
+        };
+        db.files.push(newFile);
+    });
+
+    // 儲存回 localStorage
+    localStorage.setItem('fileDatabase', JSON.stringify(db));
+
+    const count = uploadSelectedFiles.length;
+    showToast('✅ 已成功上傳 ' + count + ' 個檔案到「' + currentPath + '」');
+
+    // 記錄操作
+    if (typeof addFrontendAuditLog === 'function') {
+        addFrontendAuditLog('上傳檔案', uploadSelectedFiles.map(f => f.name).join(', '));
+    }
+
+    // 清空
+    uploadSelectedFiles = [];
+    renderUploadFileList();
     closeModal('uploadModal');
+
+    // 重新載入當前資料夾以顯示新檔案
+    loadKmFolder(currentPath);
 }
 
 /**

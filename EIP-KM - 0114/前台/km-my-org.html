@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/style-sidebar.css">
     <link rel="stylesheet" href="css/style-content.css">
     <link rel="stylesheet" href="css/style-km-base.css">
+    <link rel="stylesheet" href="css/style-search.css">
     <link rel="stylesheet" href="css/style-km-recent.css">
     <style>
         /* ===== 權限設定相關樣式 ===== */
@@ -170,14 +171,11 @@
         .picker-tag .tag-rm { cursor: pointer; margin-left: 2px; font-size: 11px; opacity: .6; }
         .picker-tag .tag-rm:hover { opacity: 1; }
 
-        /* 二選一 Toggle */
+        /* 類型切換 Tab */
         .picker-type-hint {
             font-size: 12px; color: var(--text-muted); margin-bottom: 10px;
             display: flex; align-items: center; gap: 5px;
             padding: 6px 10px; background: #F8FAFC; border-radius: 8px; border: 1px solid #E2E8F0;
-        }
-        .picker-type-hint.locked {
-            background: #EFF6FF; border-color: #BFDBFE; color: #1D4ED8;
         }
         .picker-type-toggle {
             display: flex; align-items: center; gap: 0; margin-bottom: 14px;
@@ -189,15 +187,15 @@
             color: var(--text-secondary); transition: all .2s; display: flex; align-items: center;
             justify-content: center; gap: 6px;
         }
-        .picker-toggle-btn:hover:not(.locked) { background: #F1F5F9; }
+        .picker-toggle-btn:hover { background: #F1F5F9; }
         .picker-toggle-btn.active {
             background: #2563EB; color: #fff; box-shadow: 0 2px 6px rgba(37,99,235,.25);
         }
         .picker-toggle-btn.active[data-tab="person"] {
             background: #7C3AED; box-shadow: 0 2px 6px rgba(124,58,237,.25);
         }
-        .picker-toggle-btn.locked {
-            opacity: .4; cursor: not-allowed; background: #F1F5F9;
+        .picker-tab-count {
+            font-size: 11px; font-weight: 700; opacity: .85;
         }
         .picker-toggle-divider {
             font-size: 11px; color: var(--text-muted); font-weight: 600; padding: 0 4px;
@@ -568,17 +566,16 @@
                 <div class="picker-selected-tags" id="pickerSelectedTags">
                     <span style="font-size:12px;color:var(--text-muted);line-height:28px;">尚未選取對象</span>
                 </div>
-                <!-- 類型二選一 -->
+                <!-- 類型切換 Tab -->
                 <div class="picker-type-hint" id="pickerTypeHint">
-                    <i class="fa-solid fa-circle-info"></i> 請選擇共享對象類型（部門與人員只能擇一）
+                    <i class="fa-solid fa-circle-info"></i> 可同時選擇部門與人員
                 </div>
                 <div class="picker-type-toggle">
                     <button class="picker-toggle-btn active" data-tab="dept" id="pickerToggleDept" onclick="switchPickerTab('dept')">
-                        <i class="fa-solid fa-building"></i> 選擇部門
+                        <i class="fa-solid fa-building"></i> 部門 <span class="picker-tab-count" id="pickerDeptCount"></span>
                     </button>
-                    <span class="picker-toggle-divider">或</span>
                     <button class="picker-toggle-btn" data-tab="person" id="pickerTogglePerson" onclick="switchPickerTab('person')">
-                        <i class="fa-solid fa-user"></i> 選擇人員
+                        <i class="fa-solid fa-user"></i> 人員 <span class="picker-tab-count" id="pickerPersonCount"></span>
                     </button>
                 </div>
                 <!-- 搜尋 -->
@@ -647,6 +644,61 @@
 
     <!-- Toast 通知 -->
     <div id="toastContainer" class="toast-container"></div>
+
+    <!-- 上傳 Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-box upload-modal-box">
+            <div class="upload-modal-header">
+                <div class="upload-modal-title">
+                    <span class="upload-title-main">用文件</span>
+                    <span class="upload-title-sub" id="uploadTargetPath">自己的文件</span>
+                </div>
+                <button class="upload-close-btn" onclick="closeModal('uploadModal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="upload-modal-body">
+                <div class="upload-dropzone" id="uploadDropzone">
+                    <div class="upload-dropzone-content">
+                        <i class="fa-solid fa-cloud-arrow-up upload-dropzone-icon" id="dropzoneIcon"></i>
+                        <p class="upload-dropzone-title">或者拖曳檔案</p>
+                        <p class="upload-dropzone-hint">pdf、圖片、文件、音訊 等內容</p>
+                    </div>
+                    <div class="upload-dropzone-overlay" id="dropzoneOverlay">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>放開以上傳檔案</span>
+                    </div>
+                    <div class="upload-file-list" id="uploadFileList"></div>
+                    <input type="file" multiple id="uploadFiles" style="display:none">
+                </div>
+                <div class="upload-source-btns">
+                    <button class="upload-source-btn" id="uploadFileBtn">
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                        <span>上傳檔案</span>
+                    </button>
+                    <button class="upload-source-btn">
+                        <i class="fa-solid fa-link"></i><i class="fa-brands fa-youtube" style="color:#FF0000;margin-left:-4px"></i>
+                        <span>網站</span>
+                    </button>
+                    <button class="upload-source-btn">
+                        <i class="fa-brands fa-google-drive" style="color:#34A853"></i>
+                        <span>雲端硬碟</span>
+                    </button>
+                    <button class="upload-source-btn">
+                        <i class="fa-regular fa-copy"></i>
+                        <span>複製的文字</span>
+                    </button>
+                </div>
+            </div>
+            <div class="upload-modal-footer">
+                <div class="upload-footer-left">
+                    <div class="upload-progress-bar">
+                        <div class="upload-progress-fill" id="uploadProgressFill"></div>
+                    </div>
+                    <span class="upload-progress-text" id="uploadProgressText">0/10</span>
+                </div>
+                <button class="btn primary" onclick="doUpload()"><i class="fa-solid fa-upload"></i> 上傳</button>
+            </div>
+        </div>
+    </div>
     
     <!-- JS 引用 -->
     <script src="js/main-script.js"></script>
@@ -740,6 +792,46 @@
     // 模擬：目前使用者有完全控制權限的資料夾（根據 currentUserDept = 'HR'）
     const _myManageableFolders = ['HR', 'HR/FAQ', 'HR/SOP', 'HR/表單', 'HR/表單/差旅', 'HR/表單/請假', 'HR/培訓'];
 
+    // ===== 各資料夾對於當前使用者的操作權限 =====
+    // 'edit' = 可上傳 / 新增資料夾 / 修改 / 刪除  (完全控制)
+    // 'view' = 僅瀏覽 / 下載（無法上傳、新增資料夾、修改、刪除）
+    const _folderUserPerm = {
+        'HR':         'edit',
+        'HR/FAQ':     'edit',
+        'HR/SOP':     'edit',
+        'HR/表單':    'edit',
+        'HR/表單/差旅': 'edit',
+        'HR/表單/請假': 'edit',
+        'HR/培訓':    'edit',
+        '管理部':       'view',   // 僅瀏覽
+        '管理部/財務報表': 'view',
+        '管理部/採購合約': 'view',
+        '行政部':       'view',
+        '專案':         'view',
+    };
+
+    /**
+     * 判斷使用者對指定資料夾是否擁有編輯權限
+     * @param {string} folderPath
+     * @returns {boolean}
+     */
+    function hasFolderEditPerm(folderPath) {
+        if (!folderPath) return false;
+        // 直接查表；若沒有定義則向上查找父層
+        if (_folderUserPerm[folderPath]) return _folderUserPerm[folderPath] === 'edit';
+        // 向上查找父層
+        const parts = folderPath.split('/');
+        while (parts.length > 1) {
+            parts.pop();
+            const parent = parts.join('/');
+            if (_folderUserPerm[parent]) return _folderUserPerm[parent] === 'edit';
+        }
+        return false;
+    }
+
+    // 暴露給 km-recent.js 的 renderFileTable 使用
+    window._hasFolderEditPerm = hasFolderEditPerm;
+
     let _permCurrentFolder = null;
     let _permCurrentMode = 'whitelist';
 
@@ -767,6 +859,7 @@
             _origSelectFolder(folderPath);
             _permCurrentFolder = folderPath;
             updatePermButtons(folderPath);
+            updateEditButtons(folderPath);
         };
     })();
 
@@ -776,6 +869,17 @@
         const btnView = document.getElementById('btnViewBW');
         if (btnSet) btnSet.classList.toggle('show', canManage);
         if (btnView) btnView.classList.toggle('show', canManage);
+    }
+
+    /**
+     * 根據資料夾權限顯示 / 隱藏上傳與新增資料夾按鈕
+     */
+    function updateEditButtons(folderPath) {
+        const canEdit = hasFolderEditPerm(folderPath);
+        const uploadBtn  = document.getElementById('uploadBtn');
+        const newFolderBtn = document.getElementById('newFolderBtn');
+        if (uploadBtn)    uploadBtn.style.display    = canEdit ? '' : 'none';
+        if (newFolderBtn) newFolderBtn.style.display  = canEdit ? '' : 'none';
     }
 
     // ===== 設定權限 Modal =====
@@ -932,41 +1036,28 @@
 
     function switchPickerTab(tab) {
         if (_pickerTab === tab) return;
-        // 切換類型時清空已選
-        if (_pickerSelected.length > 0) {
-            if (!confirm('切換類型將清除目前已選取的項目，確定要切換嗎？')) return;
-        }
-        _pickerSelected = [];
         _pickerTab = tab;
         document.getElementById('pickerSearchInput').value = '';
         updatePickerTabs();
         renderPickerList();
-        renderPickerTags();
     }
 
     function updatePickerTabs() {
         const deptBtn = document.getElementById('pickerToggleDept');
         const personBtn = document.getElementById('pickerTogglePerson');
-        const hint = document.getElementById('pickerTypeHint');
+        const deptCountEl = document.getElementById('pickerDeptCount');
+        const personCountEl = document.getElementById('pickerPersonCount');
         if (deptBtn) {
             deptBtn.classList.toggle('active', _pickerTab === 'dept');
-            deptBtn.classList.toggle('locked', _pickerTab === 'person' && _pickerSelected.length > 0);
         }
         if (personBtn) {
             personBtn.classList.toggle('active', _pickerTab === 'person');
-            personBtn.classList.toggle('locked', _pickerTab === 'dept' && _pickerSelected.length > 0);
         }
-        // 已有選取時更新提示
-        if (hint) {
-            if (_pickerSelected.length > 0) {
-                const label = _pickerTab === 'dept' ? '部門' : '人員';
-                hint.innerHTML = `<i class="fa-solid fa-lock" style="color:#2563EB;"></i> 已鎖定為 <b>${label}</b> 模式（清空選取後可切換）`;
-                hint.classList.add('locked');
-            } else {
-                hint.innerHTML = '<i class="fa-solid fa-circle-info"></i> 請選擇共享對象類型（部門與人員只能擇一）';
-                hint.classList.remove('locked');
-            }
-        }
+        // 更新 tab 上的已選數量
+        const deptCount = _pickerSelected.filter(s => s.type === '部門').length;
+        const personCount = _pickerSelected.filter(s => s.type === '人員').length;
+        if (deptCountEl) deptCountEl.textContent = deptCount > 0 ? `(${deptCount})` : '';
+        if (personCountEl) personCountEl.textContent = personCount > 0 ? `(${personCount})` : '';
         document.getElementById('pickerSearchInput').placeholder =
             _pickerTab === 'dept' ? '搜尋部門…' : '搜尋人員…';
     }
@@ -1180,5 +1271,6 @@
         if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') confirmNewFolder(); });
     });
     </script>
+    <script src="js/search.js"></script>
 </body>
 </html>

@@ -28,9 +28,8 @@
 
 /* KM 容器 */
 .km-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 24px 24px 24px;
+    margin: 0 24px;
+    padding: 0 0 24px 0;
 }
 
 /* KM 搜尋列 */
@@ -299,6 +298,11 @@
     width: 100%;
     padding: 6px 10px;
     font-size: 13px;
+}
+
+/* KM 導航容器預留高度，避免載入時跳動 */
+#km-nav-container {
+    min-height: 62px;
 }
 
 /* KM 內部導航 */

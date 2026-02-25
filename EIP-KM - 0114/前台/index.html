@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="css/style-sidebar.css">
     <link rel="stylesheet" href="css/style-content.css">
     <link rel="stylesheet" href="css/style-home.css">
+    <link rel="stylesheet" href="css/style-contacts.css">
+    <link rel="stylesheet" href="css/style-search.css">
 </head>
 <body>
     <!-- 頂部導航欄 -->
@@ -52,7 +54,7 @@
         <aside class="sidebar" id="sidebar">
             <nav class="sidebar-nav">
                 <!-- 公佈欄 -->
-                <a href="#" class="nav-item" data-page="home" onclick="gotoPage('home')">
+                <a href="#" class="nav-item" data-page="home" onclick="gotoPage('home', event)">
                     <i class="fa-solid fa-bullhorn"></i>
                     <span>公佈欄*</span>
                 </a>
@@ -76,7 +78,7 @@
                 </a>
 
                 <!-- 通訊錄 -->
-                <a href="#" class="nav-item" data-page="contacts">
+                <a href="#" class="nav-item" data-page="contacts" onclick="gotoPage('contacts', event)">
                     <i class="fa-solid fa-address-book"></i>
                     <span>通訊錄</span>
                 </a>
@@ -92,10 +94,15 @@
                     <i class="fa-solid fa-folder-tree"></i>
                     <span>文件庫管理</span>
                 </a>
-                <!-- KM 知識管理（文件庫管理子項目） -->
-                <a href="km-knowledge.html" class="nav-item sub-item" data-page="km-knowledge">
+                <!-- KM 知識管理 -->
+                <a href="km-knowledge.html" class="nav-item" data-page="km-knowledge">
                     <i class="fa-solid fa-brain"></i>
                     <span>KM 知識管理</span>
+                </a>
+                <!-- 組織圖 -->
+                <a href="org-chart.html" class="nav-item" data-page="org-chart">
+                    <i class="fa-solid fa-sitemap"></i>
+                    <span>組織圖</span>
                 </a>
                 <!-- 投影機 -->
                 <a href="#" class="nav-item" data-page="projector">
@@ -338,11 +345,21 @@
             </section>
 
             <section class="page-section" id="page-contacts" style="display:none;">
-                <div class="placeholder-content">
-                    <i class="fa-solid fa-address-book"></i>
-                    <h2>通訊錄</h2>
-                    <p>此功能尚在開發中...</p>
+                <!-- 通訊錄工具列 -->
+                <div class="contacts-toolbar">
+                    <div class="toolbar-left">
+                        <h2><i class="fa-solid fa-address-book"></i> 通訊錄</h2>
+                        <span class="contacts-count" id="contactsVisibleCount">顯示 0 / 0 人</span>
+                    </div>
+                    <div class="contacts-search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="contactsSearchInput" placeholder="搜尋姓名、Email、部門…">
+                    </div>
                 </div>
+                <!-- 部門篩選按鈕 -->
+                <div class="contacts-filters" id="contactsDeptFilters"></div>
+                <!-- 通訊錄清單 -->
+                <div id="contactsListBody" style="margin-top:16px;"></div>
             </section>
 
             <section class="page-section" id="page-media" style="display:none;">
@@ -424,48 +441,75 @@
                     <p>此功能尚在開發中...</p>
                 </div>
             </section>
+
+            <!-- ==================== 搜尋結果頁 ==================== -->
+            <section class="page-section" id="page-search" style="display:none;">
+                <!-- 搜尋結果由 search.js 動態渲染 -->
+            </section>
         </main>
     </div>
 
     <!-- ==================== Modals ==================== -->
     <!-- 上傳 Modal -->
     <div class="modal" id="uploadModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <span>上傳到 <strong id="uploadTargetPath">HR/FAQ</strong></span>
-                <button class="btn ghost" onclick="closeModal('uploadModal')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="modal-box upload-modal-box">
+            <!-- 標題區 -->
+            <div class="upload-modal-header">
+                <div class="upload-modal-title">
+                    <span class="upload-title-main">用文件</span>
+                    <span class="upload-title-sub" id="uploadTargetPath">自己的文件</span>
+                </div>
+                <button class="upload-close-btn" onclick="closeModal('uploadModal')"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="modal-body">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>選擇檔案</label>
-                        <p class="hint">支援多檔</p>
-                        <input type="file" multiple id="uploadFiles">
+
+            <div class="upload-modal-body">
+                <!-- 拖曳上傳區 -->
+                <div class="upload-dropzone" id="uploadDropzone">
+                    <div class="upload-dropzone-content">
+                        <i class="fa-solid fa-cloud-arrow-up upload-dropzone-icon" id="dropzoneIcon"></i>
+                        <p class="upload-dropzone-title">或者拖曳檔案</p>
+                        <p class="upload-dropzone-hint">pdf、圖片、文件、音訊 等內容</p>
                     </div>
-                    <div class="form-group">
-                        <label>基本資訊</label>
-                        <div class="form-field">
-                            <span>標題（可選）：</span>
-                            <input type="text" id="uploadTitle" placeholder="顯示名稱，不改檔名">
-                        </div>
-                        <div class="form-field">
-                            <span>描述：</span>
-                            <input type="text" id="uploadDesc" placeholder="可選填">
-                        </div>
-                        <div class="form-field">
-                            <span>標籤：</span>
-                            <input type="text" id="uploadTags" placeholder="以逗號分隔">
-                        </div>
-                        <label class="checkbox-label">
-                            <input type="checkbox" checked id="uploadInherit"> 繼承目前資料夾權限
-                        </label>
-                        <p class="hint">提示：標題僅影響列表顯示，不會改變實際檔名。</p>
+                    <!-- 拖曳中覆蓋層 -->
+                    <div class="upload-dropzone-overlay" id="dropzoneOverlay">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>放開以上傳檔案</span>
                     </div>
+                    <!-- 已選檔案列表 -->
+                    <div class="upload-file-list" id="uploadFileList"></div>
+                    <input type="file" multiple id="uploadFiles" style="display:none">
+                </div>
+
+                <!-- 底部來源按鈕 -->
+                <div class="upload-source-btns">
+                    <button class="upload-source-btn" id="uploadFileBtn">
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                        <span>上傳檔案</span>
+                    </button>
+                    <button class="upload-source-btn">
+                        <i class="fa-solid fa-link"></i><i class="fa-brands fa-youtube" style="color:#FF0000;margin-left:-4px"></i>
+                        <span>網站</span>
+                    </button>
+                    <button class="upload-source-btn">
+                        <i class="fa-brands fa-google-drive" style="color:#34A853"></i>
+                        <span>雲端硬碟</span>
+                    </button>
+                    <button class="upload-source-btn">
+                        <i class="fa-regular fa-copy"></i>
+                        <span>複製的文字</span>
+                    </button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="closeModal('uploadModal')">取消</button>
-                <button class="btn primary" onclick="doUpload()">上傳</button>
+
+            <!-- 底部進度列 -->
+            <div class="upload-modal-footer">
+                <div class="upload-footer-left">
+                    <div class="upload-progress-bar">
+                        <div class="upload-progress-fill" id="uploadProgressFill"></div>
+                    </div>
+                    <span class="upload-progress-text" id="uploadProgressText">0/10</span>
+                </div>
+                <button class="btn primary" onclick="doUpload()"><i class="fa-solid fa-upload"></i> 上傳</button>
             </div>
         </div>
     </div>
@@ -581,6 +625,8 @@
     <script src="js/main-script.js"></script>
     <script src="js/sidebar-script.js"></script>
     <script src="js/home-script.js"></script>
+    <script src="js/contacts-script.js"></script>
+    <script src="js/search.js"></script>
 
     <!-- localStorage 連動功能 -->
     <script>
@@ -666,6 +712,13 @@
             showSyncStatus();
             loadFolderTree(); // 載入資料夾樹狀結構
             console.log('✅ 前台權限檢查系統已就緒');
+
+            // 處理 URL 參數 ?page=xxx，自動切換頁面
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetPage = urlParams.get('page');
+            if (targetPage) {
+                gotoPage(targetPage);
+            }
         });
 
         // 從 localStorage 載入資料夾樹狀結構

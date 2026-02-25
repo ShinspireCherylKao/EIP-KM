@@ -1,0 +1,538 @@
+/*
+ * style-search.css
+ * 全站搜尋結果樣式表
+ */
+
+/* ==================== 搜尋下拉建議 ==================== */
+.search-box {
+    position: relative;
+}
+
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    z-index: 1000;
+    max-height: 360px;
+    overflow-y: auto;
+    display: none;
+}
+
+.search-suggestions.show {
+    display: block;
+}
+
+.search-suggestions .suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 13px;
+}
+
+.search-suggestions .suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.search-suggestions .suggestion-item:hover {
+    background: var(--hover-bg);
+}
+
+.search-suggestions .suggestion-item i {
+    color: var(--text-secondary);
+    font-size: 14px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.search-suggestions .suggestion-item .suggestion-text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-suggestions .suggestion-item .suggestion-path {
+    font-size: 11px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.search-suggestions .suggestion-header {
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: #F8FAFC;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.search-suggestions .suggestion-footer {
+    padding: 10px 14px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--primary-color);
+    cursor: pointer;
+    border-top: 1px solid var(--border-color);
+    font-weight: 500;
+}
+
+.search-suggestions .suggestion-footer:hover {
+    background: #EFF6FF;
+}
+
+/* ==================== 搜尋結果頁 ==================== */
+.search-results-page {
+    padding: 0 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* 搜尋結果頭部 */
+.search-header {
+    background: var(--white-color);
+    padding: 20px 24px;
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.search-query {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.search-query i {
+    color: var(--primary-color);
+    font-size: 20px;
+}
+
+.search-query h2 {
+    font-size: 18px;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.search-query h2 .keyword {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.search-stats {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* 分類 Tab */
+.search-category-tabs {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.search-category-tab {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    background: var(--white-color);
+    color: #4B5563;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.search-category-tab:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.search-category-tab.active {
+    background: var(--primary-color);
+    color: var(--white-color);
+    border-color: var(--primary-color);
+}
+
+.search-category-tab .tab-count {
+    background: rgba(0,0,0,0.1);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+}
+
+.search-category-tab.active .tab-count {
+    background: rgba(255,255,255,0.2);
+}
+
+/* 結果區塊 */
+.search-result-section {
+    background: var(--white-color);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.search-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: #F8FAFC;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.search-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.search-section-title .section-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+}
+
+.search-section-title.km .section-icon {
+    background: #DBEAFE;
+    color: var(--primary-color);
+}
+
+.search-section-title.folder .section-icon {
+    background: #FEF3C7;
+    color: #F59E0B;
+}
+
+.search-section-count {
+    background: #E5E7EB;
+    color: #4B5563;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* 結果列表 */
+.search-result-list {
+    padding: 8px 0;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid #F3F4F6;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background: #F8FAFC;
+}
+
+/* 結果圖示 */
+.search-result-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.search-result-icon.pdf {
+    background: #FEE2E2;
+    color: #EF4444;
+}
+
+.search-result-icon.docx,
+.search-result-icon.doc {
+    background: #DBEAFE;
+    color: #3B82F6;
+}
+
+.search-result-icon.xlsx,
+.search-result-icon.xls {
+    background: #D1FAE5;
+    color: #10B981;
+}
+
+.search-result-icon.pptx,
+.search-result-icon.ppt {
+    background: #FFEDD5;
+    color: #F97316;
+}
+
+.search-result-icon.folder {
+    background: #FEF3C7;
+    color: #F59E0B;
+}
+
+.search-result-icon.default {
+    background: #F3F4F6;
+    color: #6B7280;
+}
+
+/* 結果內容 */
+.search-result-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.search-result-title {
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-result-title .highlight {
+    background: #FEF3C7;
+    color: #92400E;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+.search-result-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: #9CA3AF;
+}
+
+.search-result-meta .folder-path {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #6B7280;
+}
+
+.search-result-meta .folder-path i {
+    font-size: 11px;
+}
+
+/* 結果標籤 */
+.search-result-tags {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.search-result-tags .tag {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    background: #F3F4F6;
+    color: #6B7280;
+    white-space: nowrap;
+}
+
+/* 結果日期 */
+.search-result-date {
+    font-size: 12px;
+    color: #9CA3AF;
+    flex-shrink: 0;
+}
+
+/* 操作按鈕 */
+.search-result-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.search-result-item:hover .search-result-actions {
+    opacity: 1;
+}
+
+.search-result-actions .action-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s;
+}
+
+.search-result-actions .action-btn:hover {
+    background: #EFF6FF;
+    color: var(--primary-color);
+}
+
+/* 顯示更多 */
+.search-show-more {
+    padding: 12px 20px;
+    text-align: center;
+    color: var(--primary-color);
+    font-size: 13px;
+    cursor: pointer;
+    border-top: 1px solid #F3F4F6;
+    transition: background 0.15s;
+}
+
+.search-show-more:hover {
+    background: #F8FAFC;
+}
+
+/* 空狀態 */
+.search-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+
+.search-empty i {
+    font-size: 48px;
+    color: #D1D5DB;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.search-empty h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.search-empty p {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* 搜尋提示 */
+.search-tips {
+    background: var(--white-color);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    box-shadow: var(--shadow-sm);
+    margin-top: 16px;
+}
+
+.search-tips h4 {
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-tips h4 i {
+    color: var(--warning-color);
+}
+
+.search-tips ul {
+    list-style: none;
+    padding: 0;
+}
+
+.search-tips ul li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+}
+
+.search-tips ul li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+}
+
+/* ==================== 權限標籤 ==================== */
+.perm-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.perm-badge.view-only {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.perm-badge.download {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.perm-badge.full {
+    background: #DBEAFE;
+    color: #1E40AF;
+}
+
+/* ==================== 響應式 ==================== */
+@media screen and (max-width: 768px) {
+    .search-results-page {
+        padding: 0 12px;
+    }
+
+    .search-header {
+        padding: 16px;
+    }
+
+    .search-result-item {
+        padding: 10px 14px;
+    }
+
+    .search-result-tags {
+        display: none;
+    }
+
+    .search-result-actions {
+        opacity: 1;
+    }
+
+    .search-category-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+}

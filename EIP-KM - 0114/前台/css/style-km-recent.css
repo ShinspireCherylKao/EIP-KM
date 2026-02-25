@@ -13,7 +13,9 @@
 
 /* ========== 左側資料夾導航面板 ========== */
 .folder-nav-panel {
-    width: 300px;
+    width: 25%;
+    min-width: 220px;
+    max-width: 360px;
     flex-shrink: 0;
     background: var(--white-color);
     border: 1px solid var(--border-color);
@@ -60,16 +62,16 @@
     overflow-y: auto;
 }
 
-/* 導航區塊 */
-.nav-section {
+/* 導航區塊（限定在 folder-nav-panel 內，避免覆蓋 sidebar） */
+.folder-nav-panel .nav-section {
     border-bottom: 1px solid var(--border-color);
 }
 
-.nav-section:last-child {
+.folder-nav-panel .nav-section:last-child {
     border-bottom: none;
 }
 
-.nav-section-header {
+.folder-nav-panel .nav-section-header {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -82,17 +84,17 @@
     letter-spacing: 0.5px;
 }
 
-.nav-section-header i {
+.folder-nav-panel .nav-section-header i {
     color: var(--primary-color);
     font-size: 12px;
 }
 
 /* 導航列表 */
-.nav-list {
+.folder-nav-panel .nav-list {
     padding: 4px 0;
 }
 
-.nav-item {
+.folder-nav-panel .nav-item {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -104,17 +106,17 @@
     position: relative;
 }
 
-.nav-item:hover {
+.folder-nav-panel .nav-item:hover {
     background: #f3f4f6;
 }
 
-.nav-item.active {
+.folder-nav-panel .nav-item.active {
     background: #eff6ff;
     color: var(--primary-color);
     font-weight: 500;
 }
 
-.nav-item.active::before {
+.folder-nav-panel .nav-item.active::before {
     content: '';
     position: absolute;
     left: 0;
@@ -125,29 +127,29 @@
     border-radius: 0 2px 2px 0;
 }
 
-.nav-item i {
+.folder-nav-panel .nav-item i {
     font-size: 14px;
     color: #6b7280;
     width: 18px;
     text-align: center;
 }
 
-.nav-item.active i {
+.folder-nav-panel .nav-item.active i {
     color: var(--primary-color);
 }
 
-.nav-item:hover i {
+.folder-nav-panel .nav-item:hover i {
     color: var(--primary-color);
 }
 
-.nav-item span {
+.folder-nav-panel .nav-item span {
     flex: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.nav-item .nav-count {
+.folder-nav-panel .nav-item .nav-count {
     font-size: 11px;
     color: #9ca3af;
     background: #e5e7eb;
@@ -156,34 +158,34 @@
     flex-shrink: 0;
 }
 
-.nav-item.active .nav-count {
+.folder-nav-panel .nav-item.active .nav-count {
     background: #dbeafe;
     color: var(--primary-color);
 }
 
 /* 部門展開收合 */
-.nav-sublist {
+.folder-nav-panel .nav-sublist {
     padding-left: 20px;
     display: none;
 }
 
-.nav-sublist.show {
+.folder-nav-panel .nav-sublist.show {
     display: block;
 }
 
 /* 部門箭頭 */
-.nav-dept {
+.folder-nav-panel .nav-dept {
     position: relative;
 }
 
-.nav-arrow {
+.folder-nav-panel .nav-arrow {
     transition: transform 0.2s ease;
     font-size: 10px;
     color: #9ca3af;
     margin-left: auto;
 }
 
-.nav-dept:hover .nav-arrow {
+.folder-nav-panel .nav-dept:hover .nav-arrow {
     color: var(--primary-color);
 }
 

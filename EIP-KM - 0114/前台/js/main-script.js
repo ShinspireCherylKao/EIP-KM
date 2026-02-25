@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化首頁
     initHome();
     
-    // 初始化 KM 系統
-    initKM();
+    // 初始化 KM 系統（僅在 KM 頁面有效）
+    if (typeof initKM === 'function') initKM();
     
     // 設置導航項目的 tooltip
     setNavTooltips();
@@ -37,7 +37,10 @@ function setNavTooltips() {
  * 頁面切換功能
  * @param {string} pageId - 頁面 ID
  */
-function gotoPage(pageId) {
+function gotoPage(pageId, e) {
+    // 阻止預設連結行為
+    if (e) e.preventDefault();
+
     // 隱藏所有頁面
     const allPages = document.querySelectorAll('.page-section');
     allPages.forEach(page => {
@@ -59,6 +62,11 @@ function gotoPage(pageId) {
         }
     });
     
+    // 通訊錄頁面初始化
+    if (pageId === 'contacts' && typeof initContacts === 'function') {
+        initContacts();
+    }
+
     // 滾動到頂部
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }

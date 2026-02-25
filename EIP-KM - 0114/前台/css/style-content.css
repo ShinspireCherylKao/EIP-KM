@@ -12,6 +12,13 @@
     background-color: var(--content-bg);
     min-height: calc(100vh - var(--header-height));
     transition: margin-left var(--transition);
+    /* 防止切頁閃爍：主內容區先隱藏，layout 就緒後淡入 */
+    opacity: 0;
+    transition: opacity 0.1s ease, margin-left var(--transition);
+}
+
+.main-content.layout-ready {
+    opacity: 1;
 }
 
 /* 側邊欄收合時的內容區調整 */
@@ -249,4 +256,299 @@
     .page-section {
         padding: 12px;
     }
+}
+
+/* ==================== 上傳 Modal 樣式 ==================== */
+.upload-modal-box {
+    width: min(560px, 95vw);
+    background: var(--white-color);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+}
+
+/* 標題區 */
+.upload-modal-header {
+    position: relative;
+    padding: 24px 24px 16px;
+    text-align: center;
+    background: linear-gradient(180deg, #f0f6ff 0%, #fff 100%);
+}
+
+.upload-modal-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.upload-title-main {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.upload-title-sub {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--success-color);
+    cursor: pointer;
+}
+
+.upload-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+
+.upload-close-btn:hover {
+    background: var(--hover-bg);
+    color: var(--text-primary);
+}
+
+/* 內容區 */
+.upload-modal-body {
+    padding: 0 24px 20px;
+}
+
+/* 拖曳上傳區 */
+.upload-dropzone {
+    position: relative;
+    border: 2px dashed #d0d5dd;
+    border-radius: 14px;
+    padding: 40px 24px;
+    text-align: center;
+    background: #fafbfc;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-dropzone:hover {
+    border-color: var(--primary-color);
+    background: #f0f6ff;
+}
+
+.upload-dropzone.dragging {
+    border-color: var(--primary-color);
+    background: #e8f0fe;
+    border-width: 3px;
+}
+
+.upload-dropzone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.upload-dropzone-icon {
+    font-size: 36px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.upload-dropzone.dragging .upload-dropzone-icon {
+    color: var(--primary-color);
+    transform: translateY(-4px) scale(1.1);
+}
+
+.upload-dropzone-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.upload-dropzone-hint {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* 拖曳覆蓋層 */
+.upload-dropzone-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(59, 130, 246, 0.08);
+    border-radius: 12px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--primary-color);
+    z-index: 5;
+    pointer-events: none;
+}
+
+.upload-dropzone-overlay i {
+    font-size: 40px;
+}
+
+.upload-dropzone.dragging .upload-dropzone-overlay {
+    display: flex;
+}
+
+.upload-dropzone.dragging .upload-dropzone-content {
+    opacity: 0.3;
+}
+
+/* 已選檔案列表 */
+.upload-file-list {
+    width: 100%;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.upload-file-list:empty {
+    margin-top: 0;
+}
+
+.upload-file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 13px;
+    animation: fileItemIn 0.25s ease-out;
+}
+
+@keyframes fileItemIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.upload-file-item i.file-icon {
+    font-size: 18px;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.upload-file-item .file-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.upload-file-item .file-size {
+    color: var(--text-muted);
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.upload-file-item .file-remove {
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: color 0.15s, background 0.15s;
+}
+
+.upload-file-item .file-remove:hover {
+    color: var(--danger-color);
+    background: #fef2f2;
+}
+
+/* 底部來源按鈕 */
+.upload-source-btns {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.upload-source-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    background: var(--white-color);
+    font-size: 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+    white-space: nowrap;
+}
+
+.upload-source-btn:hover {
+    background: var(--hover-bg);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.upload-source-btn i {
+    font-size: 15px;
+}
+
+/* 底部進度條 */
+.upload-modal-footer {
+    padding: 12px 24px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.upload-footer-left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.upload-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.upload-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary-color), #60a5fa);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.upload-progress-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    min-width: 48px;
+    text-align: right;
+}
+
+.upload-modal-footer .btn.primary {
+    flex-shrink: 0;
 }

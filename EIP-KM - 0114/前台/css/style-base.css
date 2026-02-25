@@ -69,6 +69,30 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+/* ===== 防止切頁閃爍：header / sidebar 容器預佔空間、背景即時可見 ===== */
+#header-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+    background-color: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 50;
+}
+
+#sidebar-container {
+    position: fixed;
+    left: 0;
+    top: var(--header-height);
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--header-height));
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    z-index: 50;
+    overflow: hidden;
+}
+
 /* 連結樣式 */
 a {
     text-decoration: none;
