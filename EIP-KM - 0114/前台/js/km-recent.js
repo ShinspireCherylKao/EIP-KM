@@ -179,6 +179,28 @@ function initMySpaceData() {
 }
 
 /**
+ * 渲染左側「最近檔案」列表
+ * 即使資料夾不可見，只要檔案有獨立存取權限，仍會顯示
+ */
+/**
+ * 載入「最近檔案」到右側面板
+ * 包含資料夾不可見但檔案有獨立存取權限的情境
+ */
+function loadRecentFilesView() {
+    const recentNames = JSON.parse(localStorage.getItem('recentFiles') || '[]');
+    const data = localStorage.getItem('fileDatabase');
+    if (!data) return;
+
+    const db = JSON.parse(data);
+    // 取出最近檔案：不論資料夾是否可見，只要檔案本身有權限就顯示
+    const files = recentNames
+        .map(name => db.files.find(f => f.name === name))
+        .filter(f => f && f.permissions[currentUserDept] !== '不可見');
+
+    renderFileTable(files, true);
+}
+
+/**
  * 初始化近期存取
  */
 function initKmMySpace() {
@@ -204,13 +226,41 @@ function initKmMyOrg() {
     setTrashNoticeVisible(false);
     setTrashActionsVisible(true);
 
-    const titleEl = document.getElementById('currentFolderName');
-    if (titleEl) titleEl.textContent = '所有部門';
-
-    // 預設在右側顯示所有頂層部門資料夾
-    loadTopDeptFolders();
+    // 預設選取左側「所有空間」的第一個項目
+    _selectFirstSpaceOrShowEmpty();
 
     console.log('✅ 共享部門已初始化');
+}
+
+/**
+ * 自動選取左側「所有空間」的第一個資料夾，若無空間則顯示提示訊息
+ */
+function _selectFirstSpaceOrShowEmpty() {
+    const firstSpace = document.querySelector('#deptFoldersList .nav-item');
+    if (firstSpace && firstSpace.dataset.path) {
+        // 自動選取第一個空間
+        selectFolder(firstSpace.dataset.path);
+    } else {
+        // 無空間權限，顯示提示
+        const titleEl = document.getElementById('currentFolderName');
+        if (titleEl) titleEl.textContent = '無空間權限';
+        const tbody = document.getElementById('fileListBody');
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align:center; padding:60px 20px; color:#94A3B8;">
+                        <i class="fa-solid fa-folder-xmark" style="font-size:48px; margin-bottom:16px; display:block; color:#CBD5E1;"></i>
+                        <div style="font-size:15px; font-weight:500;">您目前沒有任何空間權限</div>
+                        <div style="font-size:13px; margin-top:6px;">請聯繫系統管理員取得權限</div>
+                    </td>
+                </tr>`;
+        }
+        // 隱藏上傳與新增按鈕
+        const uploadBtn = document.getElementById('uploadBtn');
+        const newFolderBtn = document.getElementById('newFolderBtn');
+        if (uploadBtn) uploadBtn.style.display = 'none';
+        if (newFolderBtn) newFolderBtn.style.display = 'none';
+    }
 }
 
 /**
@@ -224,9 +274,9 @@ function loadTopDeptFolders() {
     const topDepts = ['HR', '管理部', '行政部', '專案'];
     const deptNames = {
         'HR': 'HR (人資部)',
-        '管理部': '管理部',
-        '行政部': '行政部',
-        '專案': '專案部門'
+        '管理部': '會議記錄',
+        '行政部': '年報',
+        '專案': '分享資料'
     };
 
     const topFolders = topDepts
@@ -280,27 +330,51 @@ function renderDeptFolders() {
     const topDepts = ['HR', '管理部', '行政部', '專案'];
     const deptNames = {
         'HR': 'HR (人資部)',
-        '管理部': '管理部',
-        '行政部': '行政部',
-        '專案': '專案部門'
+        '管理部': '會議記錄',
+        '行政部': '年報',
+        '專案': '分享資料'
     };
     
-    let html = '';
+    // 區分：部門空間（可管理）與共享資料夾（僅可讀取）
+    let spaceHtml = '';   // 所有空間
+    let sharedHtml = '';  // 共享資料夾
     
     topDepts.forEach(dept => {
         const deptFolder = db.folders.find(f => f.name === dept);
         const perm = deptFolder?.permissions[currentUserDept];
         if (perm === '不可見') return;
+
+        const isManageable = (typeof _myManageableFolders !== 'undefined') && _myManageableFolders.includes(dept);
+        const displayName = deptNames[dept] || dept;
+        const safeDept = dept.replace(/'/g, "\\'");
         
-        html += `
-            <div class="nav-item nav-dept" data-path="${dept}" onclick="selectFolder('${dept}')">
-                <i class="fa-solid fa-building"></i>
-                <span>${deptNames[dept]}</span>
-            </div>
-        `;
+        if (isManageable) {
+            // 部門空間 → 房子圖示
+            spaceHtml += `
+                <div class="nav-item nav-dept" data-path="${dept}" onclick="selectFolder('${safeDept}')">
+                    <i class="fa-solid fa-building"></i>
+                    <span>${displayName}</span>
+                </div>
+            `;
+        } else {
+            // 共享資料夾 → 資料夾圖示
+            sharedHtml += `
+                <div class="nav-item nav-dept" data-path="${dept}" onclick="selectFolder('${safeDept}')">
+                    <i class="fa-solid fa-folder" style="color:#F59E0B;"></i>
+                    <span>${displayName}</span>
+                </div>
+            `;
+        }
     });
     
-    container.innerHTML = html;
+    container.innerHTML = spaceHtml;
+
+    // 渲染共享資料夾區塊
+    const sharedContainer = document.getElementById('sharedFoldersList');
+    const sharedSection = document.getElementById('sharedFoldersSection');
+    if (sharedContainer) sharedContainer.innerHTML = sharedHtml;
+    // 若無共享資料夾則隱藏該區塊
+    if (sharedSection) sharedSection.style.display = sharedHtml ? '' : 'none';
 }
 
 /**
@@ -329,11 +403,45 @@ function selectFolder(folderPath) {
     const target = document.querySelector(`.nav-item[data-path="${folderPath}"]`);
     if (target) target.classList.add('active');
     
-    // 更新標題
-    document.getElementById('currentFolderName').textContent = folderPath;
+    // 更新標題為可點擊的麵包屑路徑
+    document.getElementById('currentFolderName').innerHTML = renderFolderBreadcrumb(folderPath);
     
     // 載入檔案
     loadFilesForFolder(folderPath);
+}
+
+/**
+ * 產生可點擊的資料夾麵包屑路徑 HTML
+ * 例如 "HR/表單/請假" → "HR (人資部) / 表單 / 請假"
+ * 每一層（除了最後一層）可點擊回到該層資料夾
+ */
+function renderFolderBreadcrumb(folderPath) {
+    // 頂層資料夾顯示名稱對照
+    const folderDisplayNames = {
+        'HR': 'HR (人資部)',
+        '管理部': '會議記錄',
+        '行政部': '年報',
+        '專案': '分享資料'
+    };
+    const parts = folderPath.split('/');
+    const crumbs = [];
+    
+    for (let i = 0; i < parts.length; i++) {
+        const partPath = parts.slice(0, i + 1).join('/');
+        // 頂層使用顯示名稱，子層使用原始名稱
+        const displayName = (i === 0) ? (folderDisplayNames[parts[i]] || parts[i]) : parts[i];
+        
+        if (i < parts.length - 1) {
+            // 可點擊的父層連結
+            const safePath = partPath.replace(/'/g, "\\'");
+            crumbs.push(`<a class="breadcrumb-link" href="javascript:void(0)" onclick="selectFolder('${safePath}')">${displayName}</a>`);
+        } else {
+            // 目前所在層（不可點擊）
+            crumbs.push(`<span class="breadcrumb-current">${displayName}</span>`);
+        }
+    }
+    
+    return crumbs.join('<span class="breadcrumb-sep"> / </span>');
 }
 
 /**
@@ -343,7 +451,7 @@ function selectQuickView(view) {
     currentView = view;
     currentFolder = null;
     setTrashNoticeVisible(view === 'trash');
-    setTrashActionsVisible(view !== 'trash' && view !== 'fav');
+    setTrashActionsVisible(view !== 'trash' && view !== 'fav' && view !== 'recentFiles');
     
     // 更新 active 狀態
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -351,7 +459,7 @@ function selectQuickView(view) {
     if (target) target.classList.add('active');
     
     // 更新標題
-    const titles = { 'recent': '最近存取', 'fav': '我的收藏', 'trash': '垃圾桶' };
+    const titles = { 'recent': '最近存取', 'fav': '我的收藏', 'trash': '垃圾桶', 'recentFiles': '最近檔案' };
     document.getElementById('currentFolderName').textContent = titles[view];
     
     // 載入檔案
@@ -361,6 +469,8 @@ function selectQuickView(view) {
         loadFavoriteFiles();
     } else if (view === 'trash') {
         loadTrashFiles();
+    } else if (view === 'recentFiles') {
+        loadRecentFilesView();
     }
 }
 
@@ -427,9 +537,12 @@ function updateQuickViewCounts() {
     const favCount = document.getElementById('favCount');
     const trashCount = document.getElementById('trashCount');
     
+    const recentFilesCount = document.getElementById('recentFilesCount');
+
     if (recentCount) recentCount.textContent = recentFiles.length;
     if (favCount) favCount.textContent = favFiles.length;
     if (trashCount) trashCount.textContent = trashFiles.length;
+    if (recentFilesCount) recentFilesCount.textContent = recentFiles.length;
 }
 
 /**
@@ -445,14 +558,15 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
         thead.querySelectorAll('.col-date, .col-actions, .col-tags').forEach(th => th.style.display = '');
     }
 
-    // 還原上傳檔案與新增資料夾按鈕（若有權限控制函式則交由它決定）
+    // 還原上傳檔案與新增資料夾按鈕（快速檢視模式下隱藏）
     const uploadBtn = document.getElementById('uploadBtn');
     const newFolderBtn = document.getElementById('newFolderBtn');
-    if (typeof window._hasFolderEditPerm === 'function' && currentFolder) {
-        const canEdit = window._hasFolderEditPerm(currentFolder);
-        if (uploadBtn)    uploadBtn.style.display    = canEdit ? '' : 'none';
-        if (newFolderBtn) newFolderBtn.style.display  = canEdit ? '' : 'none';
+    const quickViews = ['fav', 'trash', 'recentFiles'];
+    if (currentView && quickViews.includes(currentView)) {
+        if (uploadBtn) uploadBtn.style.display = 'none';
+        if (newFolderBtn) newFolderBtn.style.display = 'none';
     } else {
+        // 所有資料夾（含共享資料夾）皆顯示上傳與新增資料夾按鈕
         if (uploadBtn) uploadBtn.style.display = '';
         if (newFolderBtn) newFolderBtn.style.display = '';
     }
@@ -464,9 +578,6 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
 
     // 子資料夾列
     const favFolders = JSON.parse(localStorage.getItem('favoriteFolders') || '[]');
-    // 權限判斷：當前資料夾是否可編輯
-    const _canEditCurrent = (typeof window._hasFolderEditPerm === 'function' && currentFolder)
-        ? window._hasFolderEditPerm(currentFolder) : true;
     let folderHtml = subFolders.map(sf => {
         const displayName = sf.name.split('/').pop();
         const safeName = sf.name.replace(/'/g, "\\'");
@@ -491,13 +602,16 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
                         <button class="btn small ghost ${folderFavClass}" onclick="event.stopPropagation(); toggleFolderFavorite('${safeName}')" title="${isFolderFav ? '取消收藏' : '加入收藏'}">
                             <i class="${folderFavIcon}"></i>
                         </button>
-                        ${_canEditCurrent ? `<div class="more-menu-wrapper">
+                        <button class="btn small ghost" onclick="event.stopPropagation(); quickShare('folder', '${safeName}')" title="分享">
+                            <i class="fa-solid fa-share-nodes"></i>
+                        </button>
+                        <div class="more-menu-wrapper">
                             <button class="btn small ghost" onclick="event.stopPropagation(); toggleMoreMenu(event, '${safeName}')" title="更多操作">
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </button>
                             <div class="more-menu-dropdown" id="moreMenu_${safeId}">
-                                <button class="menu-item" onclick="openShareModal('${safeName}', '${safeName}')">
-                                    <i class="fa-solid fa-share-nodes"></i>共用
+                                <button class="menu-item" onclick="openPermOrgModal('${safeName}')">
+                                    <i class="fa-solid fa-shield-halved"></i>權限設定
                                 </button>
                                 <button class="menu-item" onclick="renameFolder('${safeName}')">
                                     <i class="fa-solid fa-pen"></i>重新命名
@@ -506,7 +620,7 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
                                     <i class="fa-solid fa-trash-can"></i>刪除資料夾
                                 </button>
                             </div>
-                        </div>` : ''}
+                        </div>
                     </div>
                 </td>
             </tr>`;
@@ -523,6 +637,10 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
         const tagsHtml = (file.tags || []).slice(0, 3).map(tag => 
             `<span class="file-tag">${tag}</span>`
         ).join('');
+        const filePrivacy = getItemPrivacy(file.name);
+        const filePrivBadgeId = 'privacyBadge_' + file.name.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_');
+        const fileIsConfidential = filePrivacy === 'confidential';
+        const fileSafeName = file.name.replace(/'/g, "\\'");
         
         return `
             <tr data-filename="${file.name}">
@@ -530,7 +648,7 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
                     <div class="file-name-cell">
                         <i class="fa-solid ${icon}"></i>
                         <div>
-                            <div class="file-name">${file.name}</div>
+                            <div class="file-name">${file.name}<span class="privacy-badge confidential" id="${filePrivBadgeId}" style="display:${fileIsConfidential ? 'inline-flex' : 'none'}"><i class="fa-solid fa-lock"></i>機密</span></div>
                             ${showFolder ? `<div class="file-folder">${file.folder}</div>` : ''}
                         </div>
                     </div>
@@ -546,19 +664,25 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
                         <button class="btn small ghost ${favClass}" onclick="toggleFavorite('${file.name}')" title="${isFav ? '取消收藏' : '加入收藏'}">
                             <i class="${favIcon}"></i>
                         </button>
+                        <button class="btn small ghost" onclick="quickShare('file', '${file.name}', '${file.folder}')" title="分享">
+                            <i class="fa-solid fa-share-nodes"></i>
+                        </button>
                         <button class="btn small ghost${canPreview ? '' : ' disabled'}" ${canPreview ? `onclick="viewFile('${file.name}')"` : ''} title="${canPreview ? '檢視' : '此檔案格式不支援線上檢視'}" ${canPreview ? '' : 'style="opacity:.35;cursor:not-allowed;"'}>
                             <i class="fa-solid ${canPreview ? 'fa-eye' : 'fa-eye-slash'}"></i>
                         </button>
                         <button class="btn small ghost" onclick="downloadFile('${file.name}')" title="下載">
                             <i class="fa-solid fa-download"></i>
                         </button>
-                        ${_canEditCurrent ? `<div class="more-menu-wrapper">
+                        <div class="more-menu-wrapper">
                             <button class="btn small ghost" onclick="toggleMoreMenu(event, '${file.name.replace(/'/g, "\\'")}')" title="更多操作">
                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                             </button>
                             <div class="more-menu-dropdown" id="moreMenu_${file.name.replace(/[^a-zA-Z0-9一-龥]/g, '_')}">
                                 <button class="menu-item" onclick="openShareModal('${file.name}', '${file.folder}')">
-                                    <i class="fa-solid fa-share-nodes"></i>共用
+                                    <i class="fa-solid fa-shield-halved"></i>權限設定
+                                </button>
+                                <button class="menu-item" onclick="openPrivacyDialog('${fileSafeName}')">
+                                    <i class="fa-solid fa-lock"></i>檔案隱私
                                 </button>
                                 <button class="menu-item" onclick="renameFile('${file.name}')">
                                     <i class="fa-solid fa-pen"></i>修改檔名
@@ -567,7 +691,7 @@ function renderFileTable(files, showFolder = false, subFolders = []) {
                                     <i class="fa-solid fa-trash-can"></i>移到垃圾桶
                                 </button>
                             </div>
-                        </div>` : ''}
+                        </div>
                     </div>
                 </td>
             </tr>
@@ -690,15 +814,15 @@ function renderTrashTable(files) {
             <tr data-filename="${file.name}" class="trash-item">
                 <td class="col-name">
                     <div class="file-name-cell">
-                        <i class="fa-solid ${icon}" style="opacity: 0.5;"></i>
+                        <i class="fa-solid ${icon}"></i>
                         <div>
-                            <div class="file-name" style="color: #9ca3af;">${file.name}</div>
+                            <div class="file-name">${file.name}</div>
                             <div class="file-folder">原位置: ${file.originalFolder}</div>
                         </div>
                     </div>
                 </td>
                 <td class="col-tags">
-                    <span class="file-date" style="color: #9ca3af;">刪除於 ${file.deletedAt}</span>
+                    <span class="file-date">刪除於 ${file.deletedAt}</span>
                 </td>
                 <td class="col-date">
                     <span class="file-date">${file.uploadDate || '-'}</span>
@@ -1303,6 +1427,124 @@ function renderUploadFileList() {
 }
 
 /**
+ * 切換上傳檔案隱私性設定
+ * @param {HTMLElement} btn - 被點擊的按鈕
+ * @param {string} value - 'general' 或 'confidential'
+ */
+function setUploadPrivacy(btn, value) {
+    const toggle = btn.closest('.upload-privacy-toggle');
+    toggle.querySelectorAll('.privacy-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // 儲存目前選擇的隱私性
+    window._uploadPrivacy = value;
+}
+
+// 預設隱私性為一般
+window._uploadPrivacy = 'general';
+
+// ===== 檔案／資料夾隱私設定 =====
+
+/**
+ * 取得項目隱私設定
+ * @param {string} name - 檔案名稱或資料夾路徑
+ * @returns {string} 'general' 或 'confidential'
+ */
+function getItemPrivacy(name) {
+    const settings = JSON.parse(localStorage.getItem('itemPrivacySettings') || '{}');
+    return settings[name] || 'general';
+}
+
+/**
+ * 設定項目隱私並持久化
+ * @param {string} name - 檔案名稱或資料夾路徑
+ * @param {string} value - 'general' 或 'confidential'
+ */
+function setItemPrivacy(name, value) {
+    const settings = JSON.parse(localStorage.getItem('itemPrivacySettings') || '{}');
+    if (value === 'general') {
+        delete settings[name]; // 預設值不需儲存
+    } else {
+        settings[name] = value;
+    }
+    localStorage.setItem('itemPrivacySettings', JSON.stringify(settings));
+}
+
+/**
+ * 開啟檔案隱私設定 Dialog
+ * @param {string} name - 檔案名稱或資料夾路徑
+ */
+function openPrivacyDialog(name) {
+    closeAllMoreMenus();
+    const current = getItemPrivacy(name);
+    window._privacyDialogTarget = name;
+    // 更新 dialog 顯示名稱
+    const displayName = name.split('/').pop();
+    const nameEl = document.getElementById('privacyDialogName');
+    if (nameEl) nameEl.textContent = displayName;
+    // 設定當前選擇狀態
+    document.querySelectorAll('#privacyDialog .privacy-dialog-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.value === current);
+    });
+    // 顯示 dialog
+    const dialog = document.getElementById('privacyDialog');
+    if (dialog) dialog.classList.add('show');
+}
+
+/**
+ * 關閉檔案隱私設定 Dialog
+ */
+function closePrivacyDialog() {
+    const dialog = document.getElementById('privacyDialog');
+    if (dialog) dialog.classList.remove('show');
+    window._privacyDialogTarget = null;
+}
+
+/**
+ * 點擊隱私選項
+ * @param {HTMLElement} optEl - 被點擊的選項元素
+ */
+function selectPrivacyOption(optEl) {
+    document.querySelectorAll('#privacyDialog .privacy-dialog-option').forEach(o => o.classList.remove('active'));
+    optEl.classList.add('active');
+}
+
+/**
+ * 確認檔案隱私設定
+ */
+function confirmPrivacyDialog() {
+    const name = window._privacyDialogTarget;
+    if (!name) return;
+    const activeOpt = document.querySelector('#privacyDialog .privacy-dialog-option.active');
+    const value = activeOpt ? activeOpt.dataset.value : 'general';
+    setItemPrivacy(name, value);
+    // 更新檔案名稱旁的機密標記
+    const safeId = name.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_');
+    const badge = document.getElementById('privacyBadge_' + safeId);
+    if (badge) {
+        badge.style.display = (value === 'confidential') ? 'inline-flex' : 'none';
+    }
+    // 提示
+    const label = value === 'confidential' ? '機密' : '一般';
+    if (typeof showToast === 'function') {
+        showToast('已將「' + name.split('/').pop() + '」設為' + label);
+    }
+    closePrivacyDialog();
+}
+
+/**
+ * 重置上傳隱私性為預設值（一般）
+ */
+function resetUploadPrivacy() {
+    window._uploadPrivacy = 'general';
+    document.querySelectorAll('.upload-privacy-toggle .privacy-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.value === 'general');
+    });
+    // 重置「覆蓋同名檔案」勾選狀態
+    const overwriteCheck = document.getElementById('uploadOverwriteCheck');
+    if (overwriteCheck) overwriteCheck.checked = false;
+}
+
+/**
  * 執行上傳
  */
 function doUpload() {
@@ -1323,22 +1565,53 @@ function doUpload() {
     const db = JSON.parse(data);
     const today = new Date().toISOString().split('T')[0];
 
+    // 取得「覆蓋同名檔案」勾選狀態
+    const overwriteCheck = document.getElementById('uploadOverwriteCheck');
+    const isOverwrite = overwriteCheck ? overwriteCheck.checked : false;
+
     uploadSelectedFiles.forEach(file => {
-        const exists = db.files.some(f => f.name === file.name && f.folder === targetFolder);
-        if (exists) {
-            console.log('⚠️ 同名檔案已存在，跳過:', file.name);
-            return;
+        const existingIndex = db.files.findIndex(f => f.name === file.name && f.folder === targetFolder);
+        let finalName = file.name;
+
+        if (existingIndex !== -1) {
+            if (isOverwrite) {
+                // 覆蓋模式：更新既有檔案的中繼資訊，保留原有 ID
+                db.files[existingIndex].size = uploadFormatFileSize(file.size);
+                db.files[existingIndex].sizeBytes = file.size;
+                db.files[existingIndex].uploadDate = today;
+                db.files[existingIndex].privacy = window._uploadPrivacy || 'general';
+                console.log('🔄 覆蓋同名檔案:', file.name);
+                return; // 已覆蓋，不需再新增
+            } else {
+                // 重新命名模式：在副檔名前加上時間戳記 _YYYYMMDDHHmmssSSS
+                const now = new Date();
+                const timestamp = now.getFullYear().toString()
+                    + String(now.getMonth() + 1).padStart(2, '0')
+                    + String(now.getDate()).padStart(2, '0')
+                    + String(now.getHours()).padStart(2, '0')
+                    + String(now.getMinutes()).padStart(2, '0')
+                    + String(now.getSeconds()).padStart(2, '0')
+                    + String(now.getMilliseconds()).padStart(3, '0');
+                const dotIndex = file.name.lastIndexOf('.');
+                if (dotIndex > 0) {
+                    finalName = file.name.substring(0, dotIndex) + '_' + timestamp + file.name.substring(dotIndex);
+                } else {
+                    finalName = file.name + '_' + timestamp;
+                }
+                console.log('📝 同名檔案重新命名:', file.name, '→', finalName);
+            }
         }
 
         const newFile = {
             id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
-            name: file.name,
+            name: finalName,
             path: '/' + targetFolder + '/',
             folder: targetFolder,
             department: currentUserDept,
             size: uploadFormatFileSize(file.size),
             sizeBytes: file.size,
             uploadDate: today,
+            privacy: window._uploadPrivacy || 'general', // 隱私性：general(一般) / confidential(機密)
             tags: [],
             permissions: {
                 'HR': '完全控制',
@@ -1356,6 +1629,7 @@ function doUpload() {
 
     uploadSelectedFiles = [];
     renderUploadFileList();
+    resetUploadPrivacy();
     closeModal('uploadModal');
 
     if (currentFolder) {
@@ -1385,7 +1659,58 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ==================== 分享功能 ====================
+// ==================== 快速分享功能 ====================
+
+/**
+ * 快速分享：產生連結並複製到剪貼簿
+ * @param {'folder'|'file'} type - 分享類型
+ * @param {string} name - 資料夾路徑或檔案名稱
+ * @param {string} [folder] - 檔案所屬資料夾（僅 type=file 時使用）
+ */
+function quickShare(type, name, folder) {
+    let itemId = '';
+    let displayName = name;
+
+    if (type === 'folder') {
+        // 資料夾：以資料夾路徑產生 ID
+        itemId = encodeURIComponent(name);
+        displayName = name.split('/').pop();
+    } else {
+        // 檔案：從 fileDatabase 取得檔案 ID
+        const data = localStorage.getItem('fileDatabase');
+        if (data) {
+            const db = JSON.parse(data);
+            const file = db.files.find(f => f.name === name && f.folder === (folder || currentFolder));
+            if (file) {
+                itemId = file.id;
+            }
+        }
+        if (!itemId) {
+            itemId = encodeURIComponent(name);
+        }
+        displayName = name;
+    }
+
+    // 產生分享連結
+    const baseUrl = window.location.origin;
+    const shareLink = baseUrl + '/share/' + type + '/' + itemId;
+
+    // 複製到剪貼簿
+    navigator.clipboard.writeText(shareLink).then(() => {
+        showToast('已複製「' + displayName + '」的分享連結');
+    }).catch(() => {
+        // 降級方案：使用 execCommand
+        const tempInput = document.createElement('input');
+        tempInput.value = shareLink;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        showToast('已複製「' + displayName + '」的分享連結');
+    });
+}
+
+// ==================== 共用設定功能 ====================
 
 // 當前分享的檔案資料
 let currentShareFile = null;
@@ -1450,6 +1775,7 @@ function openShareModal(fileName, folder) {
             name: t, type: '部門',
             edit: existingShare.perms.includes('編輯'),
             view: true,
+            denied: false,
             reason: ''
         }));
         document.getElementById('shareModalTitle').textContent = isFolder ? '編輯資料夾共用設定' : '編輯共用設定';
@@ -1460,6 +1786,15 @@ function openShareModal(fileName, folder) {
         document.getElementById('shareSubmitBtn').textContent = '開始共用';
     }
     
+    // 初始化共用組織樹
+    _shareOrgExpandedNodes = {};
+    if (typeof _permOrgTree !== 'undefined') {
+        _shareOrgExpandedNodes[_permOrgTree.id] = true;
+    }
+    if (document.getElementById('shareOrgSearchInput')) {
+        document.getElementById('shareOrgSearchInput').value = '';
+    }
+    renderShareOrgTree();
     renderSharePermTable();
     
     // 產生共用連結（內網 + 外網）
@@ -1499,41 +1834,291 @@ function copyShareLink(type) {
     });
 }
 
+/** 共用 Modal 用的組織樹展開狀態 */
+let _shareOrgExpandedNodes = {};
+
 /** 渲染共用對象表格 */
 function renderSharePermTable() {
     const tbody = document.getElementById('sharePermBody');
     if (!tbody) return;
     if (!_sharePermList.length) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px;">尚無共用對象，請點擊下方新增</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:18px;">請從上方組織架構勾選共用對象</td></tr>';
         return;
     }
-    tbody.innerHTML = _sharePermList.map((e, i) => `<tr>
+    tbody.innerHTML = _sharePermList.map((e, i) => {
+        const typeClass = e.type === '人員' ? 'person' : (e.type === '組別' ? 'team' : 'dept');
+        return `<tr>
         <td><b>${e.name}</b></td>
-        <td><span class="pm-pill wl">${e.type}</span></td>
-        <td><input type="checkbox" ${e.edit ? 'checked' : ''} onchange="_sharePermList[${i}].edit=this.checked"></td>
-        <td><input type="checkbox" ${e.view ? 'checked' : ''} onchange="_sharePermList[${i}].view=this.checked"></td>
+        <td><span class="pm-pill ${typeClass}">${e.type}</span></td>
+        <td><input type="radio" name="share-tbl-perm-${i}" value="edit" ${e.edit ? 'checked' : ''} onchange="_sharePermList[${i}].edit=true;_sharePermList[${i}].view=false;_sharePermList[${i}].denied=false;renderShareOrgTree();" style="accent-color:#2563EB;width:16px;height:16px;cursor:pointer;"></td>
+        <td><input type="radio" name="share-tbl-perm-${i}" value="view" ${e.view ? 'checked' : ''} onchange="_sharePermList[${i}].view=true;_sharePermList[${i}].edit=false;_sharePermList[${i}].denied=false;renderShareOrgTree();" style="accent-color:#2563EB;width:16px;height:16px;cursor:pointer;"></td>
+        <td><input type="radio" name="share-tbl-perm-${i}" value="denied" ${e.denied ? 'checked' : ''} onchange="_sharePermList[${i}].denied=true;_sharePermList[${i}].edit=false;_sharePermList[${i}].view=false;renderShareOrgTree();" style="accent-color:#DC2626;width:16px;height:16px;cursor:pointer;"></td>
         <td><button class="rm-btn" onclick="removeSharePermItem(${i})"><i class="fa-solid fa-trash"></i></button></td>
-    </tr>`).join('');
+    </tr>`;
+    }).join('');
 }
 
 /** 移除共用對象 */
 function removeSharePermItem(idx) {
     _sharePermList.splice(idx, 1);
+    renderShareOrgTree();
     renderSharePermTable();
 }
 
-/** 開啟新增共用對象 Picker（複用現有 picker） */
+/** 勾選/取消勾選共用對象 — 部門或組別 */
+/** 判斷節點是否為部分選取（有部分人員被選取，但非全部） */
+function _isShareNodeIndeterminate(node) {
+    const allIds = _collectAllMemberIds(node);
+    if (allIds.length === 0) return false;
+    const selectedCount = allIds.filter(pid => _sharePermList.some(s => s.id === pid && s.type === '人員')).length;
+    return selectedCount > 0 && selectedCount < allIds.length;
+}
+
+/** 過組織樹找到指定 nodeId 的節點 */
+function _findOrgNode(node, nodeId) {
+    if (node.id === nodeId) return node;
+    if (node.children) {
+        for (const c of node.children) {
+            const found = _findOrgNode(c, nodeId);
+            if (found) return found;
+        }
+    }
+    return null;
+}
+
+/** 遞迴收集節點下所有人員 ID（含子節點） */
+function _collectAllMemberIds(node) {
+    const ids = [];
+    if (node.headPersonId) ids.push(node.headPersonId);
+    if (node.members) ids.push(...node.members);
+    if (node.children) node.children.forEach(c => ids.push(..._collectAllMemberIds(c)));
+    return ids;
+}
+
+function toggleShareOrgNodeCheck(nodeId, label, type) {
+    const targetNode = _findOrgNode(_permOrgTree, nodeId);
+    // 只取該部門直屬成員（不含子部門）
+    const directMemberIds = [];
+    if (targetNode) {
+        if (targetNode.headPersonId) directMemberIds.push(targetNode.headPersonId);
+        if (targetNode.members) directMemberIds.push(...targetNode.members);
+    }
+    const pplLookup = typeof _getPersonById === 'function' ? _getPersonById : (pid => _permOrgPeople.find(pp => pp.id === pid));
+    const deptIdx = _sharePermList.findIndex(s => s.id === nodeId && (s.type === '部門' || s.type === '組別'));
+
+    // 判斷該部門直屬成員是否全部已勾選
+    const allSelected = directMemberIds.length > 0
+        ? directMemberIds.every(pid => _sharePermList.some(s => s.id === pid && s.type === '人員'))
+        : deptIdx >= 0;
+
+    if (allSelected) {
+        // 全部已選 → 取消全選（移除部門 + 直屬人員）
+        if (deptIdx >= 0) _sharePermList.splice(deptIdx, 1);
+        directMemberIds.forEach(pid => {
+            const pIdx = _sharePermList.findIndex(s => s.id === pid && s.type === '人員');
+            if (pIdx >= 0) _sharePermList.splice(pIdx, 1);
+        });
+    } else {
+        // 未全選（含部分選取 / 未選取）→ 全選直屬成員
+        if (deptIdx < 0) {
+            _sharePermList.push({ id: nodeId, name: label, type: type === 'team' ? '組別' : '部門', owner: false, edit: false, view: true, denied: false, reason: '' });
+        }
+        directMemberIds.forEach(pid => {
+            if (!_sharePermList.some(s => s.id === pid && s.type === '人員')) {
+                const p = pplLookup(pid);
+                if (p) _sharePermList.push({ id: pid, name: p.name, type: '人員', owner: false, edit: false, view: true, denied: false, reason: '' });
+            }
+        });
+        // 自動展開該節點
+        _shareOrgExpandedNodes[nodeId] = true;
+    }
+    renderShareOrgTree();
+    renderSharePermTable();
+}
+
+/** 勾選/取消勾選共用對象 — 人員 */
+function toggleShareOrgPersonCheck(pid) {
+    const idx = _sharePermList.findIndex(s => s.id === pid && s.type === '人員');
+    if (idx >= 0) {
+        _sharePermList.splice(idx, 1);
+    } else {
+        const p = typeof _getPersonById === 'function' ? _getPersonById(pid) : _permOrgPeople.find(pp => pp.id === pid);
+        if (p) {
+            _sharePermList.push({ id: pid, name: p.name, type: '人員', owner: false, edit: false, view: true, denied: false, reason: '' });
+        }
+    }
+    renderShareOrgTree();
+    renderSharePermTable();
+}
+
+/** 切換節點展開/收合 */
+function toggleShareOrgNode(nodeId) {
+    _shareOrgExpandedNodes[nodeId] = !_shareOrgExpandedNodes[nodeId];
+    renderShareOrgTree();
+}
+
+/** 扁平化組織樹，收集所有節點與麵包屑路徑（共用 Modal 用） */
+function _flattenShareOrgNodes(node, parentPath) {
+    const result = [];
+    const currentPath = parentPath ? parentPath + ' > ' + node.label : node.label;
+    result.push({ node: node, breadcrumb: parentPath || '' });
+    if (node.children) {
+        node.children.forEach(child => {
+            result.push(..._flattenShareOrgNodes(child, currentPath));
+        });
+    }
+    return result;
+}
+
+/** 渲染共用組織樹（扁平化） */
+function renderShareOrgTree() {
+    const container = document.getElementById('shareOrgTree');
+    if (!container) return;
+    const keyword = (document.getElementById('shareOrgSearchInput') || {}).value || '';
+    const kw = keyword.trim().toLowerCase();
+    const flatList = _flattenShareOrgNodes(_permOrgTree, '');
+    let html = '';
+    flatList.forEach(({ node, breadcrumb }) => {
+        const nodeHtml = _buildShareFlatNodeHtml(node, breadcrumb, kw);
+        if (nodeHtml) html += nodeHtml;
+    });
+    container.innerHTML = html;
+    // 設定 indeterminate 狀態
+    container.querySelectorAll('input.pot-checkbox[data-indeterminate]').forEach(cb => {
+        cb.indeterminate = true;
+    });
+}
+
+/** 建置單一扁平化節點 HTML（共用 Modal 用） */
+function _buildShareFlatNodeHtml(node, breadcrumb, keyword) {
+    const memberIds = [];
+    if (node.headPersonId) memberIds.push(node.headPersonId);
+    if (node.members) memberIds.push(...node.members);
+    const isExpanded = !!_shareOrgExpandedNodes[node.id];
+
+    // 選取狀態（僅看直屬成員）
+    const _selectedCount = memberIds.filter(pid => _sharePermList.some(s => s.id === pid && s.type === '人員')).length;
+    const isChecked = memberIds.length > 0
+        ? _selectedCount === memberIds.length
+        : _sharePermList.some(s => s.id === node.id && (s.type === '部門' || s.type === '組別'));
+    const isIndeterminate = memberIds.length > 0 && _selectedCount > 0 && _selectedCount < memberIds.length;
+
+    // 搜尋過濾：節點名稱、麵包屑路徑、人員名稱
+    const pplLookup = typeof _getPersonById === 'function' ? _getPersonById : (pid => _permOrgPeople.find(pp => pp.id === pid));
+    let matchSelf = !keyword || node.label.toLowerCase().includes(keyword);
+    let matchBreadcrumb = !keyword || (breadcrumb && breadcrumb.toLowerCase().includes(keyword));
+    let matchMembers = memberIds.filter(pid => {
+        const p = pplLookup(pid);
+        return p && (p.name.toLowerCase().includes(keyword) || p.title.toLowerCase().includes(keyword));
+    });
+    if (keyword && !matchSelf && !matchBreadcrumb && matchMembers.length === 0) return '';
+
+    // 人員列
+    let membersHtml = '';
+    const showMembers = isExpanded;
+    if (showMembers && memberIds.length > 0) {
+        const filteredMembers = (keyword && !matchSelf && !matchBreadcrumb) ? matchMembers : memberIds;
+        membersHtml = filteredMembers.map(pid => {
+            const p = pplLookup(pid);
+            if (!p) return '';
+            const isPC = _sharePermList.some(s => s.id === pid && s.type === '人員');
+            const permEntry = _sharePermList.find(s => s.id === pid && s.type === '人員');
+            const isOwner = permEntry ? permEntry.owner : false;
+            const isEdit = permEntry ? permEntry.edit : false;
+            const isView = permEntry ? permEntry.view : true;
+            // 決定目前權限等級與顯示文字
+            let curLevel = 'none';
+            let curLabel = '—';
+            if (isPC) {
+                if (isOwner) { curLevel = 'owner'; curLabel = '管理者'; }
+                else if (isEdit) { curLevel = 'edit'; curLabel = '編輯者'; }
+                else if (permEntry && permEntry.denied) { curLevel = 'denied'; curLabel = '拒絕存取'; }
+                else { curLevel = 'view'; curLabel = '檢視者'; }
+            }
+            const dropdownHtml = isPC ? `
+                <div class="pot-perm-dropdown" onclick="event.stopPropagation();">
+                    <select class="pot-perm-select" data-level="${curLevel}" onchange="onSharePermSelectChange('${pid}', this)">
+                        <option value="owner" ${curLevel === 'owner' ? 'selected' : ''}>管理者</option>
+                        <option value="edit" ${curLevel === 'edit' ? 'selected' : ''}>編輯者</option>
+                        <option value="view" ${curLevel === 'view' ? 'selected' : ''}>檢視者</option>
+                        <option value="denied" ${curLevel === 'denied' ? 'selected' : ''}>拒絕存取</option>
+                    </select>
+                </div>` : '';
+            return `<div class="pot-member-row ${isPC ? 'selected' : ''}" onclick="toggleShareOrgPersonCheck('${pid}')">
+                <input type="checkbox" class="pot-checkbox" ${isPC ? 'checked' : ''} onclick="event.stopPropagation(); toggleShareOrgPersonCheck('${pid}')">
+                <div class="pot-member-info">
+                    <span class="pot-member-name">${p.name}</span>
+                    <span class="pot-member-title">${p.title} · ${p.empNo || ''}</span>
+                </div>
+                ${dropdownHtml}
+            </div>`;
+        }).join('');
+    }
+
+    const hasMembers = memberIds.length > 0;
+    const toggleClass = hasMembers
+        ? (showMembers ? 'expanded' : '')
+        : 'no-children';
+
+    return `<div class="pot-node">
+        <div class="pot-row ${isChecked || isIndeterminate ? 'selected' : ''}">
+            <span class="pot-toggle ${toggleClass}" onclick="event.stopPropagation(); toggleShareOrgNode('${node.id}')">
+                <i class="fa-solid fa-caret-right"></i>
+            </span>
+            <input type="checkbox" class="pot-checkbox" ${isChecked ? 'checked' : ''} ${isIndeterminate ? 'data-indeterminate' : ''} onclick="event.stopPropagation(); toggleShareOrgNodeCheck('${node.id}', '${node.label.replace(/'/g,"\\'")}', '${node.type}')">
+            <div class="pot-node-info" onclick="toggleShareOrgNode('${node.id}')">
+                <span class="pot-label">${node.label}</span>
+                ${breadcrumb ? `<span class="pot-breadcrumb">${breadcrumb}</span>` : ''}
+            </div>
+        </div>
+        <div class="pot-children ${showMembers ? '' : 'collapsed'}">
+            ${membersHtml}
+        </div>
+    </div>`;
+}
+
+/** 設定共用對象人員的權限等級（管理者/編輯者/檢視者/拒絕存取） */
+function setSharePersonPerm(pid, level) {
+    let entry = _sharePermList.find(s => s.id === pid && s.type === '人員');
+    if (!entry) {
+        // 尚未勾選 → 自動加入並設定權限
+        const p = typeof _getPersonById === 'function' ? _getPersonById(pid) : _permOrgPeople.find(pp => pp.id === pid);
+        if (!p) return;
+        entry = { id: pid, name: p.name, type: '人員', owner: false, edit: false, view: true, denied: false, reason: '' };
+        _sharePermList.push(entry);
+    }
+    entry.owner  = (level === 'owner');
+    entry.edit   = (level === 'edit');
+    entry.view   = (level === 'view');
+    entry.denied = (level === 'denied');
+    renderShareOrgTree();
+    renderSharePermTable();
+}
+
+/** 原生 select 選擇共用權限等級 */
+function onSharePermSelectChange(pid, selectEl) {
+    event.stopPropagation();
+    const level = selectEl.value;
+    selectEl.setAttribute('data-level', level);
+    setSharePersonPerm(pid, level);
+}
+
+/** 搜尋過濾共用組織樹 */
+function filterShareOrgTree() {
+    const keyword = (document.getElementById('shareOrgSearchInput') || {}).value || '';
+    if (keyword.trim()) {
+        _expandAllShareNodes(_permOrgTree);
+    }
+    renderShareOrgTree();
+}
+function _expandAllShareNodes(node) {
+    _shareOrgExpandedNodes[node.id] = true;
+    if (node.children) node.children.forEach(c => _expandAllShareNodes(c));
+}
+
+/** 開啟新增共用對象 Picker（已棄用，改為直接用樹狀選擇） */
 function openShareAddPicker() {
-    _pickerSelected = [];
-    _pickerTab = 'dept';
-    document.getElementById('pickerSearchInput').value = '';
-    document.getElementById('pickerReason').value = '';
-    updatePickerTabs();
-    renderPickerList();
-    renderPickerTags();
-    // 標記為從 share modal 來的
-    document.getElementById('addPickerModal').dataset.source = 'share';
-    document.getElementById('addPickerModal').classList.add('show');
+    // 保留向下相容，但不再使用
 }
 
 /**
