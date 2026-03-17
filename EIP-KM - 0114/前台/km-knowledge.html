@@ -434,6 +434,9 @@
     // ===== 當前審核 Tab =====
     let _reviewTab = 'submitted';
 
+    // ===== 個人貢獻 View =====
+    let _contribView = 'published';
+
     // ===== 初始化 =====
     (function init() {
         renderLatestArticles();
@@ -511,8 +514,6 @@
     }
 
     // ===== 個人貢獻 =====
-    let _contribView = 'published';
-
     function renderContributions() {
         const stats = document.getElementById('contribStats');
         const pCount = _myContributions.published.length;
