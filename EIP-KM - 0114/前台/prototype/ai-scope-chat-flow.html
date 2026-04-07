@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototype - AI 智能問答：雙模式對話流程</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft JhengHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #F1F5F9; min-height: 100vh; color: #0F172A;
+        }
+
+        /* ── Proto Header ── */
+        .proto-bar {
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            padding: 14px 32px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50; color: #fff;
+        }
+        .proto-bar h1 { font-size: 16px; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+        .proto-bar h1 i { color: #38BDF8; }
+        .proto-badge {
+            background: rgba(56,189,248,.15); color: #7DD3FC; font-size: 11px; font-weight: 600;
+            padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(56,189,248,.25);
+        }
+        .scenario-tabs {
+            display: flex; gap: 0; margin: 0 auto; max-width: 800px; padding: 16px 32px 0;
+        }
+        .scenario-tab {
+            flex: 1; padding: 12px 16px; border: none; background: #fff; cursor: pointer;
+            font-size: 13px; font-weight: 600; color: #64748B; transition: all .2s;
+            border-bottom: 3px solid transparent; font-family: inherit;
+            display: flex; align-items: center; gap: 8px; justify-content: center;
+        }
+        .scenario-tab:first-child { border-radius: 10px 0 0 0; }
+        .scenario-tab:last-child { border-radius: 0 10px 0 0; }
+        .scenario-tab.active { color: #1D4ED8; border-bottom-color: #3B82F6; background: #EFF6FF; }
+        .scenario-tab:hover:not(.active) { background: #F8FAFC; }
+        .scenario-tab .tab-badge {
+            font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 700;
+        }
+        .scenario-tab .tab-badge.green { background: #D1FAE5; color: #065F46; }
+        .scenario-tab .tab-badge.amber { background: #FEF3C7; color: #92400E; }
+
+        /* ── Chat Container ── */
+        .chat-wrapper {
+            max-width: 800px; margin: 0 auto; padding: 0 32px 40px;
+        }
+        .chat-container {
+            background: #fff; border-radius: 0 0 14px 14px; border: 1px solid #E5E7EB;
+            border-top: none; display: flex; flex-direction: column;
+            min-height: 620px; overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,.05);
+        }
+        .chat-container.hidden { display: none; }
+
+        .chat-body { flex: 1; overflow-y: auto; padding: 24px; }
+
+        /* ── Messages ── */
+        .msg { display: flex; gap: 12px; margin-bottom: 20px; }
+        .msg.user { flex-direction: row-reverse; }
+        .msg-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; font-size: 14px;
+        }
+        .msg.bot .msg-avatar { background: linear-gradient(135deg, #3B82F6, #1D4ED8); color: #fff; }
+        .msg.user .msg-avatar { background: #64748B; color: #fff; }
+        .msg-content { max-width: 85%; }
+        .msg-bubble {
+            padding: 14px 18px; border-radius: 14px;
+            font-size: 14px; line-height: 1.75;
+        }
+        .msg.bot .msg-bubble { background: #F8FAFC; border: 1px solid #E5E7EB; }
+        .msg.user .msg-bubble { background: linear-gradient(135deg, #3B82F6, #2563EB); color: #fff; border-radius: 14px 14px 4px 14px; }
+        .msg-bubble p { margin-bottom: 8px; }
+        .msg-bubble p:last-child { margin-bottom: 0; }
+        .hint-text { font-size: 13px; color: #94A3B8; }
+
+        /* ── Quick Questions ── */
+        .quick-qs { margin-top: 12px; }
+        .quick-qs .ql { font-size: 12px; color: #94A3B8; margin-bottom: 6px; }
+        .qq-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #fff; border: 1px solid #E5E7EB; border-radius: 8px;
+            padding: 7px 14px; font-size: 12px; cursor: pointer;
+            margin: 0 6px 6px 0; transition: all .15s; font-family: inherit; color: #0F172A;
+        }
+        .qq-btn:hover { border-color: #3B82F6; background: #EFF6FF; color: #1D4ED8; }
+        .qq-btn i { color: #3B82F6; font-size: 11px; }
+
+        /* ── Comparison Table ── */
+        .cmp-table-wrap {
+            margin: 14px 0; overflow-x: auto; border-radius: 10px; border: 1px solid #E5E7EB;
+        }
+        .cmp-table {
+            width: 100%; border-collapse: collapse; font-size: 13px; background: #fff;
+        }
+        .cmp-table th {
+            background: #F1F5F9; padding: 10px 14px; text-align: left;
+            font-weight: 600; color: #0F172A; border-bottom: 2px solid #E5E7EB;
+            white-space: nowrap;
+        }
+        .cmp-table td {
+            padding: 10px 14px; border-bottom: 1px solid #F1F5F9; vertical-align: top;
+        }
+        .cmp-table tbody tr:hover { background: #F8FAFC; }
+        .cmp-table td:first-child { font-weight: 500; color: #334155; white-space: nowrap; }
+        .cmp-table .change-up { color: #059669; font-weight: 600; }
+        .cmp-table .change-new { color: #DC2626; font-weight: 600; }
+        .cmp-table .change-down { color: #3B82F6; font-weight: 600; }
+
+        /* ── Reference Sources (like the screenshot) ── */
+        .ref-block {
+            margin-top: 16px; padding-top: 12px;
+            border-top: 1px solid #E5E7EB;
+        }
+        .ref-label {
+            font-size: 12px; color: #94A3B8; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .ref-label i { font-size: 14px; }
+        .ref-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .ref-chip {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 500;
+            cursor: pointer; transition: all .15s; border: 1px solid #E5E7EB;
+            background: #FAFBFC; color: #334155; text-decoration: none;
+        }
+        .ref-chip:hover { border-color: #3B82F6; background: #EFF6FF; color: #1D4ED8; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(59,130,246,.12); }
+        .ref-chip i { font-size: 13px; }
+        .ref-chip i.pdf { color: #DC2626; }
+        .ref-chip i.doc { color: #2563EB; }
+        .ref-chip i.xls { color: #059669; }
+        .ref-chip i.folder { color: #D97706; }
+        .ref-node {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 10px; border-radius: 8px; font-size: 11px;
+            background: #EFF6FF; color: #1D4ED8; cursor: pointer;
+            border: 1px solid #BFDBFE; transition: all .15s;
+        }
+        .ref-node:hover { background: #DBEAFE; }
+
+        /* ── Scope Confirm Card ── */
+        .scope-card {
+            background: #FAFBFC; border: 1px solid #E5E7EB; border-radius: 12px;
+            padding: 16px; margin: 12px 0;
+        }
+        .scope-card-title {
+            font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .scope-card-title i { color: #F59E0B; }
+        .scope-group { margin-bottom: 12px; }
+        .scope-group:last-of-type { margin-bottom: 14px; }
+        .scope-group-label {
+            font-size: 12px; font-weight: 600; color: #64748B;
+            margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+        }
+        .scope-group-label .dot {
+            width: 8px; height: 8px; border-radius: 50%;
+        }
+        .scope-group-label .dot.a { background: #3B82F6; }
+        .scope-group-label .dot.b { background: #F59E0B; }
+        .scope-items { display: flex; flex-direction: column; gap: 6px; }
+        .scope-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 12px; border-radius: 8px; border: 1px solid #E5E7EB;
+            background: #fff; cursor: pointer; transition: all .15s;
+            font-size: 13px;
+        }
+        .scope-item:hover { border-color: #93C5FD; background: #F0F7FF; }
+        .scope-item.checked { border-color: #3B82F6; background: #EFF6FF; }
+        .scope-item .si-check {
+            width: 18px; height: 18px; border-radius: 4px; border: 2px solid #CBD5E1;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; color: transparent; transition: all .15s; flex-shrink: 0;
+        }
+        .scope-item.checked .si-check { background: #3B82F6; border-color: #3B82F6; color: #fff; }
+        .scope-item .si-icon { font-size: 14px; flex-shrink: 0; }
+        .scope-item .si-icon.folder { color: #D97706; }
+        .scope-item .si-icon.file { color: #2563EB; }
+        .scope-item .si-info { flex: 1; min-width: 0; }
+        .scope-item .si-name { font-weight: 500; }
+        .scope-item .si-meta { font-size: 11px; color: #94A3B8; margin-top: 1px; }
+
+        .scope-actions { display: flex; gap: 8px; }
+        .scope-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 16px; border-radius: 8px; font-size: 13px; cursor: pointer;
+            border: none; font-family: inherit; font-weight: 600; transition: all .2s;
+        }
+        .scope-btn.primary { background: #3B82F6; color: #fff; }
+        .scope-btn.primary:hover { background: #2563EB; box-shadow: 0 2px 8px rgba(37,99,235,.3); }
+        .scope-btn.ghost { background: transparent; color: #64748B; border: 1px solid #E5E7EB; }
+        .scope-btn.ghost:hover { background: #F8FAFC; border-color: #CBD5E1; }
+
+        /* ── Loading Dots ── */
+        .typing-indicator {
+            display: inline-flex; align-items: center; gap: 4px; padding: 8px 0;
+        }
+        .typing-dot {
+            width: 8px; height: 8px; border-radius: 50%; background: #94A3B8;
+            animation: typingBounce .6s infinite alternate;
+        }
+        .typing-dot:nth-child(2) { animation-delay: .15s; }
+        .typing-dot:nth-child(3) { animation-delay: .3s; }
+        @keyframes typingBounce {
+            from { opacity: .3; transform: translateY(0); }
+            to { opacity: 1; transform: translateY(-4px); }
+        }
+
+        /* ── Chat Input ── */
+        .chat-input-area {
+            padding: 16px 24px; border-top: 1px solid #E5E7EB; background: #fff;
+        }
+        .chat-input-row {
+            display: flex; gap: 10px; align-items: flex-end;
+        }
+        .chat-input-row textarea {
+            flex: 1; resize: none; border: 1.5px solid #E5E7EB; border-radius: 12px;
+            padding: 11px 16px; font-size: 14px; font-family: inherit;
+            outline: none; transition: all .2s; min-height: 46px; max-height: 120px;
+        }
+        .chat-input-row textarea:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59,130,246,.08); }
+        .send-btn {
+            background: linear-gradient(135deg, #3B82F6, #2563EB); color: #fff;
+            border: none; border-radius: 12px; padding: 11px 20px;
+            cursor: pointer; font-size: 14px; transition: all .2s;
+            display: flex; align-items: center; gap: 6px; white-space: nowrap;
+            font-family: inherit; font-weight: 500;
+        }
+        .send-btn:hover { box-shadow: 0 4px 14px rgba(37,99,235,.3); }
+        .input-hint { font-size: 11px; color: #CBD5E1; margin-top: 6px; }
+
+        /* ── Scenario Description ── */
+        .scenario-desc {
+            margin: 0 auto; max-width: 800px; padding: 16px 32px 0;
+        }
+        .desc-card {
+            background: #fff; border: 1px solid #E5E7EB; border-radius: 10px;
+            padding: 14px 18px; font-size: 13px; color: #475569; line-height: 1.7;
+            display: flex; gap: 12px; align-items: flex-start;
+        }
+        .desc-card.hidden { display: none; }
+        .desc-card i { color: #3B82F6; font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+        .desc-card strong { color: #0F172A; }
+        .desc-card .tag { 
+            display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; 
+            font-weight: 600; margin: 0 2px;
+        }
+        .desc-card .tag.green { background: #D1FAE5; color: #065F46; }
+        .desc-card .tag.amber { background: #FEF3C7; color: #92400E; }
+
+        /* ── Summary Box inside answer ── */
+        .ai-summary-box {
+            background: linear-gradient(135deg, #F0F9FF, #E0F2FE); border-left: 4px solid #3B82F6;
+            border-radius: 8px; padding: 12px 16px; margin: 10px 0; font-size: 13px; line-height: 1.8;
+        }
+        .ai-summary-box strong { color: #1D4ED8; }
+
+        /* ── Divider ── */
+        .scope-vs {
+            display: flex; align-items: center; gap: 10px; margin: 8px 0;
+            font-size: 11px; color: #94A3B8; font-weight: 600;
+        }
+        .scope-vs::before, .scope-vs::after { content: ''; flex: 1; height: 1px; background: #E5E7EB; }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="proto-bar">
+    <h1><i class="fa-solid fa-flask"></i> AI 智能問答 — 雙模式對話流程</h1>
+    <span class="proto-badge">Prototype</span>
+</div>
+
+<!-- Scenario Tabs -->
+<div class="scenario-tabs">
+    <button class="scenario-tab active" onclick="switchScenario('direct')">
+        <i class="fa-solid fa-bolt"></i> 情境一：直回模式
+        <span class="tab-badge green">範圍明確</span>
+    </button>
+    <button class="scenario-tab" onclick="switchScenario('confirm')">
+        <i class="fa-solid fa-list-check"></i> 情境二：確認模式
+        <span class="tab-badge amber">範圍模糊</span>
+    </button>
+</div>
+
+<!-- Scenario Descriptions -->
+<div class="scenario-desc">
+    <div class="desc-card" id="desc-direct">
+        <i class="fa-solid fa-circle-info"></i>
+        <div>
+            <strong>直回模式</strong>：當 AI 從問題中找到的文件<span class="tag green">少且明確</span>時，
+            直接給出比較結果 + 底部附上參考來源檔案。零等待、一次到位。
+        </div>
+    </div>
+    <div class="desc-card hidden" id="desc-confirm">
+        <i class="fa-solid fa-circle-info"></i>
+        <div>
+            <strong>確認模式</strong>：當 AI 找到的文件<span class="tag amber">多且模糊</span>時，
+            先用互動式卡片讓使用者勾選確認範圍 → 確認後才執行分析。精準到位、不怕比錯。
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     情境一：直回模式
+     ═══════════════════════════════════ -->
+<div class="chat-wrapper">
+<div class="chat-container" id="chat-direct">
+    <div class="chat-body">
+        <!-- 初始歡迎 -->
+        <div class="msg bot">
+            <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+            <div class="msg-content">
+                <div class="msg-bubble">
+                    <p>您好！我是 AI 智能助手，請問有什麼可以幫助您的？</p>
+                    <p class="hint-text">您可以直接詢問文件內容、比較專案差異、查詢規範變動等問題。</p>
+                    <div class="quick-qs">
+                        <div class="ql">常用提問：</div>
+                        <button class="qq-btn"><i class="fa-solid fa-code-compare"></i> 比較大毅與陸府專案差異</button>
+                        <button class="qq-btn"><i class="fa-solid fa-table"></i> 列出近三年旅費申請差異</button>
+                        <button class="qq-btn"><i class="fa-solid fa-magnifying-glass"></i> 公司差旅規範重點摘要</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用者提問 -->
+        <div class="msg user">
+            <div class="msg-avatar"><i class="fa-solid fa-user"></i></div>
+            <div class="msg-content">
+                <div class="msg-bubble">比較大毅與陸府專案的差異</div>
+            </div>
+        </div>
+
+        <!-- AI 直接回答（範圍明確，只各找到 1 個資料夾） -->
+        <div class="msg bot">
+            <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+            <div class="msg-content">
+                <div class="msg-bubble">
+                    <p>以下是<strong>大毅建設案</strong>與<strong>陸府建設案</strong>的主要差異比較：</p>
+
+                    <div class="ai-summary-box">
+                        <strong>摘要：</strong>兩案在建築規模、單價與用料等級上差異顯著。大毅案以高坪效住宅為主，陸府案則偏向精品豪宅定位，公設比與建材規格均較高。
+                    </div>
+
+                    <div class="cmp-table-wrap">
+                        <table class="cmp-table">
+                            <thead>
+                                <tr>
+                                    <th>比較項目</th>
+                                    <th>大毅建設案</th>
+                                    <th>陸府建設案</th>
+                                    <th>差異說明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>基地面積</td>
+                                    <td>1,200 坪</td>
+                                    <td>2,800 坪</td>
+                                    <td class="change-up">陸府大 133%</td>
+                                </tr>
+                                <tr>
+                                    <td>總戶數</td>
+                                    <td>186 戶</td>
+                                    <td>120 戶</td>
+                                    <td class="change-down">陸府較少</td>
+                                </tr>
+                                <tr>
+                                    <td>每坪單價</td>
+                                    <td>38 萬/坪</td>
+                                    <td>58 萬/坪</td>
+                                    <td class="change-up">陸府高 52%</td>
+                                </tr>
+                                <tr>
+                                    <td>公設比</td>
+                                    <td>32%</td>
+                                    <td>38%</td>
+                                    <td>陸府含更多休閒設施</td>
+                                </tr>
+                                <tr>
+                                    <td>建材規格</td>
+                                    <td>標準規格</td>
+                                    <td>進口石材 + 氣密窗</td>
+                                    <td class="change-new">陸府用料等級更高</td>
+                                </tr>
+                                <tr>
+                                    <td>停車規劃</td>
+                                    <td>地下 2 層 / 1:1</td>
+                                    <td>地下 3 層 / 1:1.5</td>
+                                    <td>陸府車位配比較高</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 參考來源 -->
+                    <div class="ref-block">
+                        <div class="ref-label"><i class="fa-solid fa-quote-left"></i> 參考</div>
+                        <div class="ref-chips">
+                            <a class="ref-chip" href="#"><i class="fa-solid fa-file-pdf pdf"></i> 大毅建設-規格書v2.1.pdf</a>
+                            <a class="ref-chip" href="#"><i class="fa-solid fa-file-excel xls"></i> 大毅建設-報價比較.xlsx</a>
+                            <a class="ref-chip" href="#"><i class="fa-solid fa-file-pdf pdf"></i> 陸府建設-規格書v1.8.pdf</a>
+                            <a class="ref-chip" href="#"><i class="fa-solid fa-file-word doc"></i> 陸府建設-建材清單.docx</a>
+                            <a class="ref-chip" href="#"><i class="fa-solid fa-file-excel xls"></i> 陸府建設-報價比較.xlsx</a>
+                            <span class="ref-node"><i class="fa-solid fa-location-dot"></i> 參考節點</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-input-area">
+        <div class="chat-input-row">
+            <textarea id="input-direct" rows="1" placeholder="輸入您的問題... 試試：移除陸府建設-報價比較.xlsx" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg('direct')}"></textarea>
+            <button class="send-btn" onclick="sendMsg('direct')"><i class="fa-solid fa-paper-plane"></i> 發送</button>
+        </div>
+        <div class="input-hint">按 Enter 發送，Shift + Enter 換行 · 試輸入「移除陸府建設-報價比較.xlsx」或「加入大毅建設-合約書.pdf」</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     情境二：確認模式
+     ═══════════════════════════════════ -->
+<div class="chat-container hidden" id="chat-confirm">
+    <div class="chat-body">
+        <!-- 初始歡迎 -->
+        <div class="msg bot">
+            <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+            <div class="msg-content">
+                <div class="msg-bubble">
+                    <p>您好！我是 AI 智能助手，請問有什麼可以幫助您的？</p>
+                    <p class="hint-text">您可以直接詢問文件內容、比較專案差異、查詢規範變動等問題。</p>
+                    <div class="quick-qs">
+                        <div class="ql">常用提問：</div>
+                        <button class="qq-btn"><i class="fa-solid fa-code-compare"></i> 比較大毅與陸府專案差異</button>
+                        <button class="qq-btn"><i class="fa-solid fa-table"></i> 列出近三年旅費申請差異</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用者提問 -->
+        <div class="msg user">
+            <div class="msg-avatar"><i class="fa-solid fa-user"></i></div>
+            <div class="msg-content">
+                <div class="msg-bubble">比較大毅與陸府專案的差異</div>
+            </div>
+        </div>
+
+        <!-- AI 反問：匹配到多組文件，需確認 -->
+        <div class="msg bot">
+            <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+            <div class="msg-content">
+                <div class="msg-bubble">
+                    <p>我在文件庫中找到多組與「大毅」和「陸府」相關的文件，請確認要比較的範圍：</p>
+
+                    <div class="scope-card">
+                        <div class="scope-card-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 請確認比較範圍</div>
+                        
+                        <div class="scope-group">
+                            <div class="scope-group-label"><span class="dot a"></span> 大毅相關</div>
+                            <div class="scope-items">
+                                <div class="scope-item checked" onclick="toggleItem(this)">
+                                    <div class="si-check"><i class="fa-solid fa-check"></i></div>
+                                    <i class="fa-solid fa-folder si-icon folder"></i>
+                                    <div class="si-info">
+                                        <div class="si-name">大毅建設-台中七期案</div>
+                                        <div class="si-meta">3 個檔案 · 專案文件 / 大毅</div>
+                                    </div>
+                                </div>
+                                <div class="scope-item checked" onclick="toggleItem(this)">
+                                    <div class="si-check"><i class="fa-solid fa-check"></i></div>
+                                    <i class="fa-solid fa-folder si-icon folder"></i>
+                                    <div class="si-info">
+                                        <div class="si-name">大毅建設-高雄鼓山案</div>
+                                        <div class="si-meta">5 個檔案 · 專案文件 / 大毅</div>
+                                    </div>
+                                </div>
+                                <div class="scope-item" onclick="toggleItem(this)">
+                                    <div class="si-check"><i class="fa-solid fa-check"></i></div>
+                                    <i class="fa-solid fa-file-lines si-icon file"></i>
+                                    <div class="si-info">
+                                        <div class="si-name">大毅建設-內部會議紀錄 2024.docx</div>
+                                        <div class="si-meta">Word · 320 KB · 會議紀錄</div>
+                                    </div>
+                                </div>
+                                <div class="scope-item" onclick="toggleItem(this)">
+                                    <div class="si-check"><i class="fa-solid fa-check"></i></div>
+                                    <i class="fa-solid fa-file-lines si-icon file"></i>
+                                    <div class="si-info">
+                                        <div class="si-name">大毅建設-合約變更備忘錄.pdf</div>
+                                        <div class="si-meta">PDF · 1.2 MB · 法務文件</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="scope-vs"><i class="fa-solid fa-arrows-left-right"></i> VS</div>
+
+                        <div class="scope-group">
+                            <div class="scope-group-label"><span class="dot b"></span> 陸府相關</div>
+                            <div class="scope-items">
+                                <div class="scope-item checked" onclick="toggleItem(this)">
+                                    <div class="si-check"><i class="fa-solid fa-check"></i></div>
+                                    <i class="fa-solid fa-folder si-icon folder"></i>
+                                    <div class="si-info">
+                                        <div class="si-name">陸府建設-惠宇聯開案</div>
+                                        <div class="si-meta">4 個檔案 · 專案文件 / 陸府</div>
+                                    </div>
+                                </div>
+                                <div class="scope-item" onclick="toggleItem(this)">
+                                    <div class="si-check"><i class="fa-solid fa-check"></i></div>
+                                    <i class="fa-solid fa-folder si-icon folder"></i>
+                                    <div class="si-info">
+                                        <div class="si-name">陸府建設-內部規範手冊</div>
+                                        <div class="si-meta">2 個檔案 · 制度文件 / 陸府</div>
+                                    </div>
+                                </div>
+                                <div class="scope-item checked" onclick="toggleItem(this)">
+                                    <div class="si-check"><i class="fa-solid fa-check"></i></div>
+                                    <i class="fa-solid fa-folder si-icon folder"></i>
+                                    <div class="si-info">
+                                        <div class="si-name">陸府建設-台中美術館案</div>
+                                        <div class="si-meta">6 個檔案 · 專案文件 / 陸府</div>
+                                    </div>
+                                </div>
+                                <div class="scope-item" onclick="toggleItem(this)">
+                                    <div class="si-check"><i class="fa-solid fa-check"></i></div>
+                                    <i class="fa-solid fa-file-lines si-icon file"></i>
+                                    <div class="si-info">
+                                        <div class="si-name">陸府建設-年度營收報告.pdf</div>
+                                        <div class="si-meta">PDF · 2.4 MB · 財務報表</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="scope-actions">
+                            <button class="scope-btn primary" onclick="confirmScope()"><i class="fa-solid fa-check"></i> 確認比較</button>
+                            <button class="scope-btn ghost"><i class="fa-solid fa-check-double"></i> 全選</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 確認後，AI 分析中 (模擬) -->
+        <div class="msg bot" id="typingMsg" style="display:none">
+            <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+            <div class="msg-content">
+                <div class="msg-bubble">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 確認後的回答 -->
+        <div class="msg bot" id="confirmAnswer" style="display:none">
+            <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+            <div class="msg-content">
+                <div class="msg-bubble">
+                    <p>已根據您確認的範圍完成分析，以下是<strong>大毅</strong>（台中七期案 + 高雄鼓山案）與<strong>陸府</strong>（惠宇聯開案 + 台中美術館案）的比較：</p>
+
+                    <div class="ai-summary-box">
+                        <strong>摘要：</strong>大毅兩案以中高價位住宅為主力，強調坪效與交屋速度；陸府兩案皆定位精品豪宅，著重公設品質與建材等級，單價與公設比均顯著高於大毅。
+                    </div>
+
+                    <div class="cmp-table-wrap">
+                        <table class="cmp-table">
+                            <thead>
+                                <tr>
+                                    <th>比較項目</th>
+                                    <th>大毅（2案合計）</th>
+                                    <th>陸府（2案合計）</th>
+                                    <th>差異說明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>總基地面積</td>
+                                    <td>1,850 坪</td>
+                                    <td>4,200 坪</td>
+                                    <td class="change-up">陸府大 127%</td>
+                                </tr>
+                                <tr>
+                                    <td>總戶數</td>
+                                    <td>312 戶</td>
+                                    <td>198 戶</td>
+                                    <td class="change-down">陸府戶數較少</td>
+                                </tr>
+                                <tr>
+                                    <td>平均單價</td>
+                                    <td>36 萬/坪</td>
+                                    <td>55 萬/坪</td>
+                                    <td class="change-up">陸府高 53%</td>
+                                </tr>
+                                <tr>
+                                    <td>平均公設比</td>
+                                    <td>31.5%</td>
+                                    <td>37.2%</td>
+                                    <td>陸府公設配置更豐富</td>
+                                </tr>
+                                <tr>
+                                    <td>預計交屋</td>
+                                    <td>2025 Q2 / Q4</td>
+                                    <td>2026 Q1 / Q3</td>
+                                    <td>大毅較早交屋</td>
+                                </tr>
+                                <tr>
+                                    <td>建材等級</td>
+                                    <td>國產標配</td>
+                                    <td>進口精裝</td>
+                                    <td class="change-new">陸府用料差異大</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 參考來源 -->
+                    <div class="ref-block">
+                        <div class="ref-label"><i class="fa-solid fa-quote-left"></i> 參考</div>
+                        <div class="ref-chips">
+                            <a class="ref-chip" href="#"><i class="fa-solid fa-file-pdf pdf"></i> 大毅-七期規格書v2.pdf</a>
+                            <a class="ref-chip" href="#"><i class="fa-solid fa-file-excel xls"></i> 大毅-七期報價表.xlsx</a>
+                            <a class="ref-chip" href="#"><i class="fa-solid fa-file-pdf pdf"></i> 大毅-鼓山規格書v1.pdf</a>
+                            <a class="ref-chip" href="#"><i class="fa-solid fa-file-pdf pdf"></i> 陸府-惠宇規格書v3.pdf</a>
+                            <a class="ref-chip" href="#"><i class="fa-solid fa-file-word doc"></i> 陸府-惠宇建材清單.docx</a>
+                            <a class="ref-chip" href="#"><i class="fa-solid fa-file-pdf pdf"></i> 陸府-美術館規格書v2.pdf</a>
+                            <a class="ref-chip" href="#"><i class="fa-solid fa-file-excel xls"></i> 陸府-美術館報價表.xlsx</a>
+                            <span class="ref-node"><i class="fa-solid fa-location-dot"></i> 參考節點</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-input-area">
+        <div class="chat-input-row">
+            <textarea id="input-confirm" rows="1" placeholder="輸入您的問題... 試試：移除陸府美術館報價表" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg('confirm')}"></textarea>
+            <button class="send-btn" onclick="sendMsg('confirm')"><i class="fa-solid fa-paper-plane"></i> 發送</button>
+        </div>
+        <div class="input-hint">按 Enter 發送，Shift + Enter 換行 · 試輸入「移除陸府美術館報價表」或「只比較建材規格」</div>
+    </div>
+</div>
+</div>
+
+<script>
+/* 切換情境 Tab */
+function switchScenario(id) {
+    document.querySelectorAll('.scenario-tab').forEach(t => t.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    document.getElementById('chat-direct').classList.toggle('hidden', id !== 'direct');
+    document.getElementById('chat-confirm').classList.toggle('hidden', id !== 'confirm');
+    document.getElementById('desc-direct').classList.toggle('hidden', id !== 'direct');
+    document.getElementById('desc-confirm').classList.toggle('hidden', id !== 'confirm');
+}
+
+/* 勾選/取消 scope item */
+function toggleItem(el) {
+    el.classList.toggle('checked');
+}
+
+/* 確認範圍後，模擬 AI 分析 */
+function confirmScope() {
+    const card = document.querySelector('#chat-confirm .scope-card');
+    const actions = card.querySelector('.scope-actions');
+    actions.innerHTML = '<span style="color:#059669;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;"><i class="fa-solid fa-circle-check"></i> 已確認範圍，分析中...</span>';
+
+    const typingMsg = document.getElementById('typingMsg');
+    typingMsg.style.display = 'flex';
+    typingMsg.scrollIntoView({ behavior: 'smooth' });
+
+    setTimeout(() => {
+        typingMsg.style.display = 'none';
+        const answer = document.getElementById('confirmAnswer');
+        answer.style.display = 'flex';
+        answer.scrollIntoView({ behavior: 'smooth' });
+    }, 1500);
+}
+
+/* ═══════════════════════════
+   互動式對話引擎
+   ═══════════════════════════ */
+
+function escapeHtml(text) {
+    const d = document.createElement('div');
+    d.textContent = text;
+    return d.innerHTML;
+}
+
+function getChatBody(scenario) {
+    return document.querySelector('#chat-' + scenario + ' .chat-body');
+}
+
+function appendMsg(scenario, role, html) {
+    const body = getChatBody(scenario);
+    const div = document.createElement('div');
+    div.className = 'msg ' + role;
+    const icon = role === 'user' ? 'fa-user' : 'fa-robot';
+    div.innerHTML = `
+        <div class="msg-avatar"><i class="fa-solid ${icon}"></i></div>
+        <div class="msg-content"><div class="msg-bubble">${html}</div></div>
+    `;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    return div;
+}
+
+function showTyping(scenario) {
+    const body = getChatBody(scenario);
+    const div = document.createElement('div');
+    div.className = 'msg bot';
+    div.id = 'typing-' + scenario;
+    div.innerHTML = `
+        <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div class="msg-content"><div class="msg-bubble">
+            <div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+        </div></div>
+    `;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+}
+
+function hideTyping(scenario) {
+    const el = document.getElementById('typing-' + scenario);
+    if (el) el.remove();
+}
+
+/* ── 模擬回應資料庫 ── */
+const responses = {
+    // 移除檔案
+    remove: {
+        match: /移除|刪除|拿掉|排除|不要.*報價|不含/,
+        reply: function(q) {
+            // 解析移除了什麼
+            let removed = '陸府-美術館報價表.xlsx';
+            if (/大毅/.test(q)) removed = '大毅建設-報價比較.xlsx';
+            if (/規格/.test(q)) removed = q.match(/[\u4e00-\u9fff]+-[\u4e00-\u9fff]+/)?.[0] + '.pdf' || removed;
+            if (/報價/.test(q) && /陸府/.test(q)) removed = '陸府-美術館報價表.xlsx';
+
+            return `<p>好的，已將 <strong style="color:#DC2626;"><i class="fa-solid fa-file-circle-minus" style="font-size:12px"></i> ${escapeHtml(removed)}</strong> 從比較範圍中移除，重新分析中...</p>
+
+            <div class="ai-summary-box">
+                <strong>更新摘要：</strong>移除報價資料後，比較聚焦於規格面與建材差異。大毅維持高坪效策略，陸府在建材與公設規劃上仍明顯領先，但價差表現需另行參考其他報價文件。
+            </div>
+
+            <div class="cmp-table-wrap"><table class="cmp-table">
+                <thead><tr><th>比較項目</th><th>大毅建設案</th><th>陸府建設案</th><th>差異說明</th></tr></thead>
+                <tbody>
+                    <tr><td>基地面積</td><td>1,200 坪</td><td>2,800 坪</td><td class="change-up">陸府大 133%</td></tr>
+                    <tr><td>總戶數</td><td>186 戶</td><td>120 戶</td><td class="change-down">陸府較少</td></tr>
+                    <tr><td>公設比</td><td>32%</td><td>38%</td><td>陸府公設更豐富</td></tr>
+                    <tr><td>建材規格</td><td>國產標配</td><td>進口石材 + 氣密窗</td><td class="change-new">陸府用料更高</td></tr>
+                    <tr><td>停車規劃</td><td>地下2層 / 1:1</td><td>地下3層 / 1:1.5</td><td>陸府車位配比較高</td></tr>
+                    <tr><td>每坪單價</td><td colspan="2" style="color:#94A3B8;text-align:center;">— 需參照報價文件 —</td><td style="color:#F59E0B;">已移除報價來源</td></tr>
+                </tbody>
+            </table></div>
+
+            <div class="ref-block">
+                <div class="ref-label"><i class="fa-solid fa-quote-left"></i> 參考</div>
+                <div class="ref-chips">
+                    <a class="ref-chip" href="#"><i class="fa-solid fa-file-pdf pdf"></i> 大毅建設-規格書v2.1.pdf</a>
+                    <a class="ref-chip" href="#"><i class="fa-solid fa-file-pdf pdf"></i> 陸府建設-規格書v1.8.pdf</a>
+                    <a class="ref-chip" href="#"><i class="fa-solid fa-file-word doc"></i> 陸府建設-建材清單.docx</a>
+                    <a class="ref-chip" href="#" style="opacity:.4;text-decoration:line-through;pointer-events:none;"><i class="fa-solid fa-file-excel xls"></i> ${escapeHtml(removed)}</a>
+                    <span class="ref-node"><i class="fa-solid fa-location-dot"></i> 參考節點</span>
+                </div>
+            </div>`;
+        }
+    },
+    // 加入檔案
+    add: {
+        match: /加入|新增|納入|也.*比較|包含/,
+        reply: function(q) {
+            let added = '大毅建設-合約書v3.pdf';
+            if (/會議/.test(q)) added = '大毅建設-內部會議紀錄 2024.docx';
+            if (/報價/.test(q)) added = '大毅建設-最新報價 2025.xlsx';
+
+            return `<p>好的，已將 <strong style="color:#059669;"><i class="fa-solid fa-file-circle-plus" style="font-size:12px"></i> ${escapeHtml(added)}</strong> 加入比較範圍，重新分析中...</p>
+
+            <div class="ai-summary-box">
+                <strong>更新摘要：</strong>加入新文件後，比較內容更為完整。大毅新增的合約資料揭示了付款條件差異 — 大毅採 5/5 分期，陸府採 3/3/4 分期制。
+            </div>
+
+            <div class="cmp-table-wrap"><table class="cmp-table">
+                <thead><tr><th>比較項目</th><th>大毅建設案</th><th>陸府建設案</th><th>差異說明</th></tr></thead>
+                <tbody>
+                    <tr><td>基地面積</td><td>1,200 坪</td><td>2,800 坪</td><td class="change-up">陸府大 133%</td></tr>
+                    <tr><td>每坪單價</td><td>38 萬/坪</td><td>58 萬/坪</td><td class="change-up">陸府高 52%</td></tr>
+                    <tr><td>建材規格</td><td>國產標配</td><td>進口石材 + 氣密窗</td><td class="change-new">陸府用料更高</td></tr>
+                    <tr style="background:#F0FDF4;"><td>💡 付款方式</td><td>5/5 分期</td><td>3/3/4 分期</td><td class="change-new">新增比較項</td></tr>
+                    <tr style="background:#F0FDF4;"><td>💡 合約保固</td><td>1 年</td><td>2 年</td><td class="change-up">陸府保固更長</td></tr>
+                </tbody>
+            </table></div>
+
+            <div class="ref-block">
+                <div class="ref-label"><i class="fa-solid fa-quote-left"></i> 參考</div>
+                <div class="ref-chips">
+                    <a class="ref-chip" href="#"><i class="fa-solid fa-file-pdf pdf"></i> 大毅建設-規格書v2.1.pdf</a>
+                    <a class="ref-chip" href="#"><i class="fa-solid fa-file-excel xls"></i> 大毅建設-報價比較.xlsx</a>
+                    <a class="ref-chip" href="#" style="background:#F0FDF4;border-color:#86EFAC;"><i class="fa-solid fa-file-pdf pdf"></i> ✨ ${escapeHtml(added)}</a>
+                    <a class="ref-chip" href="#"><i class="fa-solid fa-file-pdf pdf"></i> 陸府建設-規格書v1.8.pdf</a>
+                    <a class="ref-chip" href="#"><i class="fa-solid fa-file-word doc"></i> 陸府建設-建材清單.docx</a>
+                    <a class="ref-chip" href="#"><i class="fa-solid fa-file-excel xls"></i> 陸府建設-報價比較.xlsx</a>
+                    <span class="ref-node"><i class="fa-solid fa-location-dot"></i> 參考節點</span>
+                </div>
+            </div>`;
+        }
+    },
+    // 只比較某項
+    focus: {
+        match: /只比較|只看|聚焦|專注|針對.*比較/,
+        reply: function(q) {
+            let focus = '建材規格';
+            if (/價/.test(q)) focus = '價格與報價';
+            if (/設/.test(q) && /公/.test(q)) focus = '公設比';
+
+            return `<p>好的，聚焦在<strong>「${escapeHtml(focus)}」</strong>進行深度比較：</p>
+
+            <div class="cmp-table-wrap"><table class="cmp-table">
+                <thead><tr><th>建材項目</th><th>大毅建設案</th><th>陸府建設案</th><th>差異</th></tr></thead>
+                <tbody>
+                    <tr><td>外牆</td><td>二丁掛磁磚</td><td>花崗石乾掛</td><td class="change-new">等級差異大</td></tr>
+                    <tr><td>門窗</td><td>陽極鋁窗</td><td>日製氣密窗</td><td class="change-up">陸府等級高</td></tr>
+                    <tr><td>地坪</td><td>60x60 拋光磚</td><td>義大利進口大理石</td><td class="change-new">進口 vs 國產</td></tr>
+                    <tr><td>衛浴</td><td>國產品牌</td><td>TOTO / Duravit</td><td class="change-up">陸府為進口品牌</td></tr>
+                    <tr><td>廚具</td><td>不鏽鋼標配</td><td>德製 Bosch 崁入式</td><td class="change-new">規格差異顯著</td></tr>
+                </tbody>
+            </table></div>
+
+            <div class="ref-block">
+                <div class="ref-label"><i class="fa-solid fa-quote-left"></i> 參考</div>
+                <div class="ref-chips">
+                    <a class="ref-chip" href="#"><i class="fa-solid fa-file-pdf pdf"></i> 大毅建設-規格書v2.1.pdf</a>
+                    <a class="ref-chip" href="#"><i class="fa-solid fa-file-word doc"></i> 陸府建設-建材清單.docx</a>
+                    <a class="ref-chip" href="#"><i class="fa-solid fa-file-pdf pdf"></i> 陸府建設-規格書v1.8.pdf</a>
+                    <span class="ref-node"><i class="fa-solid fa-location-dot"></i> 參考節點</span>
+                </div>
+            </div>`;
+        }
+    },
+    // 通用回應
+    fallback: {
+        match: /.*/,
+        reply: function(q) {
+            return `<p>收到您的問題：「${escapeHtml(q)}」</p>
+            <p>已根據目前比較範圍進行分析。若需調整範圍，您可以說：</p>
+            <div class="quick-qs" style="margin-top:8px;">
+                <button class="qq-btn" onclick="fillAndSend(this,'移除陸府建設-報價比較.xlsx')"><i class="fa-solid fa-minus-circle"></i> 移除特定檔案</button>
+                <button class="qq-btn" onclick="fillAndSend(this,'加入大毅建設-合約書.pdf')"><i class="fa-solid fa-plus-circle"></i> 加入其他檔案</button>
+                <button class="qq-btn" onclick="fillAndSend(this,'只比較建材規格')"><i class="fa-solid fa-filter"></i> 聚焦特定面向</button>
+            </div>`;
+        }
+    }
+};
+
+function matchResponse(question) {
+    for (const key of ['remove', 'add', 'focus']) {
+        if (responses[key].match.test(question)) return responses[key];
+    }
+    return responses.fallback;
+}
+
+function sendMsg(scenario) {
+    const input = document.getElementById('input-' + scenario);
+    const question = input.value.trim();
+    if (!question) return;
+
+    // 使用者訊息
+    appendMsg(scenario, 'user', '<p>' + escapeHtml(question) + '</p>');
+    input.value = '';
+
+    // Typing
+    showTyping(scenario);
+
+    // 模擬延遲回覆
+    const handler = matchResponse(question);
+    setTimeout(() => {
+        hideTyping(scenario);
+        appendMsg(scenario, 'bot', handler.reply(question));
+    }, 1200);
+}
+
+function fillAndSend(btn, text) {
+    // 找到此按鈕所在的 chat-container
+    const container = btn.closest('.chat-container');
+    const scenario = container.id.replace('chat-', '');
+    const input = document.getElementById('input-' + scenario);
+    input.value = text;
+    sendMsg(scenario);
+}
+</script>
+</body>
+</html>

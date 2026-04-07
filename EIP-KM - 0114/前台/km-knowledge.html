@@ -12,230 +12,7 @@
     <link rel="stylesheet" href="css/style-content.css">
     <link rel="stylesheet" href="css/style-km-base.css">
     <link rel="stylesheet" href="css/style-search.css">
-    <style>
-        /* ===== 知識總覽頁面專用 ===== */
-
-        /* 歡迎區 */
-        .km-welcome {
-            padding: 20px 0 8px;
-        }
-        .km-welcome h2 { font-size: 22px; color: var(--text-primary); margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
-        .km-welcome p { color: var(--text-secondary); font-size: 14px; margin-bottom: 0; }
-
-        /* 區塊網格佈局 */
-        .km-dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        @media (max-width: 960px) { .km-dashboard-grid { grid-template-columns: 1fr; } }
-
-        /* 區塊面板 */
-        .km-block {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        .km-block .block-header {
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--white-color);
-        }
-        .km-block .block-header h3 {
-            font-size: 15px; font-weight: 700; margin: 0;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .km-block .block-header .header-icon {
-            width: 32px; height: 32px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center; font-size: 14px;
-        }
-        .km-block .block-header .more-link {
-            font-size: 13px; color: var(--primary-color); cursor: pointer;
-            display: flex; align-items: center; gap: 4px; text-decoration: none;
-        }
-        .km-block .block-header .more-link:hover { text-decoration: underline; }
-        .km-block .block-body {
-            padding: 0;
-            flex: 1;
-            max-height: 420px;
-            overflow-y: auto;
-        }
-
-        /* 文章列表項 */
-        .article-item {
-            display: flex; align-items: flex-start; gap: 12px;
-            padding: 14px 18px;
-            border-bottom: 1px solid #F1F5F9;
-            cursor: pointer;
-            transition: background .15s;
-        }
-        .article-item:last-child { border-bottom: none; }
-        .article-item:hover { background: #F8FAFC; }
-        .article-item .article-icon {
-            width: 36px; height: 36px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px; flex-shrink: 0; margin-top: 2px;
-        }
-        .article-item .article-info { flex: 1; min-width: 0; }
-        .article-item .article-title {
-            font-size: 14px; font-weight: 600; color: var(--text-primary);
-            margin-bottom: 4px; line-height: 1.4;
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-        .article-item:hover .article-title { color: var(--primary-color); }
-        .article-item .article-meta {
-            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-            font-size: 12px; color: var(--text-muted);
-        }
-        .article-item .article-meta span { display: flex; align-items: center; gap: 3px; }
-        .article-item .article-tags { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
-        .article-item .article-tags .tag {
-            font-size: 11px; padding: 1px 8px; border-radius: 999px;
-            border: 1px solid var(--border-color); color: var(--text-secondary); background: #fff;
-        }
-
-        /* 不同區塊配色 */
-        .icon-latest { background: linear-gradient(135deg, #EEF2FF, #E0E7FF); color: #4F46E5; }
-        .icon-hot { background: linear-gradient(135deg, #FEF2F2, #FEE2E2); color: #DC2626; }
-        .icon-fav { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); color: #EA580C; }
-        .icon-review { background: linear-gradient(135deg, #ECFDF5, #D1FAE5); color: #059669; }
-        .icon-contrib { background: linear-gradient(135deg, #F0F9FF, #E0F2FE); color: #0284C7; }
-
-        /* 個人貢獻統計卡 */
-        .contrib-stats {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
-        }
-        .contrib-stat-item {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 24px 12px; cursor: pointer; transition: background .15s;
-            border-right: 1px solid #F1F5F9; position: relative;
-        }
-        .contrib-stat-item:last-child { border-right: none; }
-        .contrib-stat-item:hover { background: #F8FAFC; }
-        .contrib-stat-item .stat-number {
-            font-size: 28px; font-weight: 800; line-height: 1; margin-bottom: 6px;
-        }
-        .contrib-stat-item .stat-label {
-            font-size: 12px; color: var(--text-muted); font-weight: 600;
-            display: flex; align-items: center; gap: 4px;
-        }
-        .contrib-stat-item .stat-icon {
-            width: 36px; height: 36px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px; margin-bottom: 10px;
-        }
-        .stat-published .stat-number { color: #059669; }
-        .stat-published .stat-icon { background: #ECFDF5; color: #059669; }
-        .stat-draft .stat-number { color: #D97706; }
-        .stat-draft .stat-icon { background: #FEF3C7; color: #D97706; }
-        .stat-expired .stat-number { color: #DC2626; }
-        .stat-expired .stat-icon { background: #FEF2F2; color: #DC2626; }
-
-        /* 貢獻列表 */
-        .contrib-list { border-top: 1px solid var(--border-color); }
-        .contrib-article {
-            display: flex; align-items: center; gap: 10px;
-            padding: 10px 18px; border-bottom: 1px solid #F1F5F9;
-            cursor: pointer; transition: background .15s; font-size: 13px;
-        }
-        .contrib-article:last-child { border-bottom: none; }
-        .contrib-article:hover { background: #F8FAFC; }
-        .contrib-article .ca-title {
-            flex: 1; font-weight: 600; color: var(--text-primary);
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-        .contrib-article:hover .ca-title { color: var(--primary-color); }
-        .contrib-article .ca-date { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
-        .contrib-status {
-            font-size: 10px; padding: 2px 7px; border-radius: 999px; font-weight: 700; white-space: nowrap;
-        }
-        .contrib-status.published { background: #ECFDF5; color: #059669; }
-        .contrib-status.draft { background: #FEF3C7; color: #B45309; }
-        .contrib-status.expired { background: #FEF2F2; color: #DC2626; }
-
-        /* 熱門文章排名 */
-        .article-item .rank-badge {
-            width: 24px; height: 24px; border-radius: 6px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 4px;
-        }
-        .rank-badge.rank-1 { background: #FEF3C7; color: #D97706; }
-        .rank-badge.rank-2 { background: #F1F5F9; color: #475569; }
-        .rank-badge.rank-3 { background: #FFF7ED; color: #C2410C; }
-        .rank-badge.rank-other { background: #F8FAFC; color: var(--text-muted); }
-
-        /* 收藏星星 */
-        .fav-star { color: #F59E0B; font-size: 14px; flex-shrink: 0; margin-top: 4px; }
-
-        /* 審核 Tabs */
-        .review-tabs {
-            display: flex; border-bottom: 2px solid var(--border-color); padding: 0 18px; background: var(--white-color);
-        }
-        .review-tab {
-            padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
-            border: none; background: none; color: var(--text-secondary);
-            border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s;
-            display: flex; align-items: center; gap: 6px;
-        }
-        .review-tab:hover { color: var(--text-primary); }
-        .review-tab.active { color: #059669; border-bottom-color: #059669; }
-        .review-tab .tab-count {
-            font-size: 11px; padding: 1px 7px; border-radius: 999px;
-            background: #F1F5F9; color: var(--text-muted); font-weight: 700;
-        }
-        .review-tab.active .tab-count { background: #ECFDF5; color: #059669; }
-
-        /* 審核狀態 badge */
-        .status-badge {
-            font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600;
-            display: inline-flex; align-items: center; gap: 3px;
-        }
-        .status-badge.pending { background: #FEF3C7; color: #B45309; }
-        .status-badge.reviewing { background: #DBEAFE; color: #1D4ED8; }
-        .status-badge.approved { background: #ECFDF5; color: #059669; }
-        .status-badge.rejected { background: #FEF2F2; color: #DC2626; }
-
-        /* 文章內頁 Modal */
-        .article-modal-overlay {
-            position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
-            background: rgba(2,6,23,.45); z-index: 100; padding: 16px;
-        }
-        .article-modal-overlay.show { display: flex; }
-        .article-modal {
-            width: min(780px, 96vw); max-height: 90vh; overflow-y: auto;
-            background: #fff; border-radius: var(--radius); box-shadow: 0 20px 50px rgba(0,0,0,.18);
-        }
-        .article-modal .am-header {
-            padding: 18px 24px; border-bottom: 1px solid var(--border-color);
-            display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
-        }
-        .article-modal .am-header h2 { font-size: 18px; margin: 0; line-height: 1.4; }
-        .article-modal .am-meta {
-            padding: 12px 24px; background: #F8FAFC; border-bottom: 1px solid var(--border-color);
-            display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--text-secondary);
-        }
-        .article-modal .am-meta span { display: flex; align-items: center; gap: 4px; }
-        .article-modal .am-body { padding: 24px; font-size: 14px; line-height: 1.8; color: var(--text-primary); }
-        .article-modal .am-body p { margin-bottom: 14px; }
-        .article-modal .am-footer {
-            padding: 14px 24px; border-top: 1px solid var(--border-color);
-            display: flex; align-items: center; justify-content: flex-end; gap: 8px;
-        }
-
-        /* 空狀態 */
-        .empty-state {
-            text-align: center; padding: 40px 20px; color: var(--text-muted);
-        }
-        .empty-state i { font-size: 28px; margin-bottom: 8px; display: block; color: #CBD5E1; }
-    </style>
+    <link rel="stylesheet" href="css/style-km-knowledge.css">
 </head>
 <body>
     <!-- 頂部導航 -->
@@ -246,87 +23,76 @@
     
     <!-- 主要內容區 -->
     <div class="main-content">
+        <!-- 頁面標題 -->
+        <div class="km-page-header">
+            <h2>KM 知識總覽</h2>
+            <p>瀏覽最新知識文章、熱門內容與待辦審核</p>
+        </div>
+
         <!-- KM 知識管理導航 -->
         <div id="km-nav-container"></div>
-        
-        <!-- KM 知識管理首頁內容 -->
+
+        <!-- KM 知識管理內容 -->
         <div class="km-container">
-            <div class="km-welcome">
-                <h2><i class="fa-solid fa-brain"></i> KM 知識總覽</h2>
-                <p>瀏覽最新知識文章、熱門內容與待辦審核</p>
-            </div>
 
-            <!-- ===== 四區塊 Dashboard ===== -->
+            <!-- 三欄 Grid -->
             <div class="km-dashboard-grid">
-
-                <!-- 1. 最新分享 -->
-                <div class="km-block">
+                <!-- 左欄：最新文章 -->
+                <div class="km-block km-grid-latest">
                     <div class="block-header">
-                        <h3><span class="header-icon icon-latest"><i class="fa-solid fa-clock"></i></span> 最新分享</h3>
+                        <h3><i class="fa-solid fa-clock block-icon"></i> 最新文章</h3>
                         <a class="more-link" href="km-shares.html">查看全部 <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
-                    <div class="block-body" id="latestArticlesBody">
-                        <!-- 動態生成 -->
-                    </div>
+                    <div class="block-body" id="latestArticlesBody"></div>
                 </div>
 
-                <!-- 2. 熱門文章 -->
-                <div class="km-block">
+                <!-- 中欄：熱門文章 -->
+                <div class="km-block km-grid-hot">
                     <div class="block-header">
-                        <h3><span class="header-icon icon-hot"><i class="fa-solid fa-fire"></i></span> 熱門文章</h3>
+                        <h3><i class="fa-solid fa-fire block-icon"></i> 熱門文章</h3>
                         <a class="more-link" href="javascript:void(0)">查看全部 <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
-                    <div class="block-body" id="hotArticlesBody">
-                        <!-- 動態生成 -->
+                    <div class="block-body" id="hotArticlesBody"></div>
+                </div>
+
+                <!-- 右欄：個人貢獻 + 文件審核 -->
+                <div class="km-grid-side">
+                    <div class="km-block">
+                        <div class="block-header">
+                            <h3><i class="fa-solid fa-pen-nib block-icon"></i> 個人貢獻</h3>
+                            <a class="more-link" href="javascript:void(0)">管理文章 <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+                        <div class="block-body">
+                            <div class="contrib-stats" id="contribStats"></div>
+                            <div class="contrib-list" id="contribList"></div>
+                        </div>
+                    </div>
+                    <div class="km-block">
+                        <div class="block-header">
+                            <h3><i class="fa-solid fa-clipboard-check block-icon"></i> 文件審核</h3>
+                        </div>
+                        <div class="review-tabs">
+                            <button class="review-tab active" onclick="switchReviewTab('submitted')" data-tab="submitted">
+                                我送審的 <span class="tab-count" id="submittedCount">0</span>
+                            </button>
+                            <button class="review-tab" onclick="switchReviewTab('pending')" data-tab="pending">
+                                等我審核 <span class="tab-count" id="pendingCount">0</span>
+                            </button>
+                        </div>
+                        <div class="block-body" id="reviewBody"></div>
                     </div>
                 </div>
 
-                <!-- 3. 我的收藏 -->
-                <div class="km-block">
+                <!-- 左兩欄底部：我的收藏 -->
+                <div class="km-block km-grid-fav">
                     <div class="block-header">
-                        <h3><span class="header-icon icon-fav"><i class="fa-solid fa-bookmark"></i></span> 我的收藏</h3>
+                        <h3><i class="fa-solid fa-bookmark block-icon"></i> 我的收藏</h3>
                         <a class="more-link" href="javascript:void(0)">查看全部 <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
-                    <div class="block-body" id="favArticlesBody">
-                        <!-- 動態生成 -->
-                    </div>
+                    <div class="block-body fav-body" id="favArticlesBody"></div>
                 </div>
-
-                <!-- 4. 個人貢獻 -->
-                <div class="km-block">
-                    <div class="block-header">
-                        <h3><span class="header-icon icon-contrib"><i class="fa-solid fa-pen-nib"></i></span> 個人貢獻</h3>
-                        <a class="more-link" href="javascript:void(0)">管理文章 <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <div class="block-body">
-                        <div class="contrib-stats" id="contribStats">
-                            <!-- 動態生成 -->
-                        </div>
-                        <div class="contrib-list" id="contribList">
-                            <!-- 動態生成 -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 5. 文件審核 -->
-                <div class="km-block">
-                    <div class="block-header">
-                        <h3><span class="header-icon icon-review"><i class="fa-solid fa-clipboard-check"></i></span> 文件審核</h3>
-                    </div>
-                    <div class="review-tabs">
-                        <button class="review-tab active" onclick="switchReviewTab('submitted')" data-tab="submitted">
-                            我送審的 <span class="tab-count" id="submittedCount">0</span>
-                        </button>
-                        <button class="review-tab" onclick="switchReviewTab('pending')" data-tab="pending">
-                            等我審核 <span class="tab-count" id="pendingCount">0</span>
-                        </button>
-                    </div>
-                    <div class="block-body" id="reviewBody">
-                        <!-- 動態生成 -->
-                    </div>
-                </div>
-
             </div>
+
         </div>
     </div>
 
@@ -361,7 +127,7 @@
 
     // ===== 假資料 =====
 
-    // 最新分享
+    // 最新文章
     const _latestArticles = [
         { id:'a01', title:'2026年度新人訓練手冊已更新', author:'李美玲', dept:'HR', date:'2026-03-16', tags:['培訓','新人'], views: 58,
           content:'<p>各位同仁好，2026年度新人訓練手冊已完成更新，主要調整內容如下：</p><p>1. 新增公司福利與差旅報銷流程<br>2. 更新請假制度與加班規範<br>3. 補充部門介紹與組織架構圖</p><p>請各部門主管協助轉知新進同仁下載閱讀，如有疑問請聯繫 HR 部門。</p>' },
@@ -447,13 +213,13 @@
         renderReview();
     })();
 
-    // ===== 最新分享 =====
+    // ===== 最新文章 =====
     function renderLatestArticles() {
         const host = document.getElementById('latestArticlesBody');
-        if (!_latestArticles.length) { host.innerHTML = '<div class="empty-state"><i class="fa-solid fa-inbox"></i>暫無最新分享</div>'; return; }
+        if (!_latestArticles.length) { host.innerHTML = '<div class="empty-state"><i class="fa-solid fa-inbox"></i>暫無最新文章</div>'; return; }
         host.innerHTML = _latestArticles.map(a => `
             <div class="article-item" onclick="openArticle('${a.id}')">
-                <div class="article-icon icon-latest"><i class="fa-solid fa-file-lines"></i></div>
+                <div class="article-icon"><i class="fa-solid fa-file-lines"></i></div>
                 <div class="article-info">
                     <div class="article-title">${escHtml(a.title)}</div>
                     <div class="article-meta">
@@ -468,13 +234,12 @@
         `).join('');
     }
 
-    // ===== 熱門文章 =====
+    // ===== 熱門文章（列表式）=====
     function renderHotArticles() {
         const host = document.getElementById('hotArticlesBody');
         if (!_hotArticles.length) { host.innerHTML = '<div class="empty-state"><i class="fa-solid fa-fire"></i>暫無熱門文章</div>'; return; }
         host.innerHTML = _hotArticles.map((a, i) => {
             const rankClass = i < 3 ? 'rank-'+(i+1) : 'rank-other';
-            // 前三名連結至文章內頁
             const clickAction = i < 3
                 ? `window.location.href='km-article.html?id=${a.id}'`
                 : `openArticle('${a.id}')`;
@@ -486,31 +251,30 @@
                     <div class="article-meta">
                         <span><i class="fa-solid fa-user"></i> ${escHtml(a.author)}</span>
                         <span><i class="fa-solid fa-building"></i> ${escHtml(a.dept)}</span>
-                        <span><i class="fa-solid fa-eye"></i> ${a.views} 次瀏覽</span>
+                        <span><i class="fa-solid fa-eye"></i> ${a.views.toLocaleString()}</span>
                     </div>
                 </div>
             </div>`;
         }).join('');
     }
 
-    // ===== 我的收藏 =====
+    // ===== 我的收藏（水平卡片）=====
     function renderFavArticles() {
         const host = document.getElementById('favArticlesBody');
         if (!_favArticles.length) { host.innerHTML = '<div class="empty-state"><i class="fa-solid fa-bookmark"></i>尚無收藏文章</div>'; return; }
-        host.innerHTML = _favArticles.map(a => `
-            <div class="article-item" onclick="openArticle('${a.id}')">
-                <i class="fa-solid fa-star fav-star"></i>
-                <div class="article-info">
-                    <div class="article-title">${escHtml(a.title)}</div>
-                    <div class="article-meta">
-                        <span><i class="fa-solid fa-user"></i> ${escHtml(a.author)}</span>
-                        <span><i class="fa-solid fa-building"></i> ${escHtml(a.dept)}</span>
-                        <span><i class="fa-regular fa-calendar"></i> 收藏於 ${a.savedDate}</span>
-                    </div>
-                    <div class="article-tags">${(a.tags||[]).map(t=>'<span class="tag">'+escHtml(t)+'</span>').join('')}</div>
+        host.innerHTML = '<div class="fav-grid">' + _favArticles.map(a => `
+            <div class="fav-card" onclick="openArticle('${a.id}')">
+                <div class="fav-card-title">
+                    <i class="fa-solid fa-star fav-star"></i>
+                    ${escHtml(a.title)}
                 </div>
+                <div class="fav-card-meta">
+                    <span><i class="fa-solid fa-user"></i> ${escHtml(a.author)}</span>
+                    <span><i class="fa-solid fa-building"></i> ${escHtml(a.dept)}</span>
+                </div>
+                <div class="fav-card-tags">${(a.tags||[]).map(t=>'<span class="tag">'+escHtml(t)+'</span>').join('')}</div>
             </div>
-        `).join('');
+        `).join('') + '</div>';
     }
 
     // ===== 個人貢獻 =====
@@ -599,7 +363,7 @@
             if (!_mySubmitted.length) { host.innerHTML = '<div class="empty-state"><i class="fa-solid fa-paper-plane"></i>沒有送審中的文件</div>'; return; }
             host.innerHTML = _mySubmitted.map(d => `
                 <div class="article-item">
-                    <div class="article-icon icon-review"><i class="fa-solid fa-file-arrow-up"></i></div>
+                    <div class="article-icon"><i class="fa-solid fa-file-arrow-up"></i></div>
                     <div class="article-info">
                         <div class="article-title">${escHtml(d.title)}</div>
                         <div class="article-meta">
@@ -614,7 +378,7 @@
             if (!_pendingMyReview.length) { host.innerHTML = '<div class="empty-state"><i class="fa-solid fa-clipboard-check"></i>沒有待審核的文件</div>'; return; }
             host.innerHTML = _pendingMyReview.map(d => `
                 <div class="article-item">
-                    <div class="article-icon icon-review"><i class="fa-solid fa-file-circle-question"></i></div>
+                    <div class="article-icon"><i class="fa-solid fa-file-circle-question"></i></div>
                     <div class="article-info">
                         <div class="article-title">${escHtml(d.title)}</div>
                         <div class="article-meta">

@@ -1,0 +1,36 @@
+- generic [ref=e4]:
+  - generic [ref=e11]:
+    - generic [ref=e12]: 登入
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]: 公司代碼
+        - button "請選擇公司" [ref=e18] [cursor=pointer]:
+          - generic [ref=e19]: 請選擇公司
+          - img [ref=e21]
+      - generic [ref=e26]:
+        - generic [ref=e27]: 帳號
+        - textbox "帳號" [ref=e28]
+      - generic [ref=e29]:
+        - generic [ref=e30]: 密碼
+        - generic [ref=e31]:
+          - textbox "密碼" [ref=e32]
+          - generic [ref=e33] [cursor=pointer]: 
+      - generic [ref=e34]:
+        - generic [ref=e36]:
+          - checkbox "記住資訊" [ref=e37]
+          - generic [ref=e39]: 記住資訊
+        - generic [ref=e40]:
+          - img "captcha" [ref=e41]
+          - button "" [ref=e42] [cursor=pointer]:
+            - generic [ref=e43]: 
+          - textbox "請輸入驗證碼" [ref=e44]
+      - paragraph [ref=e46] [cursor=pointer]: Forget Password?
+      - generic [ref=e47]:
+        - button "登入" [ref=e48] [cursor=pointer]
+        - button "AD Login" [ref=e49] [cursor=pointer]
+        - button "Line Login" [ref=e50] [cursor=pointer]
+        - iframe [ref=e53]:
+          - button "使用 Google 帳戶登入。在新分頁中開啟" [ref=f2e3] [cursor=pointer]:
+            - img [ref=f2e8]
+  - list [ref=e56]:
+    - generic [active] [ref=e57]: 新達(24225676)
