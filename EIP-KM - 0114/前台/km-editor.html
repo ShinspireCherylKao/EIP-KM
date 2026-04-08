@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新增知識庫文章 - KM 知識管理</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-km-base.css">
+    <link rel="stylesheet" href="css/style-search.css">
+    <style>
+        /* ===== 文章編輯頁專用 ===== */
+
+        /* 返回列 */
+        .editor-back-bar {
+            margin-bottom: 16px;
+        }
+        .editor-back-bar a {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 13px; color: var(--text-secondary); text-decoration: none;
+            padding: 6px 12px; border-radius: var(--radius-sm);
+            transition: all .15s;
+        }
+        .editor-back-bar a:hover { background: var(--hover-bg); color: var(--primary-color); }
+
+        /* 編輯器主卡片 */
+        .editor-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        /* 表單頭部 */
+        .editor-header {
+            padding: 24px 32px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .editor-header h1 {
+            font-size: 22px; font-weight: 700; color: var(--text-primary);
+            margin: 0; display: flex; align-items: center; gap: 10px;
+        }
+
+        /* 表單內容 */
+        .editor-body {
+            padding: 24px 32px;
+        }
+
+        /* 表單群組 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block; font-size: 14px; font-weight: 600;
+            color: var(--text-primary); margin-bottom: 6px;
+        }
+        .form-group label .required {
+            color: #EF4444; margin-left: 2px;
+        }
+        .form-group input[type="text"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%; padding: 10px 14px;
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            font-size: 14px; background: #fff; color: var(--text-primary);
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .form-group input[type="text"]:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none; border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59,130,246,.1);
+        }
+        .form-group .form-hint {
+            font-size: 12px; color: var(--text-muted); margin-top: 4px;
+        }
+
+        /* 雙欄表單 */
+        .form-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+        }
+        @media (max-width: 700px) { .form-row { grid-template-columns: 1fr; } }
+
+        /* 標籤輸入 */
+        .tag-input-wrapper {
+            display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+            padding: 8px 12px; border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm); background: #fff; min-height: 42px;
+            cursor: text; transition: border-color .2s, box-shadow .2s;
+        }
+        .tag-input-wrapper:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59,130,246,.1);
+        }
+        .tag-input-wrapper .tag-chip {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 10px; border-radius: 999px; font-size: 12px;
+            background: #EEF2FF; color: #4F46E5; border: 1px solid #C7D2FE;
+        }
+        .tag-input-wrapper .tag-chip .remove-tag {
+            cursor: pointer; font-size: 11px; color: #6366F1;
+            margin-left: 2px; transition: color .15s;
+        }
+        .tag-input-wrapper .tag-chip .remove-tag:hover { color: #EF4444; }
+        .tag-input-wrapper input {
+            flex: 1; min-width: 100px; border: none; padding: 4px 0;
+            font-size: 13px; background: transparent; outline: none;
+        }
+
+        /* 附件上傳 */
+        .file-upload-area {
+            border: 2px dashed var(--border-color); border-radius: var(--radius-sm);
+            padding: 24px; text-align: center; cursor: pointer;
+            transition: border-color .2s, background .2s;
+        }
+        .file-upload-area:hover {
+            border-color: var(--primary-color); background: #F8FAFC;
+        }
+        .file-upload-area i { font-size: 28px; color: #94A3B8; display: block; margin-bottom: 8px; }
+        .file-upload-area p { font-size: 13px; color: var(--text-muted); margin: 0; }
+        .file-upload-area .upload-btn-text {
+            color: var(--primary-color); font-weight: 600; cursor: pointer;
+        }
+        .file-list { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+        .file-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 12px; background: #F8FAFC;
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+        }
+        .file-item .fi-icon { font-size: 16px; color: var(--primary-color); }
+        .file-item .fi-name { flex: 1; font-size: 13px; color: var(--text-primary); }
+        .file-item .fi-size { font-size: 12px; color: var(--text-muted); }
+        .file-item .fi-remove {
+            font-size: 13px; color: var(--text-muted); cursor: pointer;
+            padding: 2px 6px; border-radius: 4px; transition: all .15s;
+        }
+        .file-item .fi-remove:hover { color: #EF4444; background: #FEF2F2; }
+
+        /* 富文字編輯器 */
+        .rich-editor-toolbar {
+            display: flex; flex-wrap: wrap; gap: 2px; padding: 8px 12px;
+            border: 1px solid var(--border-color); border-bottom: none;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            background: #FAFBFC;
+        }
+        .rich-editor-toolbar button {
+            width: 34px; height: 34px; border: none; background: transparent;
+            border-radius: 6px; cursor: pointer; font-size: 14px;
+            color: var(--text-secondary); transition: all .15s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .rich-editor-toolbar button:hover { background: #E2E8F0; color: var(--text-primary); }
+        .rich-editor-toolbar button.active { background: #DBEAFE; color: #2563EB; }
+        .rich-editor-toolbar .toolbar-divider {
+            width: 1px; background: var(--border-color); margin: 4px 6px;
+        }
+        .rich-editor-content {
+            min-height: 320px; padding: 16px 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+            font-size: 15px; line-height: 1.8; color: var(--text-primary);
+            background: #fff; outline: none;
+        }
+        .rich-editor-content:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59,130,246,.1);
+        }
+        .rich-editor-content:empty::before {
+            content: attr(data-placeholder);
+            color: var(--text-muted); pointer-events: none;
+        }
+
+        /* ===== 底部操作列 ===== */
+        .editor-footer {
+            position: sticky; bottom: 0;
+            padding: 14px 32px;
+            border-top: 1px solid var(--border-color);
+            background: #FAFBFC;
+            display: flex; align-items: center; justify-content: center;
+            gap: 12px; flex-wrap: wrap;
+            z-index: 20;
+        }
+        .editor-footer .footer-label {
+            font-size: 14px; font-weight: 600; color: var(--text-primary);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .editor-footer select {
+            padding: 7px 12px; border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm); font-size: 14px;
+            background: #fff; cursor: pointer;
+        }
+        .editor-footer .btn-publish {
+            padding: 8px 20px; background: #2563EB; color: #fff;
+            border: none; border-radius: var(--radius-sm);
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            transition: background .15s;
+        }
+        .editor-footer .btn-publish:hover { background: #1D4ED8; }
+        .editor-footer .btn-draft {
+            padding: 8px 16px; background: #fff;
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            font-size: 14px; font-weight: 600; cursor: pointer; color: var(--text-primary);
+            transition: all .15s;
+        }
+        .editor-footer .btn-draft:hover { background: var(--hover-bg); }
+        .editor-footer .btn-leave {
+            padding: 8px 16px; background: #fff;
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            font-size: 14px; font-weight: 600; cursor: pointer; color: var(--text-secondary);
+            transition: all .15s;
+        }
+        .editor-footer .btn-leave:hover { background: var(--hover-bg); }
+        .editor-footer .draft-status {
+            font-size: 13px; color: var(--text-muted);
+            margin-top: 2px; width: 100%; text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <div id="header-container"></div>
+
+    <!-- 側邊欄 -->
+    <div id="sidebar-container"></div>
+
+    <!-- 主要內容區 -->
+    <div class="main-content">
+        <!-- KM 知識管理導航 -->
+        <div id="km-nav-container"></div>
+
+        <div class="km-container">
+            <!-- 返回 -->
+            <div class="editor-back-bar">
+                <a href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> 返回知識總覽</a>
+            </div>
+
+            <!-- 編輯器主卡片 -->
+            <div class="editor-card">
+                <!-- 標題區 -->
+                <div class="editor-header">
+                    <h1><i class="fa-solid fa-pen-to-square"></i> 新增知識庫文章</h1>
+                </div>
+
+                <!-- 表單 -->
+                <div class="editor-body">
+                    <!-- 文章標題 -->
+                    <div class="form-group">
+                        <label>文章標題 <span class="required">*</span></label>
+                        <input type="text" id="articleTitle" placeholder="請輸入文章標題">
+                    </div>
+
+                    <!-- 雙欄：分類 + 部門 -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>文章分類 <span class="required">*</span></label>
+                            <select id="articleCategory">
+                                <option value="">請選擇分類</option>
+                                <option value="announcement">公告通知</option>
+                                <option value="regulation">規範辦法</option>
+                                <option value="sop">SOP 流程</option>
+                                <option value="tech">技術文件</option>
+                                <option value="training">教育訓練</option>
+                                <option value="project">專案相關</option>
+                                <option value="other">其他</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>所屬部門</label>
+                            <select id="articleDept">
+                                <option value="">請選擇部門</option>
+                                <option value="HR">人力資源部</option>
+                                <option value="Finance">財務部</option>
+                                <option value="BU1">BU1 研發一部</option>
+                                <option value="BU2">BU2 研發二部</option>
+                                <option value="Admin">行政管理部</option>
+                                <option value="Sales">業務部</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 文件效期 -->
+                    <div class="form-group">
+                        <label>文件效期</label>
+                        <select id="articleValidity">
+                            <option value="permanent">永久有效</option>
+                            <option value="1year">一年</option>
+                            <option value="6months">六個月</option>
+                            <option value="custom">自訂到期日</option>
+                        </select>
+                    </div>
+
+                    <!-- 標籤 -->
+                    <div class="form-group">
+                        <label>文章標籤</label>
+                        <div class="tag-input-wrapper" id="tagInputWrapper">
+                            <input type="text" id="tagInput" placeholder="輸入標籤後按 Enter 新增">
+                        </div>
+                        <div class="form-hint">最多可新增 10 個標籤</div>
+                    </div>
+
+                    <!-- 富文字編輯器 -->
+                    <div class="form-group">
+                        <label>文章內容 <span class="required">*</span></label>
+                        <div class="rich-editor-toolbar" id="editorToolbar">
+                            <button type="button" title="粗體" onclick="execCmd('bold')"><i class="fa-solid fa-bold"></i></button>
+                            <button type="button" title="斜體" onclick="execCmd('italic')"><i class="fa-solid fa-italic"></i></button>
+                            <button type="button" title="底線" onclick="execCmd('underline')"><i class="fa-solid fa-underline"></i></button>
+                            <button type="button" title="刪除線" onclick="execCmd('strikeThrough')"><i class="fa-solid fa-strikethrough"></i></button>
+                            <div class="toolbar-divider"></div>
+                            <button type="button" title="標題 1" onclick="execCmd('formatBlock','H2')"><b>H1</b></button>
+                            <button type="button" title="標題 2" onclick="execCmd('formatBlock','H3')"><b>H2</b></button>
+                            <button type="button" title="段落" onclick="execCmd('formatBlock','P')"><i class="fa-solid fa-paragraph"></i></button>
+                            <div class="toolbar-divider"></div>
+                            <button type="button" title="無序列表" onclick="execCmd('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
+                            <button type="button" title="有序列表" onclick="execCmd('insertOrderedList')"><i class="fa-solid fa-list-ol"></i></button>
+                            <div class="toolbar-divider"></div>
+                            <button type="button" title="插入連結" onclick="insertLink()"><i class="fa-solid fa-link"></i></button>
+                            <button type="button" title="插入圖片" onclick="insertImage()"><i class="fa-solid fa-image"></i></button>
+                            <button type="button" title="引用區塊" onclick="execCmd('formatBlock','BLOCKQUOTE')"><i class="fa-solid fa-quote-left"></i></button>
+                            <button type="button" title="程式碼" onclick="execCmd('formatBlock','PRE')"><i class="fa-solid fa-code"></i></button>
+                            <div class="toolbar-divider"></div>
+                            <button type="button" title="靠左對齊" onclick="execCmd('justifyLeft')"><i class="fa-solid fa-align-left"></i></button>
+                            <button type="button" title="置中對齊" onclick="execCmd('justifyCenter')"><i class="fa-solid fa-align-center"></i></button>
+                            <button type="button" title="靠右對齊" onclick="execCmd('justifyRight')"><i class="fa-solid fa-align-right"></i></button>
+                            <div class="toolbar-divider"></div>
+                            <button type="button" title="復原" onclick="execCmd('undo')"><i class="fa-solid fa-rotate-left"></i></button>
+                            <button type="button" title="重做" onclick="execCmd('redo')"><i class="fa-solid fa-rotate-right"></i></button>
+                        </div>
+                        <div class="rich-editor-content" id="editorContent" contenteditable="true" data-placeholder="請輸入文章內容…"></div>
+                    </div>
+
+                    <!-- 附件上傳 -->
+                    <div class="form-group">
+                        <label>附件上傳</label>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <p>將檔案拖曳至此，或 <span class="upload-btn-text">點擊選擇檔案</span></p>
+                            <p style="font-size:11px; margin-top:4px;">支援 PDF、Word、Excel、PowerPoint、圖片，單檔上限 20MB</p>
+                        </div>
+                        <input type="file" id="fileInput" multiple hidden accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg,.gif">
+                        <div class="file-list" id="fileList"></div>
+                    </div>
+                </div>
+
+                <!-- 底部操作列 -->
+                <div class="editor-footer">
+                    <span class="footer-label">目前編輯的語言是</span>
+                    <select id="editLang">
+                        <option value="zh-TW">繁體中文</option>
+                        <option value="en">English</option>
+                        <option value="ja">日本語</option>
+                    </select>
+                    <button class="btn-publish" onclick="doPublish()"><i class="fa-solid fa-paper-plane"></i> 發佈</button>
+                    <button class="btn-draft" onclick="doDraft()"><i class="fa-regular fa-floppy-disk"></i> 儲存草稿</button>
+                    <button class="btn-leave" onclick="doLeave()">離開</button>
+                    <div class="draft-status" id="draftStatus"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- JS 引用 -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="shared/layout-loader.js"></script>
+    <script src="js/km-base.js"></script>
+
+    <script>
+    /* ============================================================
+       KM 文章編輯器
+       ============================================================ */
+
+    // ===== 標籤管理 =====
+    const _tags = [];
+    const tagInput = document.getElementById('tagInput');
+    const tagWrapper = document.getElementById('tagInputWrapper');
+
+    tagInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const val = this.value.trim();
+            if (!val) return;
+            if (_tags.length >= 10) { showToast('最多只能新增 10 個標籤', 'warning'); return; }
+            if (_tags.includes(val)) { showToast('標籤已存在', 'warning'); return; }
+            _tags.push(val);
+            this.value = '';
+            renderTags();
+        }
+    });
+
+    tagWrapper.addEventListener('click', function() { tagInput.focus(); });
+
+    function renderTags() {
+        tagWrapper.querySelectorAll('.tag-chip').forEach(el => el.remove());
+        _tags.forEach((t, i) => {
+            const chip = document.createElement('span');
+            chip.className = 'tag-chip';
+            chip.innerHTML = escHtml(t) + ' <span class="remove-tag" data-idx="' + i + '"><i class="fa-solid fa-xmark"></i></span>';
+            tagWrapper.insertBefore(chip, tagInput);
+        });
+        tagWrapper.querySelectorAll('.remove-tag').forEach(el => {
+            el.addEventListener('click', function(e) {
+                e.stopPropagation();
+                _tags.splice(parseInt(this.dataset.idx), 1);
+                renderTags();
+            });
+        });
+    }
+
+    // ===== 附件管理 =====
+    const _files = [];
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const fileInput = document.getElementById('fileInput');
+
+    fileUploadArea.addEventListener('click', () => fileInput.click());
+
+    fileUploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault(); fileUploadArea.style.borderColor = 'var(--primary-color)';
+        fileUploadArea.style.background = '#F0F7FF';
+    });
+    fileUploadArea.addEventListener('dragleave', () => {
+        fileUploadArea.style.borderColor = ''; fileUploadArea.style.background = '';
+    });
+    fileUploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        fileUploadArea.style.borderColor = ''; fileUploadArea.style.background = '';
+        handleFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', function() {
+        handleFiles(this.files);
+        this.value = '';
+    });
+
+    function handleFiles(files) {
+        for (const f of files) {
+            if (f.size > 20 * 1024 * 1024) {
+                showToast('檔案 ' + f.name + ' 超過 20MB 上限', 'error');
+                continue;
+            }
+            _files.push({ name: f.name, size: f.size });
+        }
+        renderFiles();
+    }
+
+    function renderFiles() {
+        const host = document.getElementById('fileList');
+        if (!_files.length) { host.innerHTML = ''; return; }
+        host.innerHTML = _files.map((f, i) => {
+            const ext = f.name.split('.').pop().toLowerCase();
+            const icon = getFileIcon(ext);
+            const size = formatSize(f.size);
+            return '<div class="file-item">' +
+                '<i class="fi-icon ' + icon + '"></i>' +
+                '<span class="fi-name">' + escHtml(f.name) + '</span>' +
+                '<span class="fi-size">' + size + '</span>' +
+                '<span class="fi-remove" onclick="removeFile(' + i + ')"><i class="fa-solid fa-xmark"></i></span>' +
+            '</div>';
+        }).join('');
+    }
+
+    function removeFile(idx) {
+        _files.splice(idx, 1);
+        renderFiles();
+    }
+
+    function getFileIcon(ext) {
+        if (['pdf'].includes(ext)) return 'fa-solid fa-file-pdf';
+        if (['doc','docx'].includes(ext)) return 'fa-solid fa-file-word';
+        if (['xls','xlsx'].includes(ext)) return 'fa-solid fa-file-excel';
+        if (['ppt','pptx'].includes(ext)) return 'fa-solid fa-file-powerpoint';
+        if (['png','jpg','jpeg','gif'].includes(ext)) return 'fa-solid fa-file-image';
+        return 'fa-solid fa-file';
+    }
+
+    function formatSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    // ===== 富文字編輯器 =====
+    function execCmd(cmd, value) {
+        document.execCommand(cmd, false, value || null);
+        document.getElementById('editorContent').focus();
+    }
+
+    function insertLink() {
+        const url = prompt('請輸入連結 URL：');
+        if (url) document.execCommand('createLink', false, url);
+    }
+
+    function insertImage() {
+        const url = prompt('請輸入圖片 URL：');
+        if (url) document.execCommand('insertImage', false, url);
+    }
+
+    // ===== 底部操作 =====
+    function doPublish() {
+        const title = document.getElementById('articleTitle').value.trim();
+        const category = document.getElementById('articleCategory').value;
+        const content = document.getElementById('editorContent').innerHTML.trim();
+
+        if (!title) { showToast('請輸入文章標題', 'error'); document.getElementById('articleTitle').focus(); return; }
+        if (!category) { showToast('請選擇文章分類', 'error'); document.getElementById('articleCategory').focus(); return; }
+        if (!content || content === '<br>') { showToast('請輸入文章內容', 'error'); document.getElementById('editorContent').focus(); return; }
+
+        showToast('文章已送出發佈！', 'success');
+        setTimeout(() => { window.location.href = 'km-knowledge.html'; }, 1500);
+    }
+
+    function doDraft() {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        const ss = String(now.getSeconds()).padStart(2, '0');
+        const ts = y + '/' + m + '/' + d + ' ' + hh + ':' + mm + ':' + ss;
+        document.getElementById('draftStatus').textContent = '草稿儲存完成於 ' + ts;
+        showToast('草稿已儲存', 'success');
+    }
+
+    function doLeave() {
+        const content = document.getElementById('editorContent').innerHTML.trim();
+        const title = document.getElementById('articleTitle').value.trim();
+        if (title || (content && content !== '<br>')) {
+            if (!confirm('尚有未儲存的內容，確定要離開嗎？')) return;
+        }
+        window.location.href = 'km-knowledge.html';
+    }
+
+    // ===== Toast =====
+    function showToast(msg, type) {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const icons = { success: 'fa-check-circle', error: 'fa-times-circle', warning: 'fa-exclamation-circle', info: 'fa-info-circle' };
+        const toast = document.createElement('div');
+        toast.className = 'toast ' + (type || 'info');
+        toast.innerHTML = '<i class="fa-solid ' + (icons[type] || icons.info) + '"></i> ' + escHtml(msg);
+        toast.style.cssText = 'display:flex;align-items:center;gap:8px;padding:12px 20px;border-radius:8px;font-size:14px;font-weight:500;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);animation:slideIn .3s ease;';
+        if (type === 'success') toast.style.background = '#059669';
+        else if (type === 'error') toast.style.background = '#DC2626';
+        else if (type === 'warning') toast.style.background = '#D97706';
+        else toast.style.background = '#2563EB';
+        container.appendChild(toast);
+        setTimeout(() => { toast.style.animation = 'slideOut .3s ease forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+
+    // ===== 工具函式 =====
+    function escHtml(str) {
+        const el = document.createElement('span');
+        el.textContent = str;
+        return el.innerHTML;
+    }
+    </script>
+    <script src="js/search.js"></script>
+</body>
+</html>

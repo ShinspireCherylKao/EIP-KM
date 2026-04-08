@@ -190,6 +190,10 @@ const KM_KNOWLEDGE_NAV_FALLBACK_HTML = `<div class="km-nav">
     <a href="km-ai.html" class="km-nav-btn ai-btn" data-km-page="ai">
         <i class="fa-solid fa-wand-magic-sparkles"></i> AI 加值
     </a>
+    <span class="km-nav-spacer"></span>
+    <a href="km-editor.html" class="km-nav-btn km-nav-btn-add" data-km-page="editor">
+        <i class="fa-solid fa-plus"></i> 新增知識庫文章
+    </a>
 </div>
 
 <script>
@@ -262,7 +266,7 @@ async function initSharedLayout() {
     if (kmNavContainer) {
         // 判斷是文件庫頁面還是 KM 知識管理頁面
         const currentPage = window.location.pathname.split('/').pop();
-        const kmKnowledgePages = ['km-knowledge.html', 'km-shares.html', 'km-ai.html'];
+        const kmKnowledgePages = ['km-knowledge.html', 'km-shares.html', 'km-ai.html', 'km-editor.html'];
         
         if (kmKnowledgePages.includes(currentPage)) {
             await loadHTMLFragment('shared/km-knowledge-nav.html', 'km-nav-container', KM_KNOWLEDGE_NAV_FALLBACK_HTML);
@@ -301,7 +305,7 @@ function setActiveMenuItem() {
     
     // 根據當前頁面設置 active
     let selector = '';
-    const kmKnowledgePages = ['km-knowledge.html', 'km-shares.html', 'km-ai.html'];
+    const kmKnowledgePages = ['km-knowledge.html', 'km-shares.html', 'km-ai.html', 'km-editor.html'];
     if (kmKnowledgePages.includes(currentPage)) {
         selector = '.nav-item[data-page="km-knowledge"]';
     } else if (currentPage === 'org-chart.html') {

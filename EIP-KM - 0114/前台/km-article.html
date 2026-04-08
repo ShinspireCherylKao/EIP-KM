@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章內頁 - KM 知識管理</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-km-base.css">
+    <link rel="stylesheet" href="css/style-search.css">
+    <style>
+        /* ===== 文章內頁專用 ===== */
+
+        /* 返回列 */
+        .article-back-bar {
+            margin-bottom: 16px;
+        }
+        .article-back-bar a {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 13px; color: var(--text-secondary); text-decoration: none;
+            padding: 6px 12px; border-radius: var(--radius-sm);
+            transition: all .15s;
+        }
+        .article-back-bar a:hover { background: var(--hover-bg); color: var(--primary-color); }
+
+        /* 文章主卡片 */
+        .article-detail-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        /* 文章頭部 */
+        .article-detail-header {
+            padding: 28px 32px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .article-detail-header h1 {
+            font-size: 22px; font-weight: 700; color: var(--text-primary);
+            margin: 0 0 16px; line-height: 1.5;
+        }
+        .article-detail-header .article-tags-row {
+            display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap;
+        }
+        .article-detail-header .article-tags-row .tag {
+            font-size: 12px; padding: 3px 10px; border-radius: 999px;
+            border: 1px solid var(--border-color); color: var(--text-secondary); background: #fff;
+        }
+
+        /* 文章 meta 資訊格 */
+        .article-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px 24px;
+            padding: 16px 32px;
+            background: #F8FAFC;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .meta-item {
+            display: flex; align-items: center; gap: 8px; font-size: 13px;
+        }
+        .meta-item .meta-icon {
+            width: 30px; height: 30px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; flex-shrink: 0;
+            background: #EEF2FF; color: #4F46E5;
+        }
+        .meta-item .meta-label { color: var(--text-muted); font-size: 12px; }
+        .meta-item .meta-value { font-weight: 600; color: var(--text-primary); }
+
+        /* 文件效期特殊樣式 */
+        .validity-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 12px; padding: 3px 10px; border-radius: 999px; font-weight: 600;
+        }
+        .validity-badge.active { background: #ECFDF5; color: #059669; }
+        .validity-badge.expiring { background: #FEF3C7; color: #B45309; }
+        .validity-badge.permanent { background: #EEF2FF; color: #4F46E5; }
+        .validity-badge.until-delete { background: #F1F5F9; color: #475569; }
+
+        /* 文章內文 */
+        .article-body {
+            padding: 28px 32px;
+            font-size: 15px; line-height: 1.9; color: var(--text-primary);
+        }
+        .article-body p { margin-bottom: 16px; }
+        .article-body h3 { font-size: 16px; font-weight: 700; margin: 24px 0 12px; color: var(--text-primary); }
+        .article-body ul, .article-body ol { margin: 0 0 16px 20px; }
+        .article-body li { margin-bottom: 6px; line-height: 1.7; }
+        .article-body a { color: var(--primary-color); text-decoration: underline; }
+        .article-body a:hover { color: var(--primary-dark); }
+        .article-body .highlight-box {
+            background: #FFF7ED; border-left: 4px solid #F59E0B;
+            padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 16px 0;
+            font-size: 14px; color: #92400E;
+        }
+        .article-body .info-box {
+            background: #EFF6FF; border-left: 4px solid #3B82F6;
+            padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 16px 0;
+            font-size: 14px; color: #1E40AF;
+        }
+
+        /* 附件區 */
+        .attachments-section {
+            padding: 20px 32px;
+            border-top: 1px solid var(--border-color);
+            background: #FAFBFC;
+        }
+        .attachments-section h4 {
+            font-size: 14px; font-weight: 700; margin: 0 0 12px;
+            display: flex; align-items: center; gap: 6px; color: var(--text-primary);
+        }
+        .attachment-list { display: flex; flex-direction: column; gap: 8px; }
+        .attachment-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; background: #fff; border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm); transition: all .15s; cursor: pointer;
+        }
+        .attachment-item:hover { border-color: var(--primary-color); box-shadow: 0 2px 8px rgba(59,130,246,.1); }
+        .attachment-item .att-icon {
+            width: 36px; height: 36px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; flex-shrink: 0;
+        }
+        .att-icon.pdf { background: #FEF2F2; color: #DC2626; }
+        .att-icon.doc { background: #EFF6FF; color: #2563EB; }
+        .att-icon.xls { background: #ECFDF5; color: #059669; }
+        .att-icon.ppt { background: #FFF7ED; color: #EA580C; }
+        .attachment-item .att-info { flex: 1; min-width: 0; }
+        .attachment-item .att-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+        .attachment-item .att-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .attachment-item .att-source {
+            font-size: 11px; padding: 2px 8px; border-radius: 999px;
+            background: #EEF2FF; color: #4F46E5; font-weight: 600; white-space: nowrap;
+        }
+        .attachment-item .att-download {
+            font-size: 13px; color: var(--primary-color); padding: 4px 8px;
+            border-radius: 6px; transition: background .15s;
+        }
+        .attachment-item .att-download:hover { background: #EEF2FF; }
+
+        /* 連結卡片 */
+        .link-card {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; background: #fff; border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm); margin: 12px 0; transition: all .15s;
+            text-decoration: none; color: inherit;
+        }
+        .link-card:hover { border-color: var(--primary-color); box-shadow: 0 2px 8px rgba(59,130,246,.1); }
+        .link-card .link-icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            background: #EEF2FF; color: #4F46E5; font-size: 14px; flex-shrink: 0;
+        }
+        .link-card .link-text { font-size: 13px; font-weight: 600; color: var(--primary-color); }
+        .link-card .link-desc { font-size: 12px; color: var(--text-muted); }
+
+        /* ===== 下方三區塊 ===== */
+        .article-bottom-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 24px;
+        }
+        @media (max-width: 960px) { .article-bottom-grid { grid-template-columns: 1fr; } }
+
+        .bottom-block {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .bottom-block .bb-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--white-color);
+        }
+        .bottom-block .bb-header h3 {
+            font-size: 14px; font-weight: 700; margin: 0;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .bottom-block .bb-header .bb-icon {
+            width: 28px; height: 28px; border-radius: 7px;
+            display: flex; align-items: center; justify-content: center; font-size: 13px;
+        }
+        .bb-icon.related { background: #EEF2FF; color: #4F46E5; }
+        .bb-icon.extend { background: #FFF7ED; color: #EA580C; }
+        .bb-icon.discuss { background: #ECFDF5; color: #059669; }
+
+        .bottom-block .bb-body { padding: 0; }
+
+        /* 相關/延伸文章項目 */
+        .related-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 18px; border-bottom: 1px solid #F1F5F9;
+            cursor: pointer; transition: background .15s; text-decoration: none; color: inherit;
+        }
+        .related-item:last-child { border-bottom: none; }
+        .related-item:hover { background: #F8FAFC; }
+        .related-item .ri-icon {
+            width: 28px; height: 28px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; flex-shrink: 0;
+            background: #F1F5F9; color: var(--text-secondary);
+        }
+        .related-item .ri-info { flex: 1; min-width: 0; }
+        .related-item .ri-title {
+            font-size: 13px; font-weight: 600; color: var(--text-primary);
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .related-item:hover .ri-title { color: var(--primary-color); }
+        .related-item .ri-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+        /* 討論區 */
+        .discussion-item {
+            padding: 14px 18px; border-bottom: 1px solid #F1F5F9;
+        }
+        .discussion-item:last-child { border-bottom: none; }
+        .discussion-item .di-header {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+        }
+        .discussion-item .di-avatar {
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+        }
+        .di-avatar.avatar-1 { background: #6366F1; }
+        .di-avatar.avatar-2 { background: #EC4899; }
+        .di-avatar.avatar-3 { background: #F59E0B; }
+        .discussion-item .di-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+        .discussion-item .di-time { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+        .discussion-item .di-content { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-left: 36px; }
+        .discussion-item .di-actions { margin-left: 36px; margin-top: 6px; display: flex; gap: 12px; }
+        .discussion-item .di-actions a {
+            font-size: 12px; color: var(--text-muted); text-decoration: none;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .discussion-item .di-actions a:hover { color: var(--primary-color); }
+
+        /* 討論輸入 */
+        .discussion-input {
+            display: flex; gap: 8px; padding: 14px 18px; border-top: 1px solid var(--border-color);
+            background: #FAFBFC;
+        }
+        .discussion-input input {
+            flex: 1; padding: 8px 12px; border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm); font-size: 13px; background: #fff;
+        }
+        .discussion-input input:focus { outline: none; border-color: var(--primary-color); }
+
+        /* 回覆（巢狀） */
+        .di-reply {
+            margin-left: 36px; margin-top: 10px;
+            padding: 10px 14px; background: #F8FAFC; border-radius: 8px;
+            border-left: 3px solid #3B82F6;
+        }
+        .di-reply .di-header { margin-bottom: 4px; }
+        .di-reply .di-content { margin-left: 36px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+        .di-reply .di-actions { margin-left: 36px; margin-top: 4px; }
+        .di-dept-badge {
+            font-size: 10px; padding: 1px 7px; border-radius: 999px;
+            font-weight: 700; margin-left: 4px;
+        }
+        .di-dept-badge.hr { background: #EDE9FE; color: #6D28D9; }
+    </style>
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <div id="header-container"></div>
+
+    <!-- 側邊欄 -->
+    <div id="sidebar-container"></div>
+
+    <!-- 主要內容區 -->
+    <div class="main-content">
+        <!-- KM 知識管理導航 -->
+        <div id="km-nav-container"></div>
+
+        <div class="km-container">
+            <!-- 返回 -->
+            <div class="article-back-bar">
+                <a href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> 返回知識總覽</a>
+            </div>
+
+            <!-- 文章主卡片 -->
+            <div class="article-detail-card" id="articleCard">
+                <!-- 標題區 -->
+                <div class="article-detail-header">
+                    <h1 id="articleTitle">—</h1>
+                    <div class="article-tags-row" id="articleTags"></div>
+                </div>
+
+                <!-- Meta 資訊列 -->
+                <div class="article-meta-grid" id="articleMetaGrid">
+                    <!-- 動態生成 -->
+                </div>
+
+                <!-- 內文 -->
+                <div class="article-body" id="articleBody">
+                    <!-- 動態生成 -->
+                </div>
+
+                <!-- 附件 -->
+                <div class="attachments-section" id="attachmentsSection">
+                    <h4><i class="fa-solid fa-paperclip"></i> 附件（來源：文件庫管理發佈）</h4>
+                    <div class="attachment-list" id="attachmentList">
+                        <!-- 動態生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 下方三區塊 -->
+            <div class="article-bottom-grid">
+                <!-- 相關文章 -->
+                <div class="bottom-block">
+                    <div class="bb-header">
+                        <h3><span class="bb-icon related"><i class="fa-solid fa-link"></i></span> 相關文章</h3>
+                    </div>
+                    <div class="bb-body" id="relatedArticles">
+                        <!-- 動態生成 -->
+                    </div>
+                </div>
+
+                <!-- 延伸閱讀 -->
+                <div class="bottom-block">
+                    <div class="bb-header">
+                        <h3><span class="bb-icon extend"><i class="fa-solid fa-book-open"></i></span> 延伸閱讀</h3>
+                    </div>
+                    <div class="bb-body" id="extendedReading">
+                        <!-- 動態生成 -->
+                    </div>
+                </div>
+
+                <!-- 討論 -->
+                <div class="bottom-block">
+                    <div class="bb-header">
+                        <h3><span class="bb-icon discuss"><i class="fa-solid fa-comments"></i></span> 討論</h3>
+                    </div>
+                    <div class="bb-body" id="discussionBody">
+                        <!-- 動態生成 -->
+                    </div>
+                    <div class="discussion-input">
+                        <input type="text" placeholder="輸入留言…" id="commentInput">
+                        <button class="btn primary" onclick="postComment()"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- JS 引用 -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="shared/layout-loader.js"></script>
+    <script src="js/km-base.js"></script>
+
+    <script>
+    /* ============================================================
+       KM 文章內頁 — 假資料（前三名熱門文章）
+       ============================================================ */
+
+    // ===== 文章資料 =====
+    const _articles = {
+        'h01': {
+            id: 'h01',
+            title: '差旅報銷規範修訂公告',
+            author: '吳佳蓉',
+            dept: 'Finance',
+            createdDate: '2026-02-20',
+            lastModified: '2026-03-14',
+            views: 1024,
+            tags: ['差旅', '報銷', '公告', '財務'],
+            // 效期情境 1：文件刪除前有效
+            validity: { type: 'until-delete', label: '文件刪除前有效', icon: 'fa-infinity' },
+            content: `
+                <h3>一、修訂背景</h3>
+                <p>為配合公司 2026 年度政策調整，財務部門經內部審議後，決議修訂差旅報銷相關規範。本次修訂已通過主管會議核准，自 <b>2026 年 4 月 1 日</b>起正式實施。</p>
+
+                <div class="highlight-box">
+                    <i class="fa-solid fa-triangle-exclamation"></i> <b>重要提醒：</b>2026/3/31 前的差旅案件仍適用舊規範，請同仁留意過渡期間的核銷時限。
+                </div>
+
+                <h3>二、主要修訂項目</h3>
+                <ol>
+                    <li><b>國內出差住宿費</b>：上限由 NT$3,000 調整為 NT$3,500/晚（適用商務旅館等級）</li>
+                    <li><b>交通費核銷時限</b>：從原本 5 個工作天縮短為 <b>3 個工作天</b>內提交</li>
+                    <li><b>線上簽核流程</b>：全面導入電子簽核，無需再使用紙本表單（參閱 <a href="javascript:void(0)">EIP 簽核系統操作說明</a>）</li>
+                    <li><b>海外出差</b>：新增「每日餐費上限」，依地區分級計算（詳見附件）</li>
+                </ol>
+
+                <h3>三、適用範圍</h3>
+                <p>本規範適用於全公司所有正式員工與約聘人員。實習生差旅報銷另有規定，請參閱 <a href="javascript:void(0)">HR 實習生管理辦法</a>。</p>
+
+                <div class="info-box">
+                    <i class="fa-solid fa-circle-info"></i> 相關系統連結：<a href="javascript:void(0)">線上報帳系統入口</a> ｜ <a href="javascript:void(0)">差旅申請表單</a>
+                </div>
+
+                <h3>四、注意事項</h3>
+                <ul>
+                    <li>所有票據須為正本，影印本不予受理</li>
+                    <li>住宿費超過上限之案件，須附主管特批簽呈</li>
+                    <li>國際差旅須於出發前 7 天完成預算申請</li>
+                </ul>
+            `,
+            attachments: [
+                { name: '差旅報銷規範_v3.1_2026.pdf', size: '1.2 MB', type: 'pdf', source: 'Finance/政策', approvedDate: '2026-02-18' },
+                { name: '海外出差餐費分級表.xlsx', size: '245 KB', type: 'xls', source: 'Finance/政策', approvedDate: '2026-02-18' },
+                { name: '線上簽核系統操作手冊.pdf', size: '3.8 MB', type: 'pdf', source: 'HR/SOP', approvedDate: '2025-11-05' },
+            ],
+            related: [
+                { title: '報帳總覽', dept: 'Finance', date: '2025-09-20' },
+                { title: '2025年度財務報表摘要', dept: 'Finance', date: '2026-03-12' },
+                { title: '請假制度常見問題 FAQ', dept: 'HR', date: '2026-01-10' },
+            ],
+            extended: [
+                { title: 'EIP 簽核系統操作說明', dept: 'IT', date: '2025-08-15' },
+                { title: 'HR 實習生管理辦法', dept: 'HR', date: '2025-06-01' },
+                { title: '國際差旅安全須知', dept: 'Admin', date: '2025-10-20' },
+            ],
+            discussions: [
+                { author: '張志豪', avatar: 1, time: '2026-03-15 14:22', content: '請問海外出差的餐費分級表，是以出差目的地還是出發地為準？', likes: 3,
+                  replies: [
+                    { author: '李美玲', dept: 'HR', avatar: 2, time: '2026-03-15 15:10', content: '以出差目的地為準唷！如果同一趟出差跨多個城市，則依各城市停留天數分別計算。如有特殊情況可聯繫財務部門協助判定。', likes: 5 }
+                  ] },
+                { author: '蔡明達', avatar: 3, time: '2026-03-16 09:45', content: '建議可以在系統中加入自動帶入餐費上限的功能，減少人工查表。', likes: 2 },
+            ],
+        },
+
+        'h02': {
+            id: 'h02',
+            title: '請假制度常見問題 FAQ',
+            author: '李美玲',
+            dept: 'HR',
+            createdDate: '2026-01-10',
+            lastModified: '2026-03-05',
+            views: 876,
+            tags: ['請假', 'FAQ', 'HR', '制度'],
+            // 效期情境 2：至特定日期
+            validity: { type: 'expiring', label: '有效至 2026/12/31', icon: 'fa-calendar-xmark', expireDate: '2026-12-31' },
+            content: `
+                <h3>Q1：特休假天數如何計算？</h3>
+                <p>依據勞動基準法規定，滿 6 個月未滿 1 年者為 3 天，滿 1 年未滿 2 年者為 7 天，依年資遞增。公司採 <b>到職日制</b> 計算，非曆年制。</p>
+                <p>詳細天數對照表請參閱附件《請假制度規範手冊》。</p>
+
+                <h3>Q2：病假需要附診斷證明嗎？</h3>
+                <p>連續請病假 <b>3 天（含）以上</b>者，需於復工後 3 日內補交醫療院所出具之診斷證明書正本。3 天以內之病假免附證明，但主管得視情況要求補件。</p>
+
+                <div class="highlight-box">
+                    <i class="fa-solid fa-lightbulb"></i> <b>小提醒：</b>若需住院或長期請假（超過 7 天），建議先與 HR 聯繫了解留職停薪相關權益。
+                </div>
+
+                <h3>Q3：事假扣薪標準？</h3>
+                <p>事假依日/時計薪扣除，計算公式為：月薪 ÷ 30 天 × 請假天數。半天以 0.5 天計算，不足半天以半天計。</p>
+
+                <h3>Q4：特休假可以遞延嗎？</h3>
+                <p>依公司規定，當年度未休完之特休假得遞延至次年度使用，但最遲須於 <b>次年 6 月 30 日前</b>休畢。逾期未休部分將依法折算為薪資發放。</p>
+
+                <h3>Q5：如何申請彈性工時？</h3>
+                <p>員工可透過 <a href="javascript:void(0)">EIP 彈性工時申請系統</a> 提出申請，經直屬主管及 HR 核准後生效。彈性工時適用期間為 3 個月，需重新申請。</p>
+
+                <div class="info-box">
+                    <i class="fa-solid fa-circle-info"></i> 更多問題歡迎透過 <a href="javascript:void(0)">HR 服務信箱</a> 或企業內部通訊聯繫 HR 同仁。
+                </div>
+            `,
+            attachments: [
+                { name: '請假制度規範手冊_2026.pdf', size: '2.1 MB', type: 'pdf', source: 'HR/SOP', approvedDate: '2026-01-08' },
+                { name: '特休假天數對照表.xlsx', size: '89 KB', type: 'xls', source: 'HR/FAQ', approvedDate: '2026-01-08' },
+            ],
+            related: [
+                { title: '入職流程 SOP 完整指南', dept: 'HR', date: '2025-11-20' },
+                { title: '2026年度新人訓練手冊已更新', dept: 'HR', date: '2026-03-16' },
+                { title: '差旅報銷規範修訂公告', dept: 'Finance', date: '2026-03-14' },
+            ],
+            extended: [
+                { title: '勞動基準法第 38 條釋疑', dept: 'HR', date: '2025-04-15' },
+                { title: '彈性工時申請說明', dept: 'HR', date: '2025-09-01' },
+                { title: '員工福利手冊 2026', dept: 'HR', date: '2026-01-02' },
+            ],
+            discussions: [
+                { author: '黃淑芬', avatar: 3, time: '2026-03-01 10:30', content: '請問補休有使用期限嗎？公司有規定加班補休最晚什麼時候要用完？', likes: 7,
+                  replies: [
+                    { author: '李美玲', dept: 'HR', avatar: 2, time: '2026-03-01 11:15', content: '補休須於加班日起 6 個月內使用完畢，逾期未休將依加班費標準折算發放。相關規定可參考附件《請假制度規範手冊》第 12 頁。', likes: 4 }
+                  ] },
+            ],
+        },
+
+        'h03': {
+            id: 'h03',
+            title: '入職流程 SOP 完整指南',
+            author: '李美玲',
+            dept: 'HR',
+            createdDate: '2025-11-20',
+            lastModified: '2026-02-28',
+            views: 654,
+            tags: ['SOP', '入職', 'HR', '新人'],
+            // 效期情境 3：永久有效
+            validity: { type: 'permanent', label: '永久有效', icon: 'fa-shield-check' },
+            content: `
+                <h3>一、入職前準備（報到前 3 天）</h3>
+                <ul>
+                    <li>HR 發送報到通知信，含報到時間、地點、攜帶文件清單</li>
+                    <li>IT 部門完成帳號建立：Email、EIP 系統、VPN、內部通訊軟體</li>
+                    <li>行政部門準備工位、識別證、辦公用品</li>
+                    <li>直屬主管指定 Buddy（新人夥伴）</li>
+                </ul>
+
+                <h3>二、報到日流程</h3>
+                <ol>
+                    <li><b>09:00</b> — 至大廳報到，HR 引導至會議室</li>
+                    <li><b>09:15</b> — 繳交入職文件（身分證影本、學歷證明、緊急聯絡人資料等）</li>
+                    <li><b>09:45</b> — 簽署勞動合約與保密協議</li>
+                    <li><b>10:30</b> — 公司簡介與文化導覽（含辦公室環境介紹）</li>
+                    <li><b>11:30</b> — IT 系統設定協助（筆電發放、帳號啟用、VPN 設定）</li>
+                    <li><b>13:30</b> — 部門介紹與 Buddy 交接</li>
+                    <li><b>15:00</b> — 線上必修課程說明（含 <a href="javascript:void(0)">資安教育訓練</a>、<a href="javascript:void(0)">性平宣導</a>）</li>
+                </ol>
+
+                <div class="info-box">
+                    <i class="fa-solid fa-circle-info"></i> 線上必修課程須於到職後 <b>14 天內</b>完成，逾期將影響試用期評核。課程入口：<a href="javascript:void(0)">線上學習平台</a>
+                </div>
+
+                <h3>三、試用期管理</h3>
+                <p>試用期為 <b>3 個月</b>，期間由直屬主管與 Buddy 共同協助新進同仁適應工作環境。</p>
+                <ul>
+                    <li>第 1 個月末：主管進行第一次面談，填寫《試用期評核表（一）》</li>
+                    <li>第 2 個月末：主管進行第二次面談，確認改善項目</li>
+                    <li>第 3 個月末：完成最終評核，決定是否轉正</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <i class="fa-solid fa-triangle-exclamation"></i> <b>注意：</b>試用期間新進同仁部分機密文件權限可能受限，詳情請參閱 <a href="javascript:void(0)">文件庫權限管理說明</a>。
+                </div>
+
+                <h3>四、轉正流程</h3>
+                <p>試用期通過後，HR 將發送轉正通知信，同步更新系統權限設定。轉正後即享有完整員工福利（特休假、績效獎金等）。</p>
+            `,
+            attachments: [
+                { name: '入職流程SOP_v4.0.pdf', size: '1.8 MB', type: 'pdf', source: 'HR/SOP', approvedDate: '2025-11-18' },
+                { name: '新人報到攜帶文件清單.docx', size: '156 KB', type: 'doc', source: 'HR/SOP', approvedDate: '2025-11-18' },
+                { name: '試用期評核表範本.xlsx', size: '98 KB', type: 'xls', source: 'HR/培訓', approvedDate: '2025-11-18' },
+                { name: '新人訓練課程簡報.pptx', size: '5.2 MB', type: 'ppt', source: 'HR/培訓', approvedDate: '2026-01-10' },
+            ],
+            related: [
+                { title: '請假制度常見問題 FAQ', dept: 'HR', date: '2026-01-10' },
+                { title: '2026年度新人訓練手冊已更新', dept: 'HR', date: '2026-03-16' },
+                { title: 'Code Review 規範 v2.0', dept: 'BU1', date: '2026-03-13' },
+            ],
+            extended: [
+                { title: '資訊安全教育訓練教材', dept: 'IT', date: '2025-07-20' },
+                { title: '性別平等工作法宣導', dept: 'HR', date: '2025-05-10' },
+                { title: '文件庫權限管理說明', dept: 'IT', date: '2025-12-01' },
+            ],
+            discussions: [
+                { author: '陳雅婷', avatar: 1, time: '2026-02-10 09:20', content: '請問報到日需要攜帶照片嗎？識別證用的照片可以現場拍嗎？', likes: 2,
+                  replies: [
+                    { author: '李美玲', dept: 'HR', avatar: 2, time: '2026-02-10 10:05', content: '需要攜帶 2 吋大頭照 2 張。如果來不及準備，報到現場也可以協助拍攝，但建議事先準備較方便。', likes: 3 }
+                  ] },
+                { author: '林建宏', avatar: 3, time: '2026-03-01 14:30', content: '想請問 Buddy 制度大概會持續多久？是整個試用期都有嗎？', likes: 1,
+                  replies: [
+                    { author: '李美玲', dept: 'HR', avatar: 2, time: '2026-03-01 16:00', content: 'Buddy 制度原則上會持續整個試用期（3 個月），試用期結束後 Buddy 關係自動解除，但歡迎同仁之間繼續互相支持！', likes: 2 }
+                  ] },
+            ],
+        },
+    };
+
+    // ===== 從 URL 參數取得文章 ID =====
+    function getArticleId() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('id') || 'h01';
+    }
+
+    // ===== 初始化 =====
+    (function init() {
+        const id = getArticleId();
+        const article = _articles[id];
+        if (!article) {
+            document.getElementById('articleCard').innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--text-muted);"><i class="fa-solid fa-file-circle-xmark" style="font-size:40px;margin-bottom:12px;display:block;"></i>找不到此文章</div>';
+            return;
+        }
+        renderArticle(article);
+    })();
+
+    // ===== 渲染文章 =====
+    function renderArticle(a) {
+        document.title = a.title + ' - KM 知識管理';
+        document.getElementById('articleTitle').textContent = a.title;
+
+        // Tags
+        document.getElementById('articleTags').innerHTML = a.tags.map(t =>
+            '<span class="tag">' + escHtml(t) + '</span>'
+        ).join('');
+
+        // Meta
+        const validityHtml = renderValidity(a.validity);
+        document.getElementById('articleMetaGrid').innerHTML = `
+            <div class="meta-item">
+                <div class="meta-icon"><i class="fa-solid fa-user"></i></div>
+                <div><div class="meta-label">作者</div><div class="meta-value">${escHtml(a.author)}（${escHtml(a.dept)}）</div></div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-icon" style="background:#ECFDF5;color:#059669;"><i class="fa-solid fa-calendar-plus"></i></div>
+                <div><div class="meta-label">建立時間</div><div class="meta-value">${a.createdDate}</div></div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-icon" style="background:#FFF7ED;color:#EA580C;"><i class="fa-solid fa-pen"></i></div>
+                <div><div class="meta-label">最後修改</div><div class="meta-value">${a.lastModified}</div></div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-icon" style="background:#FEF2F2;color:#DC2626;"><i class="fa-solid fa-${a.validity.icon || 'calendar-check'}"></i></div>
+                <div><div class="meta-label">文件效期</div><div class="meta-value">${validityHtml}</div></div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-icon" style="background:#F1F5F9;color:#475569;"><i class="fa-solid fa-eye"></i></div>
+                <div><div class="meta-label">瀏覽次數</div><div class="meta-value">${a.views.toLocaleString()}</div></div>
+            </div>
+        `;
+
+        // Body
+        document.getElementById('articleBody').innerHTML = a.content;
+
+        // Attachments
+        renderAttachments(a.attachments);
+
+        // Bottom blocks
+        renderRelated(a.related);
+        renderExtended(a.extended);
+        renderDiscussions(a.discussions);
+    }
+
+    // ===== 文件效期渲染 =====
+    function renderValidity(v) {
+        switch (v.type) {
+            case 'until-delete':
+                return '<span class="validity-badge until-delete"><i class="fa-solid fa-infinity"></i> ' + escHtml(v.label) + '</span>';
+            case 'expiring':
+                return '<span class="validity-badge expiring"><i class="fa-solid fa-calendar-xmark"></i> ' + escHtml(v.label) + '</span>';
+            case 'permanent':
+                return '<span class="validity-badge permanent"><i class="fa-solid fa-shield"></i> ' + escHtml(v.label) + '</span>';
+            default:
+                return '<span class="validity-badge active">' + escHtml(v.label) + '</span>';
+        }
+    }
+
+    // ===== 附件 =====
+    function renderAttachments(attachments) {
+        const list = document.getElementById('attachmentList');
+        if (!attachments || !attachments.length) {
+            document.getElementById('attachmentsSection').style.display = 'none';
+            return;
+        }
+        list.innerHTML = attachments.map(att => {
+            const iconClass = att.type === 'pdf' ? 'pdf' : att.type === 'doc' ? 'doc' : att.type === 'xls' ? 'xls' : 'ppt';
+            const iconName = att.type === 'pdf' ? 'fa-file-pdf' : att.type === 'doc' ? 'fa-file-word' : att.type === 'xls' ? 'fa-file-excel' : 'fa-file-powerpoint';
+            return `
+                <div class="attachment-item">
+                    <div class="att-icon ${iconClass}"><i class="fa-solid ${iconName}"></i></div>
+                    <div class="att-info">
+                        <div class="att-name">${escHtml(att.name)}</div>
+                        <div class="att-meta">${att.size}・發佈核准日 ${att.approvedDate}</div>
+                    </div>
+                    <span class="att-source"><i class="fa-solid fa-folder"></i> ${escHtml(att.source)}</span>
+                    <span class="att-download" title="下載"><i class="fa-solid fa-download"></i></span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ===== 相關文章 =====
+    function renderRelated(items) {
+        const host = document.getElementById('relatedArticles');
+        host.innerHTML = items.map(r => `
+            <a class="related-item" href="javascript:void(0)">
+                <div class="ri-icon"><i class="fa-solid fa-file-lines"></i></div>
+                <div class="ri-info">
+                    <div class="ri-title">${escHtml(r.title)}</div>
+                    <div class="ri-meta">${escHtml(r.dept)}・${r.date}</div>
+                </div>
+            </a>
+        `).join('');
+    }
+
+    // ===== 延伸閱讀 =====
+    function renderExtended(items) {
+        const host = document.getElementById('extendedReading');
+        host.innerHTML = items.map(r => `
+            <a class="related-item" href="javascript:void(0)">
+                <div class="ri-icon" style="background:#FFF7ED;color:#EA580C;"><i class="fa-solid fa-book-open"></i></div>
+                <div class="ri-info">
+                    <div class="ri-title">${escHtml(r.title)}</div>
+                    <div class="ri-meta">${escHtml(r.dept)}・${r.date}</div>
+                </div>
+            </a>
+        `).join('');
+    }
+
+    // ===== 討論 =====
+    function renderDiscussions(items) {
+        const host = document.getElementById('discussionBody');
+        host.innerHTML = items.map(d => {
+            const repliesHtml = (d.replies || []).map(r => {
+                const deptBadge = r.dept ? `<span class="di-dept-badge ${r.dept.toLowerCase()}">${escHtml(r.dept)}</span>` : '';
+                return `
+                <div class="di-reply">
+                    <div class="di-header">
+                        <div class="di-avatar avatar-${r.avatar}">${escHtml(r.author.charAt(0))}</div>
+                        <span class="di-name">${escHtml(r.author)}</span>${deptBadge}
+                        <span class="di-time">${r.time}</span>
+                    </div>
+                    <div class="di-content">${escHtml(r.content)}</div>
+                    <div class="di-actions">
+                        <a href="javascript:void(0)"><i class="fa-solid fa-thumbs-up"></i> ${r.likes}</a>
+                        <a href="javascript:void(0)"><i class="fa-solid fa-reply"></i> 回覆</a>
+                    </div>
+                </div>`;
+            }).join('');
+            return `
+            <div class="discussion-item">
+                <div class="di-header">
+                    <div class="di-avatar avatar-${d.avatar}">${escHtml(d.author.charAt(0))}</div>
+                    <span class="di-name">${escHtml(d.author)}</span>
+                    <span class="di-time">${d.time}</span>
+                </div>
+                <div class="di-content">${escHtml(d.content)}</div>
+                <div class="di-actions">
+                    <a href="javascript:void(0)"><i class="fa-solid fa-thumbs-up"></i> ${d.likes}</a>
+                    <a href="javascript:void(0)"><i class="fa-solid fa-reply"></i> 回覆</a>
+                </div>
+                ${repliesHtml}
+            </div>`;
+        }).join('');
+    }
+
+    // ===== 新增留言 =====
+    function postComment() {
+        const input = document.getElementById('commentInput');
+        const text = input.value.trim();
+        if (!text) return;
+        // 模擬新增
+        const id = getArticleId();
+        const article = _articles[id];
+        if (!article) return;
+        article.discussions.push({
+            author: '王小明', avatar: 1,
+            time: new Date().toLocaleString('zh-TW', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' }).replace(/\//g, '-'),
+            content: text, likes: 0
+        });
+        input.value = '';
+        renderDiscussions(article.discussions);
+    }
+
+    // Enter 送出留言
+    document.getElementById('commentInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') postComment();
+    });
+
+    // ===== 工具函式 =====
+    function escHtml(str) {
+        const el = document.createElement('span');
+        el.textContent = str;
+        return el.innerHTML;
+    }
+    </script>
+    <script src="js/search.js"></script>
+</body>
+</html>

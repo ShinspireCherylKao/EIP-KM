@@ -378,6 +378,20 @@
     flex: 1;
 }
 
+/* 新增知識庫文章按鈕 */
+.km-nav-btn.km-nav-btn-add {
+    border: 2px solid #EA580C;
+    color: #EA580C;
+    background: var(--white-color);
+    font-weight: 600;
+}
+
+.km-nav-btn.km-nav-btn-add:hover {
+    background: #FFF7ED;
+    border-color: #C2410C;
+    color: #C2410C;
+}
+
 /* 操作按鈕 */
 .action-btns {
     display: flex;

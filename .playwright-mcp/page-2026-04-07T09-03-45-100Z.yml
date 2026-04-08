@@ -1,0 +1,33 @@
+- generic [ref=e13]:
+  - generic [ref=e14]: 登入
+  - generic [ref=e16]:
+    - generic [ref=e17]:
+      - generic [ref=e18]: 公司代碼
+      - button "請選擇公司" [active] [ref=e20] [cursor=pointer]:
+        - generic [ref=e21]: 請選擇公司
+        - img [ref=e23]
+    - generic [ref=e28]:
+      - generic [ref=e29]: 帳號
+      - textbox "帳號" [ref=e30]
+    - generic [ref=e31]:
+      - generic [ref=e32]: 密碼
+      - generic [ref=e33]:
+        - textbox "密碼" [ref=e34]
+        - generic [ref=e35] [cursor=pointer]: 
+    - generic [ref=e36]:
+      - generic [ref=e38]:
+        - checkbox "記住資訊" [ref=e39]
+        - generic [ref=e41]: 記住資訊
+      - generic [ref=e42]:
+        - img "captcha" [ref=e43]
+        - button "" [ref=e44] [cursor=pointer]:
+          - generic [ref=e45]: 
+        - textbox "請輸入驗證碼" [ref=e46]
+    - paragraph [ref=e48] [cursor=pointer]: Forget Password?
+    - generic [ref=e49]:
+      - button "登入" [ref=e50] [cursor=pointer]
+      - button "AD Login" [ref=e51] [cursor=pointer]
+      - button "Line Login" [ref=e52] [cursor=pointer]
+      - iframe [ref=e55]:
+        - button "使用 Google 帳戶登入。在新分頁中開啟" [ref=f1e3] [cursor=pointer]:
+          - img [ref=f1e8]

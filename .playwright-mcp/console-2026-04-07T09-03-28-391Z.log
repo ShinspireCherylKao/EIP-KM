@@ -1,0 +1,161 @@
+[    1520ms] [ERROR] ERROR Error: Uncaught (in promise): TypeError: Cannot read properties of undefined (reading 'unsubscribe')
+TypeError: Cannot read properties of undefined (reading 'unsubscribe')
+    at jn.ngOnDestroy (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:1:75799)
+    at Np (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1057985)
+    at t0 (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1058015)
+    at Ap (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1057606)
+    at Rp (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1057634)
+    at Ur.destroy (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1095948)
+    at Pc.destroy (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1100787)
+    at pe.deactivate (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1243633)
+    at Ws.deactivateRouteAndOutlet (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1249278)
+    at Ws.deactivateRouteAndItsChildren (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1248643)
+    at jn.ngOnDestroy (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:1:75799)
+    at Np (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1057985)
+    at t0 (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1058015)
+    at Ap (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1057606)
+    at Rp (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1057634)
+    at Ur.destroy (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1095948)
+    at Pc.destroy (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1100787)
+    at pe.deactivate (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1243633)
+    at Ws.deactivateRouteAndOutlet (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1249278)
+    at Ws.deactivateRouteAndItsChildren (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1248643)
+    at z (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:15995)
+    at z (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:15545)
+    at https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:16827
+    at v.invokeTask (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:7198)
+    at Object.onInvokeTask (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1078766)
+    at v.invokeTask (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:7119)
+    at L.runTask (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:2578)
+    at _ (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:9215) @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[    1724ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ https://prd-shinspire-eip-backend-api-c3f3fzgebtgfbzbj.japaneast-01.azurewebsites.net/api/User/GetFrontMenu:0
+[    1766ms] [LOG] save func device 3 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[    1869ms] [ERROR] ERROR zt @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[    1873ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ https://eip.shinspire.com.tw/login:0
+[    2277ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/login:0
+[    2277ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[    2277ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/login:0
+[    2277ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[    2356ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/login:0
+[    2356ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[    2356ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/login:0
+[    2356ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   15665ms] [ERROR] ERROR TypeError: Cannot read properties of undefined (reading 'nativeElement')
+    at f.blockScroll (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:2017566)
+    at Object.next (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:2015348)
+    at Je.next (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:398872)
+    at pt._next (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:398539)
+    at pt.next (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:398224)
+    at https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:412145
+    at _._next (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:409184)
+    at _.next (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:398224)
+    at https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:396061
+    at _ (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:426033) @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[   31725ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ https://prd-shinspire-eip-backend-api-c3f3fzgebtgfbzbj.japaneast-01.azurewebsites.net/api/User/RefreshToken:0
+[   31729ms] [ERROR] ERROR zt @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[   32483ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/login:0
+[   32483ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   32483ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/login:0
+[   32483ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   32500ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/login:0
+[   32500ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   32500ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/login:0
+[   32500ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   37007ms] [ERROR] ERROR TypeError: Cannot read properties of undefined (reading 'nativeElement')
+    at f.blockScroll (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:2017566)
+    at Object.next (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:2015348)
+    at Je.next (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:398872)
+    at pt._next (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:398539)
+    at pt.next (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:398224)
+    at https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:412145
+    at _._next (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:409184)
+    at _.next (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:398224)
+    at https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:396061
+    at _ (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:426033) @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[   39280ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/login:0
+[   39280ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   39280ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/login:0
+[   39280ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   41740ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/login:0
+[   41740ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   41740ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/login:0
+[   41740ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   42488ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/login:0
+[   42489ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   42489ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/login:0
+[   42489ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   45904ms] [LOG] save func device 3 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[   45933ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ https://eip.shinspire.com.tw/login:0
+[   46547ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/login:0
+[   46547ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   46570ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/login:0
+[   46570ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   46851ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/login:0
+[   46851ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   52994ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/login:0
+[   52994ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[   52994ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/login:0
+[   52994ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/login:0
+[  130358ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[  130358ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[  130358ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[  130358ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[  147922ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[  147923ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[  147923ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[  147923ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[  147949ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[  147949ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[  147949ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[  147949ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[  148049ms] [ERROR] Access to fetch at 'https://prd-shinspire-eip-backend-api-c3f3fzgebtgfbzbj.japaneast-01.azurewebsites.net/notificationHub/negotiate?negotiateVersion=1' from origin 'https://eip.shinspire.com.tw' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: The value of the 'Access-Control-Allow-Credentials' header in the response is '' which must be 'true' when the request's credentials mode is 'include'. @ https://eip.shinspire.com.tw/:0
+[  148050ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://prd-shinspire-eip-backend-api-c3f3fzgebtgfbzbj.japaneast-01.azurewebsites.net/notificationHub/negotiate?negotiateVersion=1:0
+[  148050ms] [WARNING] [2026-04-07T09:05:56.441Z] Warning: Error from HTTP request. TypeError: Failed to fetch. @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[  148051ms] [ERROR] [2026-04-07T09:05:56.441Z] Error: Failed to complete negotiation with the server: TypeError: Failed to fetch @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[  148051ms] [ERROR] [2026-04-07T09:05:56.441Z] Error: Failed to start the connection: Error: Failed to complete negotiation with the server: TypeError: Failed to fetch @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[  148051ms] [ERROR] Error: Failed to complete negotiation with the server: TypeError: Failed to fetch @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[  148052ms] [ERROR] ERROR Error: Uncaught (in promise): Error: Failed to complete negotiation with the server: TypeError: Failed to fetch
+Error: Failed to complete negotiation with the server: TypeError: Failed to fetch
+    at https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:1:35421
+    at Generator.throw (<anonymous>)
+    at o (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:886345)
+    at Me (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:886598)
+    at v.invoke (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:6580)
+    at Object.onInvoke (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1078953)
+    at v.invoke (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:6520)
+    at L.run (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:1961)
+    at https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:16790
+    at v.invokeTask (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:7198)
+    at https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:1:35421
+    at Generator.throw (<anonymous>)
+    at o (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:886345)
+    at Me (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:886598)
+    at v.invoke (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:6580)
+    at Object.onInvoke (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1078953)
+    at v.invoke (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:6520)
+    at L.run (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:1961)
+    at https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:16790
+    at v.invokeTask (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:7198)
+    at z (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:15995)
+    at z (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:15545)
+    at https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:16827
+    at v.invokeTask (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:7198)
+    at Object.onInvokeTask (https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:69:1078766)
+    at v.invokeTask (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:7119)
+    at L.runTask (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:2578)
+    at _ (https://eip.shinspire.com.tw/polyfills.9603b5467a843041.js:1:9215) @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[  148229ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/:0
+[  148229ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/:0
+[  148229ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/:0
+[  148229ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/:0
+[  148293ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.620019ed9d1100b6.woff2 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[  148293ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[  148293ms] [WARNING] Failed to decode downloaded font: https://eip.shinspire.com.tw/fa-solid-900.e67670b0779338ff.woff @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[  148293ms] [WARNING] OTS parsing error: invalid sfntVersion: 1008813135 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:68
+[  148525ms] [LOG] 0 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[  148525ms] [LOG]  相關連結 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[  148947ms] [LOG] 0 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[  148947ms] [LOG]  相關連結 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[ 2337984ms] [LOG] save func device 3 @ https://eip.shinspire.com.tw/main.b2a172f76c160d3f.js:0
+[ 2337985ms] [WARNING] [GSI_LOGGER]: google.accounts.id.initialize() is called multiple times. This could cause unexpected behavior and only the last initialized instance will be used. @ https://accounts.google.com/gsi/client:80
+[ 2338078ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) @ https://eip.shinspire.com.tw/login:0

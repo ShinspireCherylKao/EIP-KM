@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>建議方案 - 搜尋 + 麵包屑混合 | AI 文件範圍選擇</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft JhengHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #F1F5F9; min-height: 100vh; color: #0F172A;
+        }
+        .proto-header {
+            background: linear-gradient(135deg, #1E3A5F 0%, #0F172A 100%);
+            padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50; color: #fff;
+        }
+        .proto-header h1 { font-size: 18px; display: flex; align-items: center; gap: 10px; }
+        .proto-header h1 i { color: #38BDF8; }
+        .proto-badge {
+            background: rgba(56,189,248,.2); color: #7DD3FC; font-size: 12px; font-weight: 600;
+            padding: 4px 14px; border-radius: 20px; border: 1px solid rgba(56,189,248,.3);
+        }
+        .proto-desc {
+            max-width: 960px; margin: 20px auto; padding: 0 32px;
+            font-size: 14px; color: #64748B; line-height: 1.8;
+        }
+        .proto-desc strong { color: #0F172A; }
+        .proto-desc .highlight {
+            background: #DBEAFE; color: #1D4ED8; padding: 2px 8px; border-radius: 4px;
+            font-weight: 600; font-size: 13px;
+        }
+
+        .ai-layout {
+            max-width: 1240px; margin: 0 auto; padding: 0 32px 40px;
+            display: grid; grid-template-columns: 330px 1fr; gap: 20px; min-height: 650px;
+        }
+
+        /* ══════════════════════════
+           LEFT PANEL: 混合型範圍選擇
+           ══════════════════════════ */
+        .scope-panel {
+            background: #fff; border-radius: 14px; border: 1px solid #E5E7EB;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,.04);
+        }
+        .scope-panel-header {
+            padding: 14px 16px; border-bottom: 1px solid #E5E7EB;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .scope-panel-header h3 {
+            font-size: 14px; display: flex; align-items: center; gap: 8px; font-weight: 600;
+        }
+        .scope-panel-header h3 i { color: #3B82F6; }
+        .mode-toggle {
+            display: flex; gap: 0; background: #F1F5F9; border-radius: 8px; padding: 3px;
+        }
+        .mode-btn {
+            border: none; background: transparent; padding: 6px 12px; font-size: 12px;
+            border-radius: 6px; cursor: pointer; color: #64748B; transition: all .2s;
+            font-weight: 500;
+        }
+        .mode-btn.active {
+            background: #fff; color: #1D4ED8;
+            box-shadow: 0 1px 4px rgba(0,0,0,.1); font-weight: 600;
+        }
+
+        /* ── 搜尋框（主要入口） ── */
+        .scope-search { padding: 12px 16px; }
+        .search-wrap {
+            display: flex; align-items: center; gap: 8px;
+            background: #F8FAFC; border: 1.5px solid #E5E7EB; border-radius: 10px;
+            padding: 9px 14px; transition: all .2s;
+        }
+        .search-wrap:focus-within { border-color: #3B82F6; background: #fff; box-shadow: 0 0 0 3px rgba(59,130,246,.1); }
+        .search-wrap i { color: #94A3B8; font-size: 14px; }
+        .search-wrap input {
+            border: none; background: transparent; flex: 1; font-size: 13px;
+            outline: none; font-family: inherit;
+        }
+        .search-shortcut {
+            font-size: 10px; color: #CBD5E1; background: #F1F5F9;
+            padding: 2px 6px; border-radius: 4px; border: 1px solid #E5E7EB;
+        }
+
+        /* ── 即時搜尋結果下拉 ── */
+        .search-results {
+            margin: 0 16px 8px; background: #fff; border: 1px solid #E5E7EB;
+            border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.08);
+            max-height: 200px; overflow-y: auto;
+        }
+        .sr-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 14px; cursor: pointer; transition: background .12s;
+        }
+        .sr-item:hover { background: #EFF6FF; }
+        .sr-item:not(:last-child) { border-bottom: 1px solid #F1F5F9; }
+        .sr-icon {
+            width: 26px; height: 26px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; font-size: 11px;
+        }
+        .sr-icon.folder { background: #FEF3C7; color: #D97706; }
+        .sr-icon.file { background: #DBEAFE; color: #2563EB; }
+        .sr-icon.tag { background: #D1FAE5; color: #059669; }
+        .sr-info { flex: 1; min-width: 0; }
+        .sr-name { font-size: 13px; font-weight: 500; }
+        .sr-path { font-size: 11px; color: #94A3B8; }
+        .sr-add { font-size: 18px; color: #3B82F6; opacity: 0; transition: opacity .15s; }
+        .sr-item:hover .sr-add { opacity: 1; }
+
+        /* ── 麵包屑瀏覽（備援入口） ── */
+        .browse-toggle {
+            margin: 0 16px; display: flex; align-items: center; gap: 6px;
+            font-size: 12px; color: #94A3B8; cursor: pointer; padding: 6px 0;
+            transition: color .2s; user-select: none;
+        }
+        .browse-toggle:hover { color: #3B82F6; }
+        .browse-toggle i.arrow { transition: transform .2s; font-size: 10px; }
+        .browse-toggle.open i.arrow { transform: rotate(90deg); }
+
+        .browse-area {
+            margin: 0 16px 8px; border: 1px solid #E5E7EB; border-radius: 10px;
+            overflow: hidden; max-height: 0; transition: max-height .3s ease;
+        }
+        .browse-area.open { max-height: 260px; }
+        .browse-breadcrumb {
+            padding: 8px 12px; background: #F8FAFC; border-bottom: 1px solid #E5E7EB;
+            display: flex; align-items: center; gap: 5px; font-size: 12px; flex-wrap: wrap;
+        }
+        .bc-item { color: #3B82F6; cursor: pointer; }
+        .bc-item:hover { text-decoration: underline; }
+        .bc-sep { color: #CBD5E1; font-size: 10px; }
+        .bc-current { color: #0F172A; font-weight: 600; }
+        .browse-list { max-height: 200px; overflow-y: auto; }
+        .bl-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 7px 12px; cursor: pointer; transition: background .12s; font-size: 13px;
+        }
+        .bl-item:hover { background: #F8FAFC; }
+        .bl-item .bl-icon { font-size: 13px; }
+        .bl-item .bl-icon.folder { color: #D97706; }
+        .bl-item .bl-icon.file { color: #2563EB; }
+        .bl-item .bl-add { margin-left: auto; font-size: 16px; color: #3B82F6; opacity: 0; transition: opacity .15s; }
+        .bl-item:hover .bl-add { opacity: 1; }
+
+        /* ── 已選 Chip 區 ── */
+        .chip-area { flex: 1; padding: 12px 16px; overflow-y: auto; }
+        .chip-group { margin-bottom: 14px; }
+        .chip-group-label {
+            font-size: 12px; font-weight: 600; color: #64748B; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .chip-group-label .cnt {
+            background: #3B82F6; color: #fff; font-size: 10px;
+            padding: 1px 7px; border-radius: 10px;
+        }
+        .chip-group-label .cnt.b { background: #F59E0B; }
+        .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+        .chip {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 11px; border-radius: 8px; font-size: 12px; font-weight: 500;
+            transition: all .2s; cursor: default;
+        }
+        .chip i.ct { font-size: 10px; }
+        .chip .chip-x {
+            font-size: 10px; opacity: .4; cursor: pointer; margin-left: 2px;
+        }
+        .chip .chip-x:hover { opacity: 1; }
+        .chip.a { background: #DBEAFE; color: #1D4ED8; }
+        .chip.b { background: #FEF3C7; color: #92400E; }
+        .compare-vs {
+            display: flex; align-items: center; gap: 10px; margin: 10px 0;
+            font-size: 12px; color: #94A3B8; font-weight: 500;
+        }
+        .compare-vs::before, .compare-vs::after { content: ''; flex: 1; height: 1px; background: #E5E7EB; }
+        .chip-empty {
+            font-size: 12px; color: #CBD5E1; padding: 16px; text-align: center;
+            border: 2px dashed #E5E7EB; border-radius: 10px;
+        }
+
+        /* ── 雙向同步提示 ── */
+        .sync-hint {
+            padding: 10px 16px; border-top: 1px solid #E5E7EB;
+            background: #F0F9FF; font-size: 11px; color: #0369A1;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .sync-hint i { font-size: 12px; }
+
+        /* ══════════════════════════
+           RIGHT PANEL: Chat
+           ══════════════════════════ */
+        .chat-panel {
+            background: #fff; border-radius: 14px; border: 1px solid #E5E7EB;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,.04);
+        }
+        .chat-header {
+            padding: 14px 20px; border-bottom: 1px solid #E5E7EB;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .chat-header h3 { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .chat-header h3 i { color: #3B82F6; }
+        .scope-ind {
+            font-size: 12px; color: #64748B; background: #EFF6FF; padding: 4px 12px; border-radius: 6px;
+        }
+        .scope-ind strong { color: #1D4ED8; }
+
+        .chat-body { flex: 1; overflow-y: auto; padding: 20px; background: #F8FAFC; }
+        .msg { display: flex; gap: 12px; margin-bottom: 18px; }
+        .msg.user { flex-direction: row-reverse; }
+        .msg-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; font-size: 14px;
+        }
+        .msg.assistant .msg-avatar { background: linear-gradient(135deg, #3B82F6, #1D4ED8); color: #fff; }
+        .msg.user .msg-avatar { background: #64748B; color: #fff; }
+        .msg-bubble {
+            max-width: 72%; padding: 12px 16px; border-radius: 14px;
+            font-size: 14px; line-height: 1.7;
+        }
+        .msg.assistant .msg-bubble { background: #fff; border: 1px solid #E5E7EB; }
+        .msg.user .msg-bubble { background: linear-gradient(135deg, #3B82F6, #2563EB); color: #fff; }
+        .msg-bubble .hint { font-size: 13px; color: #94A3B8; margin-top: 4px; }
+
+        /* 範圍自動偵測提示 */
+        .auto-detect {
+            background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 10px;
+            padding: 10px 14px; margin: 6px 0; font-size: 12px; color: #0369A1;
+            display: flex; align-items: flex-start; gap: 8px;
+        }
+        .auto-detect i { margin-top: 2px; }
+        .auto-detect .ad-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+        .auto-detect .ad-chip {
+            background: #DBEAFE; color: #1D4ED8; font-size: 11px;
+            padding: 2px 8px; border-radius: 4px; font-weight: 500;
+        }
+        .auto-detect .ad-confirm {
+            background: #3B82F6; color: #fff; border: none; border-radius: 6px;
+            padding: 4px 10px; font-size: 11px; cursor: pointer; margin-top: 6px;
+            font-family: inherit; transition: background .2s;
+        }
+        .auto-detect .ad-confirm:hover { background: #2563EB; }
+        .ad-edit {
+            background: transparent; color: #3B82F6; border: 1px solid #93C5FD; border-radius: 6px;
+            padding: 4px 10px; font-size: 11px; cursor: pointer; margin-top: 6px; margin-left: 4px;
+            font-family: inherit; transition: all .2s;
+        }
+        .ad-edit:hover { background: #EFF6FF; }
+
+        /* Quick questions */
+        .quick-qs { margin-top: 10px; }
+        .quick-qs .label { font-size: 12px; color: #94A3B8; margin-bottom: 6px; }
+        .qq-btn {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #F8FAFC; border: 1px solid #E5E7EB; border-radius: 8px;
+            padding: 6px 12px; font-size: 12px; cursor: pointer; margin-right: 6px; margin-bottom: 6px;
+            transition: all .15s; font-family: inherit; color: #0F172A;
+        }
+        .qq-btn:hover { border-color: #3B82F6; background: #EFF6FF; }
+        .qq-btn i { color: #3B82F6; font-size: 11px; }
+
+        .chat-input-area {
+            padding: 14px 20px; border-top: 1px solid #E5E7EB;
+        }
+        /* 輸入框上方的 scope chip 標註 */
+        .input-scope-row {
+            display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;
+        }
+        .input-scope-row .isr-label { font-size: 11px; color: #94A3B8; white-space: nowrap; }
+        .input-scope-row .isr-chip {
+            font-size: 11px; padding: 2px 8px; border-radius: 5px;
+            background: #DBEAFE; color: #1D4ED8; font-weight: 500;
+        }
+        .input-scope-row .isr-chip.b { background: #FEF3C7; color: #92400E; }
+        .input-scope-row .isr-vs { font-size: 10px; color: #94A3B8; }
+
+        .chat-input-row {
+            display: flex; gap: 10px; align-items: flex-end;
+        }
+        .chat-input-row textarea {
+            flex: 1; resize: none; border: 1.5px solid #E5E7EB; border-radius: 12px;
+            padding: 10px 14px; font-size: 14px; font-family: inherit;
+            outline: none; transition: all .2s; min-height: 44px;
+        }
+        .chat-input-row textarea:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59,130,246,.08); }
+        .send-btn {
+            background: linear-gradient(135deg, #3B82F6, #2563EB); color: #fff;
+            border: none; border-radius: 12px; padding: 10px 20px;
+            cursor: pointer; font-size: 14px; transition: all .2s;
+            display: flex; align-items: center; gap: 6px; white-space: nowrap;
+        }
+        .send-btn:hover { box-shadow: 0 4px 12px rgba(37,99,235,.3); }
+        .input-hint { font-size: 11px; color: #CBD5E1; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="proto-header">
+    <h1><i class="fa-solid fa-star"></i> 建議方案：搜尋 + 麵包屑混合（雙向同步）</h1>
+    <span class="proto-badge">★ Recommended</span>
+</div>
+
+<div class="proto-desc">
+    <strong>核心概念：</strong>
+    以 <span class="highlight">搜尋 + Chip 累加</span> 為主要入口（快速精準），
+    搭配 <span class="highlight">麵包屑瀏覽</span> 作為備援（不確定名稱時可逐層探索）。
+    最重要的是 <span class="highlight">雙向同步</span>：
+    左側選好範圍→對話框自動標示；對話框直接提問→左側自動偵測並框出相關範圍（使用者可確認/微調）。
+</div>
+
+<div class="ai-layout">
+    <!-- ═══ LEFT: 範圍選擇 ═══ -->
+    <div class="scope-panel">
+        <div class="scope-panel-header">
+            <h3><i class="fa-solid fa-crosshairs"></i> 文件範圍</h3>
+            <div class="mode-toggle">
+                <button class="mode-btn" onclick="setMode(this)">單一</button>
+                <button class="mode-btn active" onclick="setMode(this)">A / B 比較</button>
+            </div>
+        </div>
+
+        <!-- 搜尋框 -->
+        <div class="scope-search">
+            <div class="search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="搜尋資料夾、檔案或標籤..." value="旅費">
+                <span class="search-shortcut">Ctrl+K</span>
+            </div>
+        </div>
+
+        <!-- 即時搜尋結果 -->
+        <div class="search-results">
+            <div class="sr-item">
+                <div class="sr-icon folder"><i class="fa-solid fa-folder"></i></div>
+                <div class="sr-info">
+                    <div class="sr-name">2024年旅費申請</div>
+                    <div class="sr-path">人事部 / 差旅管理</div>
+                </div>
+                <span class="sr-add"><i class="fa-solid fa-circle-plus"></i></span>
+            </div>
+            <div class="sr-item">
+                <div class="sr-icon folder"><i class="fa-solid fa-folder"></i></div>
+                <div class="sr-info">
+                    <div class="sr-name">2023年旅費申請</div>
+                    <div class="sr-path">人事部 / 差旅管理</div>
+                </div>
+                <span class="sr-add"><i class="fa-solid fa-circle-plus"></i></span>
+            </div>
+            <div class="sr-item">
+                <div class="sr-icon folder"><i class="fa-solid fa-folder"></i></div>
+                <div class="sr-info">
+                    <div class="sr-name">2022年旅費申請</div>
+                    <div class="sr-path">人事部 / 差旅管理</div>
+                </div>
+                <span class="sr-add"><i class="fa-solid fa-circle-plus"></i></span>
+            </div>
+            <div class="sr-item">
+                <div class="sr-icon tag"><i class="fa-solid fa-tag"></i></div>
+                <div class="sr-info">
+                    <div class="sr-name">#旅費 標籤（12 篇）</div>
+                    <div class="sr-path">依標籤篩選</div>
+                </div>
+                <span class="sr-add"><i class="fa-solid fa-circle-plus"></i></span>
+            </div>
+        </div>
+
+        <!-- 麵包屑瀏覽（摺疊備援） -->
+        <div class="browse-toggle open" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open');">
+            <i class="fa-solid fa-chevron-right arrow"></i>
+            <i class="fa-solid fa-sitemap" style="font-size:11px"></i> 瀏覽資料夾結構
+        </div>
+        <div class="browse-area open">
+            <div class="browse-breadcrumb">
+                <span class="bc-item"><i class="fa-solid fa-house" style="font-size:11px"></i></span>
+                <span class="bc-sep"><i class="fa-solid fa-chevron-right"></i></span>
+                <span class="bc-item">人事部</span>
+                <span class="bc-sep"><i class="fa-solid fa-chevron-right"></i></span>
+                <span class="bc-current">差旅管理</span>
+            </div>
+            <div class="browse-list">
+                <div class="bl-item">
+                    <span class="bl-icon folder"><i class="fa-solid fa-folder"></i></span>
+                    2024年旅費申請
+                    <span class="bl-add"><i class="fa-solid fa-circle-plus"></i></span>
+                </div>
+                <div class="bl-item">
+                    <span class="bl-icon folder"><i class="fa-solid fa-folder"></i></span>
+                    2023年旅費申請
+                    <span class="bl-add"><i class="fa-solid fa-circle-plus"></i></span>
+                </div>
+                <div class="bl-item">
+                    <span class="bl-icon folder"><i class="fa-solid fa-folder"></i></span>
+                    2022年旅費申請
+                    <span class="bl-add"><i class="fa-solid fa-circle-plus"></i></span>
+                </div>
+                <div class="bl-item">
+                    <span class="bl-icon file"><i class="fa-solid fa-file-lines"></i></span>
+                    差旅管理辦法 v3.2.pdf
+                    <span class="bl-add"><i class="fa-solid fa-circle-plus"></i></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 已選 Chip 區 -->
+        <div class="chip-area">
+            <div class="chip-group">
+                <div class="chip-group-label">
+                    <i class="fa-solid fa-a" style="color:#3B82F6; font-size:11px;"></i> 範圍 A <span class="cnt">2</span>
+                </div>
+                <div class="chips">
+                    <span class="chip a">
+                        <i class="fa-solid fa-folder ct"></i> 2024年旅費申請
+                        <span class="chip-x"><i class="fa-solid fa-xmark"></i></span>
+                    </span>
+                    <span class="chip a">
+                        <i class="fa-solid fa-folder ct"></i> 2023年旅費申請
+                        <span class="chip-x"><i class="fa-solid fa-xmark"></i></span>
+                    </span>
+                </div>
+            </div>
+            <div class="compare-vs"><i class="fa-solid fa-arrows-left-right"></i> VS</div>
+            <div class="chip-group">
+                <div class="chip-group-label">
+                    <i class="fa-solid fa-b" style="color:#D97706; font-size:11px;"></i> 範圍 B <span class="cnt b">1</span>
+                </div>
+                <div class="chips">
+                    <span class="chip b">
+                        <i class="fa-solid fa-folder ct"></i> 2022年旅費申請
+                        <span class="chip-x"><i class="fa-solid fa-xmark"></i></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sync-hint">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            雙向同步：對話中提到的文件會自動加入範圍，您也可以手動調整
+        </div>
+    </div>
+
+    <!-- ═══ RIGHT: Chat ═══ -->
+    <div class="chat-panel">
+        <div class="chat-header">
+            <h3><i class="fa-solid fa-comments"></i> 智能問答</h3>
+            <span class="scope-ind">比較模式：<strong>A (2)</strong> vs <strong>B (1)</strong></span>
+        </div>
+        <div class="chat-body">
+            <!-- 初始歡迎 -->
+            <div class="msg assistant">
+                <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+                <div class="msg-bubble">
+                    <p>您好！我是智能助手。</p>
+                    <p class="hint">您可以先在左側選定範圍，或直接提問讓我自動偵測相關文件。</p>
+                    <div class="quick-qs">
+                        <div class="label">常用提問：</div>
+                        <button class="qq-btn"><i class="fa-solid fa-code-compare"></i> 比較 A 專案與 B 專案差異</button>
+                        <button class="qq-btn"><i class="fa-solid fa-table"></i> 列出近三年旅費表格差異</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 使用者直接打字提問（雙向同步示範） -->
+            <div class="msg user">
+                <div class="msg-avatar"><i class="fa-solid fa-user"></i></div>
+                <div class="msg-bubble">比較 2024 跟 2022 的旅費申請有什麼不同</div>
+            </div>
+
+            <!-- AI 自動偵測範圍 → 確認 -->
+            <div class="msg assistant">
+                <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+                <div class="msg-bubble">
+                    <div class="auto-detect">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <div>
+                            <div>我從您的問題中偵測到以下文件範圍：</div>
+                            <div class="ad-chips">
+                                <span class="ad-chip">A: 2024年旅費申請</span>
+                                <span class="ad-chip" style="background:#FEF3C7;color:#92400E;">B: 2022年旅費申請</span>
+                            </div>
+                            <div>
+                                <button class="ad-confirm"><i class="fa-solid fa-check"></i> 確認範圍，開始分析</button>
+                                <button class="ad-edit"><i class="fa-solid fa-pen"></i> 調整範圍</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 確認後回覆 -->
+            <div class="msg assistant">
+                <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+                <div class="msg-bubble">
+                    <p>以下是 2024 vs 2022 旅費申請的主要差異：</p>
+                    <table style="width:100%;font-size:12px;border-collapse:collapse;margin-top:10px;">
+                        <thead>
+                            <tr style="background:#EFF6FF;">
+                                <th style="padding:7px 10px;text-align:left;border-bottom:2px solid #BFDBFE;">項目</th>
+                                <th style="padding:7px 10px;text-align:left;border-bottom:2px solid #BFDBFE;">2022 (B)</th>
+                                <th style="padding:7px 10px;text-align:left;border-bottom:2px solid #BFDBFE;">2024 (A)</th>
+                                <th style="padding:7px 10px;text-align:left;border-bottom:2px solid #BFDBFE;">變動</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td style="padding:7px 10px;border-bottom:1px solid #E5E7EB;">國內日支費</td><td style="padding:7px 10px;border-bottom:1px solid #E5E7EB;">$800</td><td style="padding:7px 10px;border-bottom:1px solid #E5E7EB;">$1,000</td><td style="padding:7px 10px;border-bottom:1px solid #E5E7EB;color:#059669">↑ +25%</td></tr>
+                            <tr><td style="padding:7px 10px;border-bottom:1px solid #E5E7EB;">保險欄位</td><td style="padding:7px 10px;border-bottom:1px solid #E5E7EB;">無</td><td style="padding:7px 10px;border-bottom:1px solid #E5E7EB;">全部必填</td><td style="padding:7px 10px;border-bottom:1px solid #E5E7EB;color:#DC2626">新增</td></tr>
+                            <tr><td style="padding:7px 10px;">審核層級</td><td style="padding:7px 10px;">四級</td><td style="padding:7px 10px;">三級</td><td style="padding:7px 10px;color:#059669">簡化</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 輸入區（含 scope 標示） -->
+        <div class="chat-input-area">
+            <div class="input-scope-row">
+                <span class="isr-label"><i class="fa-solid fa-crosshairs"></i> 範圍：</span>
+                <span class="isr-chip">A: 2024旅費</span>
+                <span class="isr-chip">A: 2023旅費</span>
+                <span class="isr-vs">vs</span>
+                <span class="isr-chip b">B: 2022旅費</span>
+            </div>
+            <div class="chat-input-row">
+                <textarea rows="1" placeholder="輸入問題，或直接提及文件名稱自動偵測範圍..."></textarea>
+                <button class="send-btn"><i class="fa-solid fa-paper-plane"></i> 發送</button>
+            </div>
+            <div class="input-hint">按 Enter 發送 · Shift+Enter 換行 · 提及文件名可自動偵測範圍</div>
+        </div>
+    </div>
+</div>
+
+<script>
+function setMode(btn) {
+    btn.closest('.mode-toggle').querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+</script>
+</body>
+</html>

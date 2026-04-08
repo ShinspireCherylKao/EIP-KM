@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>方案A - 麵包屑 + 平面列表 | AI 文件範圍選擇</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft JhengHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #F1F5F9;
+            min-height: 100vh;
+            color: #0F172A;
+        }
+
+        /* ── Proto Header ── */
+        .proto-header {
+            background: #fff;
+            border-bottom: 2px solid #3B82F6;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .proto-header h1 { font-size: 18px; display: flex; align-items: center; gap: 10px; }
+        .proto-header h1 i { color: #3B82F6; }
+        .proto-badge {
+            background: #DBEAFE; color: #1D4ED8; font-size: 12px; font-weight: 600;
+            padding: 4px 12px; border-radius: 20px;
+        }
+        .proto-desc {
+            max-width: 900px; margin: 20px auto; padding: 0 32px;
+            font-size: 14px; color: #64748B; line-height: 1.8;
+        }
+        .proto-desc strong { color: #0F172A; }
+
+        /* ── Main Layout ── */
+        .ai-layout {
+            max-width: 1200px; margin: 0 auto; padding: 0 32px 40px;
+            display: grid; grid-template-columns: 300px 1fr; gap: 20px;
+            min-height: 600px;
+        }
+
+        /* ── Left: Scope Panel ── */
+        .scope-panel {
+            background: #fff; border-radius: 12px; border: 1px solid #E5E7EB;
+            overflow: hidden; display: flex; flex-direction: column;
+        }
+        .scope-panel-header {
+            padding: 14px 16px; border-bottom: 1px solid #E5E7EB;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .scope-panel-header h3 {
+            font-size: 14px; display: flex; align-items: center; gap: 8px; font-weight: 600;
+        }
+        .scope-panel-header h3 i { color: #3B82F6; font-size: 15px; }
+        .scope-mode-toggle {
+            display: flex; gap: 4px; background: #F1F5F9; border-radius: 6px; padding: 2px;
+        }
+        .scope-mode-btn {
+            border: none; background: transparent; padding: 5px 10px; font-size: 12px;
+            border-radius: 4px; cursor: pointer; color: #64748B; transition: all .2s;
+        }
+        .scope-mode-btn.active { background: #fff; color: #1D4ED8; box-shadow: 0 1px 3px rgba(0,0,0,.1); font-weight: 600; }
+
+        /* 麵包屑 */
+        .breadcrumb-bar {
+            padding: 10px 16px; background: #F8FAFC; border-bottom: 1px solid #E5E7EB;
+            display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 13px;
+        }
+        .breadcrumb-item { color: #3B82F6; cursor: pointer; }
+        .breadcrumb-item:hover { text-decoration: underline; }
+        .breadcrumb-sep { color: #CBD5E1; font-size: 11px; }
+        .breadcrumb-current { color: #0F172A; font-weight: 600; }
+
+        /* 平面列表 */
+        .flat-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .flat-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 16px; cursor: pointer; transition: background .15s;
+            border-left: 3px solid transparent;
+        }
+        .flat-item:hover { background: #F1F5F9; }
+        .flat-item.selected { background: #EFF6FF; border-left-color: #3B82F6; }
+        .flat-item .fi-icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 14px;
+        }
+        .flat-item .fi-icon.folder { background: #FEF3C7; color: #D97706; }
+        .flat-item .fi-icon.file   { background: #DBEAFE; color: #2563EB; }
+        .flat-item .fi-info { flex: 1; min-width: 0; }
+        .flat-item .fi-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .flat-item .fi-meta { font-size: 11px; color: #94A3B8; margin-top: 1px; }
+        .flat-item .fi-check {
+            width: 18px; height: 18px; border-radius: 4px; border: 2px solid #CBD5E1;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; color: transparent; transition: all .2s; flex-shrink: 0;
+        }
+        .flat-item.selected .fi-check {
+            background: #3B82F6; border-color: #3B82F6; color: #fff;
+        }
+
+        /* 已選 Tags */
+        .selected-bar {
+            padding: 10px 16px; border-top: 1px solid #E5E7EB;
+            background: #F8FAFC; min-height: 42px;
+        }
+        .selected-bar-label { font-size: 11px; color: #94A3B8; margin-bottom: 6px; }
+        .selected-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .sel-tag {
+            display: flex; align-items: center; gap: 4px;
+            background: #DBEAFE; color: #1D4ED8; font-size: 12px; padding: 3px 8px;
+            border-radius: 6px; font-weight: 500;
+        }
+        .sel-tag .remove { cursor: pointer; opacity: .6; font-size: 10px; }
+        .sel-tag .remove:hover { opacity: 1; }
+
+        /* ── Right: Chat Area ── */
+        .chat-panel {
+            background: #fff; border-radius: 12px; border: 1px solid #E5E7EB;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .chat-header {
+            padding: 14px 20px; border-bottom: 1px solid #E5E7EB;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .chat-header h3 { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .chat-header h3 i { color: #3B82F6; }
+        .scope-indicator {
+            font-size: 12px; color: #64748B; background: #F1F5F9; padding: 4px 10px; border-radius: 6px;
+        }
+        .scope-indicator strong { color: #1D4ED8; }
+
+        .chat-body { flex: 1; overflow-y: auto; padding: 20px; background: #F8FAFC; }
+        .msg { display: flex; gap: 12px; margin-bottom: 16px; }
+        .msg.user { flex-direction: row-reverse; }
+        .msg-avatar {
+            width: 34px; height: 34px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px;
+        }
+        .msg.assistant .msg-avatar { background: #3B82F6; color: #fff; }
+        .msg.user .msg-avatar { background: #64748B; color: #fff; }
+        .msg-bubble {
+            max-width: 70%; padding: 12px 16px; border-radius: 12px;
+            font-size: 14px; line-height: 1.7;
+        }
+        .msg.assistant .msg-bubble { background: #fff; border: 1px solid #E5E7EB; }
+        .msg.user .msg-bubble { background: #3B82F6; color: #fff; }
+        .msg-bubble .hint { font-size: 13px; color: #94A3B8; margin-top: 4px; }
+
+        .chat-input {
+            padding: 14px 20px; border-top: 1px solid #E5E7EB;
+            display: flex; gap: 10px; align-items: flex-end;
+        }
+        .chat-input textarea {
+            flex: 1; resize: none; border: 1px solid #E5E7EB; border-radius: 10px;
+            padding: 10px 14px; font-size: 14px; font-family: inherit;
+            outline: none; transition: border-color .2s; min-height: 44px;
+        }
+        .chat-input textarea:focus { border-color: #3B82F6; }
+        .chat-input .send-btn {
+            background: #3B82F6; color: #fff; border: none; border-radius: 10px;
+            padding: 10px 18px; cursor: pointer; font-size: 14px; transition: background .2s;
+            display: flex; align-items: center; gap: 6px; white-space: nowrap;
+        }
+        .chat-input .send-btn:hover { background: #2563EB; }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="proto-header">
+    <h1><i class="fa-solid fa-flask"></i> 方案 A：麵包屑 + 平面列表</h1>
+    <span class="proto-badge">Prototype</span>
+</div>
+
+<div class="proto-desc">
+    <strong>概念：</strong>左側用「麵包屑導航」顯示當前路徑位置，下方以「平面列表」呈現當前層級的資料夾與檔案。
+    點資料夾可進入下一層，勾選即加入查詢範圍。類似 macOS Finder 的體驗，畫面乾淨、每次只看一層。<br>
+    <strong>適合：</strong>文件層級深、需要逐層瀏覽確認的場景。
+</div>
+
+<!-- Main -->
+<div class="ai-layout">
+    <!-- Left Scope -->
+    <div class="scope-panel">
+        <div class="scope-panel-header">
+            <h3><i class="fa-solid fa-folder-open"></i> 文件範圍</h3>
+            <div class="scope-mode-toggle">
+                <button class="scope-mode-btn active">單一範圍</button>
+                <button class="scope-mode-btn" onclick="toggleCompare(this)">A / B 比較</button>
+            </div>
+        </div>
+
+        <!-- 麵包屑 -->
+        <div class="breadcrumb-bar">
+            <span class="breadcrumb-item" onclick="navTo('root')"><i class="fa-solid fa-house" style="font-size:12px"></i></span>
+            <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+            <span class="breadcrumb-item" onclick="navTo('hr')">人事部</span>
+            <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+            <span class="breadcrumb-current">差旅管理</span>
+        </div>
+
+        <!-- 平面列表 -->
+        <div class="flat-list">
+            <div class="flat-item" ondblclick="navInto(this)" onclick="toggleSelect(this)">
+                <div class="fi-icon folder"><i class="fa-solid fa-folder"></i></div>
+                <div class="fi-info">
+                    <div class="fi-name">2024年旅費申請</div>
+                    <div class="fi-meta">5 個檔案 · 更新於 2024/12</div>
+                </div>
+                <div class="fi-check"><i class="fa-solid fa-check"></i></div>
+            </div>
+            <div class="flat-item selected" onclick="toggleSelect(this)">
+                <div class="fi-icon folder"><i class="fa-solid fa-folder"></i></div>
+                <div class="fi-info">
+                    <div class="fi-name">2023年旅費申請</div>
+                    <div class="fi-meta">4 個檔案 · 更新於 2023/11</div>
+                </div>
+                <div class="fi-check"><i class="fa-solid fa-check"></i></div>
+            </div>
+            <div class="flat-item selected" onclick="toggleSelect(this)">
+                <div class="fi-icon folder"><i class="fa-solid fa-folder"></i></div>
+                <div class="fi-info">
+                    <div class="fi-name">2022年旅費申請</div>
+                    <div class="fi-meta">3 個檔案 · 更新於 2022/10</div>
+                </div>
+                <div class="fi-check"><i class="fa-solid fa-check"></i></div>
+            </div>
+            <div class="flat-item" onclick="toggleSelect(this)">
+                <div class="fi-icon file"><i class="fa-solid fa-file-lines"></i></div>
+                <div class="fi-info">
+                    <div class="fi-name">差旅管理辦法 v3.2.pdf</div>
+                    <div class="fi-meta">PDF · 2.1 MB · 2024/06</div>
+                </div>
+                <div class="fi-check"><i class="fa-solid fa-check"></i></div>
+            </div>
+            <div class="flat-item" onclick="toggleSelect(this)">
+                <div class="fi-icon file"><i class="fa-solid fa-file-lines"></i></div>
+                <div class="fi-info">
+                    <div class="fi-name">國外出差申請表.docx</div>
+                    <div class="fi-meta">Word · 542 KB · 2024/03</div>
+                </div>
+                <div class="fi-check"><i class="fa-solid fa-check"></i></div>
+            </div>
+            <div class="flat-item" onclick="toggleSelect(this)">
+                <div class="fi-icon file"><i class="fa-solid fa-file-lines"></i></div>
+                <div class="fi-info">
+                    <div class="fi-name">國內出差申請表.docx</div>
+                    <div class="fi-meta">Word · 380 KB · 2024/03</div>
+                </div>
+                <div class="fi-check"><i class="fa-solid fa-check"></i></div>
+            </div>
+        </div>
+
+        <!-- 已選 -->
+        <div class="selected-bar">
+            <div class="selected-bar-label">已選 2 個範圍</div>
+            <div class="selected-tags">
+                <span class="sel-tag"><i class="fa-solid fa-folder" style="font-size:10px"></i> 2023年旅費申請 <span class="remove" onclick="this.closest('.sel-tag').remove()"><i class="fa-solid fa-xmark"></i></span></span>
+                <span class="sel-tag"><i class="fa-solid fa-folder" style="font-size:10px"></i> 2022年旅費申請 <span class="remove" onclick="this.closest('.sel-tag').remove()"><i class="fa-solid fa-xmark"></i></span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Chat -->
+    <div class="chat-panel">
+        <div class="chat-header">
+            <h3><i class="fa-solid fa-comments"></i> 智能問答</h3>
+            <span class="scope-indicator"><i class="fa-solid fa-crosshairs"></i> 範圍：<strong>2 個資料夾</strong></span>
+        </div>
+        <div class="chat-body">
+            <div class="msg assistant">
+                <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+                <div class="msg-bubble">
+                    <p>您好！我是智能助手。</p>
+                    <p class="hint">您已選取「2023年旅費申請」和「2022年旅費申請」資料夾，請輸入您的問題。</p>
+                </div>
+            </div>
+            <div class="msg user">
+                <div class="msg-avatar"><i class="fa-solid fa-user"></i></div>
+                <div class="msg-bubble">列出這兩年旅費申請的差異</div>
+            </div>
+            <div class="msg assistant">
+                <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+                <div class="msg-bubble">
+                    <p>根據您選取的範圍，以下是 2022 與 2023 年旅費申請的主要差異：</p>
+                    <ul style="margin:8px 0 0 18px; line-height:2;">
+                        <li>國內出差日支費由 NT$800 調整為 NT$900</li>
+                        <li>新增「線上會議替代出差」審核欄位</li>
+                        <li>國外出差需額外附保險證明</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="chat-input">
+            <textarea rows="1" placeholder="輸入您的問題...（已限定在選取範圍內搜尋）"></textarea>
+            <button class="send-btn"><i class="fa-solid fa-paper-plane"></i> 發送</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleSelect(el) {
+    el.classList.toggle('selected');
+}
+function navTo(target) { /* prototype: no-op */ }
+function navInto(el) { /* prototype: no-op */ }
+function toggleCompare(btn) {
+    btn.closest('.scope-mode-toggle').querySelectorAll('.scope-mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+</script>
+</body>
+</html>
