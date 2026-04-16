@@ -9,7 +9,7 @@ const HEADER_FALLBACK_HTML = `<!-- 頂部導航欄 -->
         <button class="menu-toggle" id="menuToggle">
             <i class="fa-solid fa-bars"></i>
         </button>
-        <h1 class="header-title">JoinTime (DEV)</h1>
+        <h1 class="header-title">Vera EIP (DEV)</h1>
     </div>
 
     <div class="header-right">

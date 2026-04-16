@@ -5,7 +5,7 @@
 
 // 當 DOM 載入完成後執行初始化
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('JoinTime 前台系統已初始化');
+    console.log('Vera EIP 前台系統已初始化');
     
     // 初始化側邊欄
     initSidebar();

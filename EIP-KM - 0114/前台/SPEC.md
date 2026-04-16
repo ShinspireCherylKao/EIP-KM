@@ -176,7 +176,7 @@
 
 | 類別 | 允許副檔名 |
 |------|-----------|
-| 文件 | `.pdf`、`.doc`、`.docx`、`.xls`、`.xlsx`、`.ppt`、`.pptx`、`.odt`、`.ods`、`.odp`、`.txt`、`.csv`、`.rtf` |
+| 文件 | `.pdf`、`.doc`、`.docx`、`.xls`、`.xlsx`、`.ppt`、`.pptx`、`.txt`、`.csv` |
 | 圖片 | `.jpg`、`.jpeg`、`.png`、`.gif`、`.bmp`、`.svg`、`.webp`、`.tiff` |
 | 音訊 | `.mp3`、`.wav`、`.ogg`、`.m4a` |
 | 影片 | `.mp4`、`.avi`、`.mov`、`.wmv`、`.webm` |
