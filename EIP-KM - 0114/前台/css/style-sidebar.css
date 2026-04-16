@@ -133,8 +133,8 @@
     visibility: visible;
 }
 
-/* 響應式設計 */
-@media screen and (max-width: 960px) {
+/* 響應式設計 — 斷點: 960 / 768 / 480 */
+@media (max-width: 960px) {
     .sidebar {
         width: var(--sidebar-collapsed-width);
     }
@@ -153,14 +153,18 @@
     }
 }
 
-@media screen and (max-width: 640px) {
+/* ≤768px：sidebar 完全隱藏，hamburger 展開為 overlay */
+@media (max-width: 768px) {
     .sidebar {
-        transform: translateX(-100%);
+        display: none;
         width: var(--sidebar-width);
     }
     
     .sidebar.show {
+        display: block;
         transform: translateX(0);
+        background-color: var(--sidebar-bg);
+        border-right: 1px solid var(--border-color);
     }
     
     .sidebar.show .nav-item span {

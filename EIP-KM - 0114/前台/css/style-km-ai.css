@@ -13,7 +13,7 @@
 }
 
 .ai-header h2 {
-    font-size: 24px;
+    font-size: var(--font-page-title);
     font-weight: 700;
     color: var(--text-primary);
     margin: 0 0 8px 0;
@@ -23,7 +23,7 @@
 }
 
 .ai-header h2 i {
-    color: #EF4444;
+    color: #6366F1;
 }
 
 .ai-subtitle {

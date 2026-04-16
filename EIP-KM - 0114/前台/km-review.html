@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件審核 - KM 知識管理</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-km-base.css">
+    <link rel="stylesheet" href="css/style-search.css">
+    <style>
+        /* ===== 文件審核頁專用 ===== */
+
+        .page-title-bar {
+            padding: 24px 0 0;
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 16px; flex-wrap: wrap;
+        }
+        .page-title-bar h2 {
+            font-size: var(--font-page-title); font-weight: 700; color: #111827; margin: 0;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .page-title-bar h2 i { color: #4F46E5; }
+        .page-title-bar .page-desc { color: #9CA3AF; font-size: 13px; margin: 4px 0 0; }
+
+        /* Tabs */
+        .review-tabs-bar {
+            display: flex; border-bottom: 2px solid #F0F1F3;
+            margin: 20px 0; gap: 0;
+        }
+        .review-tab-btn {
+            padding: 10px 20px; font-size: 13px; font-weight: 600;
+            cursor: pointer; border: none; background: none;
+            color: #9CA3AF; border-bottom: 2px solid transparent;
+            margin-bottom: -2px; transition: all .2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .review-tab-btn:hover { color: #6B7280; }
+        .review-tab-btn.active { color: #4F46E5; border-bottom-color: #4F46E5; }
+        .review-tab-btn .tab-count {
+            font-size: 11px; padding: 1px 7px; border-radius: 999px;
+            background: #F3F4F6; color: #9CA3AF; font-weight: 700;
+        }
+        .review-tab-btn.active .tab-count { background: #EEF2FF; color: #4F46E5; }
+
+        /* 篩選列 */
+        .toolbar {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
+        }
+        .toolbar-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .toolbar .search-box { position: relative; }
+        .toolbar .search-box i {
+            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+            color: #9CA3AF; font-size: 13px;
+        }
+        .toolbar .search-box input {
+            padding: 8px 12px 8px 34px; width: 240px;
+            border: 1px solid #E5E8ED; border-radius: 8px;
+            font-size: 13px; background: #fff; box-sizing: border-box;
+            transition: border-color .2s;
+        }
+        .toolbar .search-box input:focus { outline: none; border-color: #4F46E5; }
+
+        /* 表格 */
+        .review-table-card {
+            background: #fff; border: 1px solid #E5E8ED; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.04); overflow: hidden;
+        }
+        .review-table {
+            width: 100%; border-collapse: collapse;
+        }
+        .review-table th {
+            text-align: left; padding: 12px 16px; font-size: 12px;
+            font-weight: 600; color: #9CA3AF; background: #F9FAFB;
+            border-bottom: 1px solid #E5E8ED; white-space: nowrap;
+        }
+        .review-table td {
+            padding: 14px 16px; font-size: 13px; color: #374151;
+            border-bottom: 1px solid #F0F1F3; vertical-align: middle;
+        }
+        .review-table tbody tr { transition: background .15s; cursor: pointer; }
+        .review-table tbody tr:hover { background: #F9FAFB; }
+        .review-table tbody tr:last-child td { border-bottom: none; }
+        .review-table .title-cell {
+            font-weight: 600; color: #111827; max-width: 320px;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .review-table tbody tr:hover .title-cell { color: #4F46E5; }
+        .review-table .person-cell {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .person-avatar {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: #EEF2FF; color: #4F46E5;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; flex-shrink: 0;
+        }
+
+        /* 狀態 badge */
+        .status-badge {
+            font-size: 11px; padding: 3px 10px; border-radius: 999px;
+            font-weight: 600; display: inline-flex; align-items: center; gap: 4px;
+            white-space: nowrap;
+        }
+        .status-badge.pending   { background: #FEF3C7; color: #B45309; }
+        .status-badge.reviewing { background: #DBEAFE; color: #1D4ED8; }
+        .status-badge.approved  { background: #ECFDF5; color: #059669; }
+        .status-badge.rejected  { background: #FEF2F2; color: #DC2626; }
+
+        /* 空狀態 */
+        .empty-row td {
+            text-align: center; padding: 60px 20px !important; color: #9CA3AF;
+        }
+        .empty-row i { font-size: 28px; display: block; margin-bottom: 10px; }
+        .empty-row p { font-size: 14px; margin: 4px 0 0; }
+
+        /* ===== 詳情 Modal ===== */
+        .review-modal-overlay {
+            position: fixed; inset: 0; display: none;
+            align-items: center; justify-content: center;
+            background: rgba(15,23,42,.5); z-index: 100;
+            padding: 16px; backdrop-filter: blur(4px);
+        }
+        .review-modal-overlay.show { display: flex; }
+        .review-modal {
+            width: min(700px, 96vw); max-height: 90vh; overflow-y: auto;
+            background: #fff; border-radius: 16px;
+            box-shadow: 0 24px 48px rgba(0,0,0,.16);
+        }
+        .rm-header {
+            padding: 20px 24px; border-bottom: 1px solid #F0F1F3;
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+        }
+        .rm-header h3 { font-size: var(--font-section-title); font-weight: 700; margin: 0; line-height: 1.4; }
+        .rm-header .close-btn {
+            background: none; border: none; font-size: 18px; color: #9CA3AF;
+            cursor: pointer; padding: 4px; transition: color .15s;
+        }
+        .rm-header .close-btn:hover { color: #374151; }
+        .rm-meta-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 12px; padding: 16px 24px; background: #F9FAFB;
+            border-bottom: 1px solid #F0F1F3;
+        }
+        .rm-meta-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .rm-meta-item .meta-label { color: #9CA3AF; font-size: 12px; }
+        .rm-meta-item .meta-value { font-weight: 600; color: #111827; }
+        .rm-body { padding: 24px; font-size: 14px; line-height: 1.8; color: #374151; }
+        .rm-body p { margin-bottom: 14px; }
+
+        /* 審核歷程 */
+        .rm-history-section {
+            padding: 16px 24px; border-top: 1px solid #F0F1F3;
+        }
+        .rm-history-section h4 {
+            font-size: 14px; font-weight: 700; color: #111827;
+            margin: 0 0 10px; display: flex; align-items: center; gap: 6px;
+        }
+        .review-history-item {
+            display: flex; gap: 12px; padding: 10px 0;
+            border-bottom: 1px solid #F0F1F3; font-size: 13px;
+        }
+        .review-history-item:last-child { border-bottom: none; }
+        .rh-icon {
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; flex-shrink: 0;
+        }
+        .rh-icon.created  { background: #EEF2FF; color: #4F46E5; }
+        .rh-icon.approved  { background: #ECFDF5; color: #059669; }
+        .rh-icon.rejected  { background: #FEF2F2; color: #DC2626; }
+        .rh-icon.reviewing { background: #DBEAFE; color: #1D4ED8; }
+        .rh-content { flex: 1; }
+        .rh-action { font-weight: 600; color: #111827; }
+        .rh-time { font-size: 11px; color: #9CA3AF; margin-top: 2px; }
+        .rh-comment { font-size: 12px; color: #6B7280; margin-top: 4px; font-style: italic; }
+
+        .rm-footer {
+            padding: 14px 24px; border-top: 1px solid #F0F1F3;
+            display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+        }
+        .btn-cancel {
+            padding: 8px 18px; border: 1px solid #E5E8ED; border-radius: 8px;
+            background: #fff; color: #6B7280; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: all .15s;
+        }
+        .btn-cancel:hover { background: #F3F4F6; }
+    </style>
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <div id="header-container"></div>
+
+    <!-- 側邊欄 -->
+    <div id="sidebar-container"></div>
+
+    <!-- 主要內容區 -->
+    <div class="main-content">
+        <!-- KM 知識管理導航 -->
+        <div id="km-nav-container"></div>
+
+        <div class="km-container">
+            <!-- 標題 -->
+            <div class="page-title-bar">
+                <div>
+                    <h2><i class="fa-solid fa-clipboard-check"></i> 文件審核</h2>
+                    <p class="page-desc">查看送審進度與待審核文件</p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="review-tabs-bar" id="reviewTabs"></div>
+
+            <!-- 篩選列 -->
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="搜尋文章標題…" id="searchInput" oninput="filterList()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 表格 -->
+            <div class="review-table-card">
+                <table class="review-table">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 詳情 Modal ===== -->
+    <div class="review-modal-overlay" id="reviewModal">
+        <div class="review-modal">
+            <div class="rm-header">
+                <h3 id="rmTitle">—</h3>
+                <button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="rm-meta-grid" id="rmMeta"></div>
+            <div class="rm-body" id="rmBody"></div>
+            <div class="rm-history-section">
+                <h4><i class="fa-solid fa-clock-rotate-left"></i> 審核歷程</h4>
+                <div id="rmHistory"></div>
+            </div>
+            <div class="rm-footer">
+                <button class="btn-cancel" onclick="closeModal()">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- JS 引用 -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="shared/layout-loader.js"></script>
+    <script src="js/km-base.js"></script>
+
+    <script>
+    /* ============================================================
+       文件審核 — 查看送審進度（純瀏覽，不含審核操作）
+       ============================================================ */
+
+    // ===== 假資料 =====
+
+    // 我送審的
+    const _mySubmitted = [
+        { id:'s01', title:'BU2 部門月報 — 2026年3月', reviewer:'黃淑芬', dept:'BU2', submitDate:'2026-03-15', status:'reviewing', statusText:'審核中',
+          content:'<p>BU2 部門 2026 年 3 月份月報，包含專案進度、人力配置與下月計畫。</p>',
+          history:[
+              { action:'送審', user:'我', time:'2026-03-15 09:30', icon:'created' },
+              { action:'審核中', user:'黃淑芬', time:'2026-03-15 14:00', icon:'reviewing' }
+          ]
+        },
+        { id:'s02', title:'X 專案提案書 v2', reviewer:'鄭總經理', dept:'BU2', submitDate:'2026-03-12', status:'pending', statusText:'待審核',
+          content:'<p>X 專案第二版提案書，新增市場分析與競品比較章節。</p>',
+          history:[
+              { action:'送審', user:'我', time:'2026-03-12 10:15', icon:'created' }
+          ]
+        },
+        { id:'s03', title:'技術選型評估報告', reviewer:'蔡明達', dept:'BU1', submitDate:'2026-03-08', status:'approved', statusText:'已通過',
+          content:'<p>針對新專案的前後端技術選型評估，包含效能、社群活躍度、學習曲線等面向分析。</p>',
+          history:[
+              { action:'送審', user:'我', time:'2026-03-08 11:00', icon:'created' },
+              { action:'審核通過', user:'蔡明達', time:'2026-03-10 14:30', icon:'approved', comment:'內容完整，符合規範，同意發表。' }
+          ]
+        },
+        { id:'s04', title:'Q1 績效自評表', reviewer:'黃淑芬', dept:'BU2', submitDate:'2026-03-05', status:'rejected', statusText:'退回修改',
+          content:'<p>2026 年第一季個人績效自評表。</p>',
+          history:[
+              { action:'送審', user:'我', time:'2026-03-05 09:00', icon:'created' },
+              { action:'退回修改', user:'黃淑芬', time:'2026-03-06 10:45', icon:'rejected', comment:'缺少量化數據支撐，請補充具體達成率後重新送審。' }
+          ]
+        },
+        { id:'s05', title:'新版 API 設計規格書', reviewer:'許家豪', dept:'BU1', submitDate:'2026-03-18', status:'pending', statusText:'待審核',
+          content:'<p>REST API v3 設計規格書，涵蓋端點定義、認證機制、錯誤碼規範。</p>',
+          history:[
+              { action:'送審', user:'我', time:'2026-03-18 16:00', icon:'created' }
+          ]
+        },
+    ];
+
+    // 等我審核的
+    const _pendingMyReview = [
+        { id:'r01', title:'新進人員培訓計畫書', submitter:'李美玲', dept:'HR', submitDate:'2026-03-16', status:'pending', statusText:'待審核',
+          content:'<p>2026年度新進人員培訓計畫書，涵蓋公司文化介紹、系統操作訓練、部門輪調見習等。</p>',
+          history:[
+              { action:'送審', user:'李美玲', time:'2026-03-16 14:30', icon:'created' }
+          ]
+        },
+        { id:'r02', title:'BU1 開發規範修訂草案', submitter:'許家豪', dept:'BU1', submitDate:'2026-03-14', status:'pending', statusText:'待審核',
+          content:'<p>本次修訂主要針對程式碼風格統一、Git 分支策略、CI/CD pipeline 強制檢查等項目。</p>',
+          history:[
+              { action:'送審', user:'許家豪', time:'2026-03-14 09:15', icon:'created' },
+              { action:'補充附件', user:'許家豪', time:'2026-03-15 10:00', icon:'created' }
+          ]
+        },
+        { id:'r03', title:'會議室使用管理辦法', submitter:'楊淑惠', dept:'Admin', submitDate:'2026-03-10', status:'pending', statusText:'待審核',
+          content:'<p>為提升會議室使用效率，制定預約規則、未報到釋出機制、設備管理等辦法。</p>',
+          history:[
+              { action:'送審', user:'楊淑惠', time:'2026-03-10 16:45', icon:'created' }
+          ]
+        },
+    ];
+
+    let _currentTab = 'submitted';
+
+    // ===== 初始化 =====
+    (function init() {
+        renderTabs();
+        renderTable();
+    })();
+
+    // ===== Tabs =====
+    function renderTabs() {
+        const tabs = [
+            { key:'submitted', label:'我送審的', icon:'fa-paper-plane', count: _mySubmitted.length },
+            { key:'pending',   label:'等我審核', icon:'fa-inbox',       count: _pendingMyReview.length },
+        ];
+        document.getElementById('reviewTabs').innerHTML = tabs.map(t => `
+            <button class="review-tab-btn ${t.key === _currentTab ? 'active' : ''}" onclick="switchTab('${t.key}')" data-tab="${t.key}">
+                <i class="fa-solid ${t.icon}"></i> ${t.label}
+                <span class="tab-count">${t.count}</span>
+            </button>
+        `).join('');
+    }
+
+    function switchTab(tab) {
+        _currentTab = tab;
+        document.querySelectorAll('.review-tab-btn').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
+        document.getElementById('searchInput').value = '';
+        renderTable();
+    }
+
+    // ===== 篩選 =====
+    function filterList() { renderTable(); }
+
+    function getFiltered() {
+        const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+        const list = _currentTab === 'submitted' ? _mySubmitted : _pendingMyReview;
+        return list.filter(item => !keyword || item.title.toLowerCase().includes(keyword));
+    }
+
+    // ===== 狀態 icon =====
+    function statusIcon(s) {
+        switch(s) {
+            case 'pending':   return 'fa-clock';
+            case 'reviewing': return 'fa-spinner';
+            case 'approved':  return 'fa-check';
+            case 'rejected':  return 'fa-rotate-left';
+            default:          return 'fa-circle';
+        }
+    }
+
+    // ===== 表格渲染 =====
+    function renderTable() {
+        const items = getFiltered();
+        const thead = document.getElementById('tableHead');
+        const tbody = document.getElementById('tableBody');
+
+        if (_currentTab === 'submitted') {
+            thead.innerHTML = '<tr><th>文章標題</th><th>審核人</th><th>送審日期</th><th>狀態</th></tr>';
+            if (!items.length) { tbody.innerHTML = emptyRow(4, '沒有送審中的文件'); return; }
+            tbody.innerHTML = items.map(item => `<tr onclick="openModal('submitted','${item.id}')">
+                <td class="title-cell">${escHtml(item.title)}</td>
+                <td><div class="person-cell"><div class="person-avatar">${item.reviewer[0]}</div>${escHtml(item.reviewer)}</div></td>
+                <td>${item.submitDate}</td>
+                <td><span class="status-badge ${item.status}"><i class="fa-solid ${statusIcon(item.status)}"></i> ${item.statusText}</span></td>
+            </tr>`).join('');
+        } else {
+            thead.innerHTML = '<tr><th>文章標題</th><th>送審人</th><th>部門</th><th>送審日期</th><th>狀態</th></tr>';
+            if (!items.length) { tbody.innerHTML = emptyRow(5, '沒有待審核的文件'); return; }
+            tbody.innerHTML = items.map(item => `<tr onclick="openModal('pending','${item.id}')">
+                <td class="title-cell">${escHtml(item.title)}</td>
+                <td><div class="person-cell"><div class="person-avatar">${item.submitter[0]}</div>${escHtml(item.submitter)}</div></td>
+                <td>${escHtml(item.dept)}</td>
+                <td>${item.submitDate}</td>
+                <td><span class="status-badge ${item.status}"><i class="fa-solid ${statusIcon(item.status)}"></i> ${item.statusText}</span></td>
+            </tr>`).join('');
+        }
+    }
+
+    function emptyRow(cols, msg) {
+        return '<tr class="empty-row"><td colspan="'+cols+'"><i class="fa-solid fa-clipboard-check"></i><p>'+escHtml(msg)+'</p></td></tr>';
+    }
+
+    // ===== 詳情 Modal =====
+    function openModal(type, id) {
+        const list = type === 'submitted' ? _mySubmitted : _pendingMyReview;
+        const item = list.find(i => i.id === id);
+        if (!item) return;
+
+        document.getElementById('rmTitle').textContent = item.title;
+
+        // Meta
+        let metaHtml = '';
+        if (type === 'submitted') {
+            metaHtml = `
+                <div class="rm-meta-item"><span class="meta-label">審核人</span><span class="meta-value">${escHtml(item.reviewer)}</span></div>
+                <div class="rm-meta-item"><span class="meta-label">送審日期</span><span class="meta-value">${item.submitDate}</span></div>
+                <div class="rm-meta-item"><span class="meta-label">狀態</span><span class="meta-value"><span class="status-badge ${item.status}"><i class="fa-solid ${statusIcon(item.status)}"></i> ${item.statusText}</span></span></div>
+            `;
+        } else {
+            metaHtml = `
+                <div class="rm-meta-item"><span class="meta-label">送審人</span><span class="meta-value">${escHtml(item.submitter)}</span></div>
+                <div class="rm-meta-item"><span class="meta-label">部門</span><span class="meta-value">${escHtml(item.dept)}</span></div>
+                <div class="rm-meta-item"><span class="meta-label">送審日期</span><span class="meta-value">${item.submitDate}</span></div>
+                <div class="rm-meta-item"><span class="meta-label">狀態</span><span class="meta-value"><span class="status-badge ${item.status}"><i class="fa-solid ${statusIcon(item.status)}"></i> ${item.statusText}</span></span></div>
+            `;
+        }
+        document.getElementById('rmMeta').innerHTML = metaHtml;
+
+        // Body
+        document.getElementById('rmBody').innerHTML = item.content
+            || '<p style="color:#9CA3AF;text-align:center;padding:40px 0;">文章內容載入中…</p>';
+
+        // History
+        document.getElementById('rmHistory').innerHTML = (item.history || []).map(h => `
+            <div class="review-history-item">
+                <div class="rh-icon ${h.icon}"><i class="fa-solid ${h.icon === 'approved' ? 'fa-check' : h.icon === 'rejected' ? 'fa-rotate-left' : h.icon === 'reviewing' ? 'fa-spinner' : 'fa-paper-plane'}"></i></div>
+                <div class="rh-content">
+                    <div class="rh-action">${escHtml(h.user)} — ${escHtml(h.action)}</div>
+                    <div class="rh-time">${h.time}</div>
+                    ${h.comment ? '<div class="rh-comment">「' + escHtml(h.comment) + '」</div>' : ''}
+                </div>
+            </div>
+        `).join('');
+
+        document.getElementById('reviewModal').classList.add('show');
+    }
+
+    function closeModal() {
+        document.getElementById('reviewModal').classList.remove('show');
+    }
+    document.getElementById('reviewModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    // ===== 工具 =====
+    function escHtml(str) { const el = document.createElement('span'); el.textContent = str; return el.innerHTML; }
+    </script>
+    <script src="js/search.js"></script>
+</body>
+</html>

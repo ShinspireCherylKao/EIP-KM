@@ -2,15 +2,21 @@
     <a href="km-knowledge.html" class="km-nav-btn" data-km-page="km-home">
         <i class="fa-solid fa-brain"></i> 知識總覽
     </a>
-    <a href="km-shares.html" class="km-nav-btn" data-km-page="shares">
+    <a href="km-shares.html" class="km-nav-btn" data-km-page="shares" style="display:none;">
         <i class="fa-solid fa-share-nodes"></i> 分享中心
     </a>
-    <a href="km-ai.html" class="km-nav-btn ai-btn" data-km-page="ai">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> AI 加值
-    </a>
+    <!-- KM 知識庫搜尋 -->
+    <div class="km-nav-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="kmSearchInput" placeholder="搜尋知識庫文章…"
+               onkeydown="if(event.key==='Enter'){event.preventDefault();window.location.href='km-search.html?q='+encodeURIComponent(this.value);}">
+    </div>
     <span class="km-nav-spacer"></span>
+    <a href="km-ai.html" class="km-nav-btn ai-btn" data-km-page="ai">
+        <i class="fa-solid fa-bolt"></i><span class="nav-label-full"> AI 加值</span><span class="nav-label-short"> AI</span>
+    </a>
     <a href="km-editor.html" class="km-nav-btn km-nav-btn-add" data-km-page="editor">
-        <i class="fa-solid fa-plus"></i> 新增知識庫文章
+        <i class="fa-solid fa-plus"></i><span class="nav-label-full"> 新增知識庫文章</span><span class="nav-label-short"> 文章</span>
     </a>
 </div>
 
@@ -21,7 +27,12 @@
     const pageMap = {
         'km-knowledge.html': 'km-home',
         'km-shares.html': 'shares',
-        'km-ai.html': 'ai'
+        'km-ai.html': 'ai',
+        'km-review.html': 'km-home',
+        'km-hot.html': 'km-home',
+        'km-favorites.html': 'km-home',
+        'km-manage.html': 'km-home',
+        'km-search.html': 'km-home',
     };
     
     const currentKmPage = pageMap[currentPage];
@@ -31,5 +42,13 @@
             activeBtn.classList.add('active');
         }
     }
+
+    // 已在當前頁面的導航按鈕，點擊時不重新載入
+    document.querySelectorAll('.km-nav-btn[href]').forEach(btn => {
+        const href = btn.getAttribute('href');
+        if (href && href.split('?')[0] === currentPage) {
+            btn.addEventListener('click', e => e.preventDefault());
+        }
+    });
 })();
 </script>

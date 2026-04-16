@@ -484,16 +484,16 @@
 
 /* AI 加值按鈕樣式 */
 .km-nav-btn.ai-btn {
-    border: 2px solid #EF4444;
-    color: #EF4444;
+    border: 2px solid #6366F1;
+    color: #6366F1;
     background: var(--white-color);
     font-weight: 600;
 }
 
 .km-nav-btn.ai-btn:hover {
-    background: #FEF2F2;
-    border-color: #DC2626;
-    color: #DC2626;
+    background: #EEF2FF;
+    border-color: #4F46E5;
+    color: #4F46E5;
 }
 
 /* AI 加值頁面樣式 */
@@ -516,7 +516,7 @@
 }
 
 .ai-header h2 i {
-    color: #EF4444;
+    color: #6366F1;
 }
 
 .ai-subtitle {

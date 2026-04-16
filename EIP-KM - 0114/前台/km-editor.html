@@ -14,15 +14,17 @@
     <link rel="stylesheet" href="css/style-search.css">
     <style>
         /* ===== 文章編輯頁專用 ===== */
+        /* 字級/間距已由 style-base.css design tokens 統一管理 */
 
         /* 返回列 */
         .editor-back-bar {
-            margin-bottom: 16px;
+            margin-bottom: var(--spacing-element);
         }
         .editor-back-bar a {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 13px; color: var(--text-secondary); text-decoration: none;
-            padding: 6px 12px; border-radius: var(--radius-sm);
+            display: inline-flex; align-items: center; gap: 8px;
+            font-size: var(--font-section-title); color: var(--text-secondary); text-decoration: none;
+            padding: 8px 14px; border-radius: var(--radius-sm);
+            min-height: var(--touch-target-min);
             transition: all .15s;
         }
         .editor-back-bar a:hover { background: var(--hover-bg); color: var(--primary-color); }
@@ -38,37 +40,65 @@
 
         /* 表單頭部 */
         .editor-header {
-            padding: 24px 32px 20px;
+            padding: var(--spacing-section) var(--spacing-page) var(--spacing-card);
             border-bottom: 1px solid var(--border-color);
+            border-radius: var(--radius) var(--radius) 0 0;
         }
-        .editor-header h1 {
-            font-size: 22px; font-weight: 700; color: var(--text-primary);
+        .editor-header h2 {
+            font-size: var(--font-page-title); font-weight: 700; color: #1E3A5F;
             margin: 0; display: flex; align-items: center; gap: 10px;
         }
 
         /* 表單內容 */
         .editor-body {
-            padding: 24px 32px;
+            padding: var(--spacing-section) var(--spacing-page);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-section);
+        }
+
+        /* 雙欄面板 */
+        .editor-panel {
+            min-width: 0;
+        }
+        .editor-panel-title {
+            font-size: var(--font-card-title); font-weight: 700; color: var(--primary-color);
+            margin-bottom: var(--spacing-card); padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
         }
 
         /* 表單群組 */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: var(--spacing-card);
+            gap: 2px;
         }
         .form-group label {
-            display: block; font-size: 14px; font-weight: 600;
-            color: var(--text-primary); margin-bottom: 6px;
+            display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
+            font-size: var(--font-card-title); font-weight: 600;
+            color: var(--text-primary); margin-bottom: 1px;
         }
         .form-group label .required {
-            color: #EF4444; margin-left: 2px;
+            color: var(--danger-color); margin-left: 0;
+        }
+        .form-group label .form-hint {
+            font-size: var(--font-label); font-weight: 400; color: var(--text-muted);
+            margin: 0;
         }
         .form-group input[type="text"],
         .form-group select,
         .form-group textarea {
             width: 100%; padding: 10px 14px;
             border: 1px solid var(--border-color); border-radius: var(--radius-sm);
-            font-size: 14px; background: #fff; color: var(--text-primary);
+            font-size: var(--font-body); background: #fff; color: var(--text-primary);
+            min-height: var(--touch-target-min);
             transition: border-color .2s, box-shadow .2s;
+        }
+        .form-group select {
+            appearance: none; -webkit-appearance: none;
+            padding-right: 40px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2364748B' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
         }
         .form-group input[type="text"]:focus,
         .form-group select:focus,
@@ -77,20 +107,19 @@
             box-shadow: 0 0 0 3px rgba(59,130,246,.1);
         }
         .form-group .form-hint {
-            font-size: 12px; color: var(--text-muted); margin-top: 4px;
+            font-size: var(--font-label); color: var(--text-muted); margin-top: 4px;
         }
 
         /* 雙欄表單 */
         .form-row {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-element);
         }
-        @media (max-width: 700px) { .form-row { grid-template-columns: 1fr; } }
 
         /* 標籤輸入 */
         .tag-input-wrapper {
             display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
-            padding: 8px 12px; border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm); background: #fff; min-height: 42px;
+            padding: 10px 14px; border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm); background: #fff; min-height: var(--touch-target-min);
             cursor: text; transition: border-color .2s, box-shadow .2s;
         }
         .tag-input-wrapper:focus-within {
@@ -99,47 +128,51 @@
         }
         .tag-input-wrapper .tag-chip {
             display: inline-flex; align-items: center; gap: 4px;
-            padding: 3px 10px; border-radius: 999px; font-size: 12px;
+            padding: 4px 12px; border-radius: 999px; font-size: var(--font-body-small);
             background: #EEF2FF; color: #4F46E5; border: 1px solid #C7D2FE;
         }
         .tag-input-wrapper .tag-chip .remove-tag {
-            cursor: pointer; font-size: 11px; color: #6366F1;
+            cursor: pointer; font-size: var(--font-label); color: #6366F1;
             margin-left: 2px; transition: color .15s;
         }
-        .tag-input-wrapper .tag-chip .remove-tag:hover { color: #EF4444; }
+        .tag-input-wrapper .tag-chip .remove-tag:hover { color: var(--danger-color); }
         .tag-input-wrapper input {
             flex: 1; min-width: 100px; border: none; padding: 4px 0;
-            font-size: 13px; background: transparent; outline: none;
+            font-size: var(--font-body); background: transparent; outline: none;
         }
 
         /* 附件上傳 */
         .file-upload-area {
             border: 2px dashed var(--border-color); border-radius: var(--radius-sm);
-            padding: 24px; text-align: center; cursor: pointer;
+            padding: var(--spacing-section); text-align: center; cursor: pointer;
             transition: border-color .2s, background .2s;
         }
         .file-upload-area:hover {
-            border-color: var(--primary-color); background: #F8FAFC;
+            border-color: var(--primary-color); background: var(--hover-bg);
         }
-        .file-upload-area i { font-size: 28px; color: #94A3B8; display: block; margin-bottom: 8px; }
-        .file-upload-area p { font-size: 13px; color: var(--text-muted); margin: 0; }
+        .file-upload-area i { font-size: 28px; color: var(--text-muted); display: block; margin-bottom: 8px; }
+        .file-upload-area p { font-size: var(--font-body); color: var(--text-muted); margin: 0; }
+        .file-upload-area .file-hint { font-size: var(--font-label); margin-top: 4px; }
         .file-upload-area .upload-btn-text {
             color: var(--primary-color); font-weight: 600; cursor: pointer;
         }
         .file-list { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
         .file-item {
             display: flex; align-items: center; gap: 10px;
-            padding: 8px 12px; background: #F8FAFC;
+            padding: 8px 12px; background: var(--hover-bg);
             border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            min-height: var(--touch-target-min);
         }
-        .file-item .fi-icon { font-size: 16px; color: var(--primary-color); }
-        .file-item .fi-name { flex: 1; font-size: 13px; color: var(--text-primary); }
-        .file-item .fi-size { font-size: 12px; color: var(--text-muted); }
+        .file-item .fi-icon { font-size: var(--font-card-title); color: var(--primary-color); }
+        .file-item .fi-name { flex: 1; font-size: var(--font-body); color: var(--text-primary); }
+        .file-item .fi-size { font-size: var(--font-body-small); color: var(--text-muted); }
         .file-item .fi-remove {
-            font-size: 13px; color: var(--text-muted); cursor: pointer;
+            font-size: var(--font-label); color: var(--text-muted); cursor: pointer;
             padding: 2px 6px; border-radius: 4px; transition: all .15s;
+            min-width: 28px; min-height: 28px;
+            display: flex; align-items: center; justify-content: center;
         }
-        .file-item .fi-remove:hover { color: #EF4444; background: #FEF2F2; }
+        .file-item .fi-remove:hover { color: var(--danger-color); background: #FEF2F2; }
 
         /* 富文字編輯器 */
         .rich-editor-toolbar {
@@ -149,8 +182,8 @@
             background: #FAFBFC;
         }
         .rich-editor-toolbar button {
-            width: 34px; height: 34px; border: none; background: transparent;
-            border-radius: 6px; cursor: pointer; font-size: 14px;
+            width: 36px; height: 36px; border: none; background: transparent;
+            border-radius: 6px; cursor: pointer; font-size: var(--font-body-small);
             color: var(--text-secondary); transition: all .15s;
             display: flex; align-items: center; justify-content: center;
         }
@@ -160,10 +193,11 @@
             width: 1px; background: var(--border-color); margin: 4px 6px;
         }
         .rich-editor-content {
-            min-height: 320px; padding: 16px 18px;
+            min-height: 320px; padding: var(--spacing-card);
             border: 1px solid var(--border-color);
             border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-            font-size: 15px; line-height: 1.8; color: var(--text-primary);
+            font-size: var(--font-card-title); line-height: var(--line-height-body);
+            color: var(--text-primary);
             background: #fff; outline: none;
         }
         .rich-editor-content:focus {
@@ -178,46 +212,102 @@
         /* ===== 底部操作列 ===== */
         .editor-footer {
             position: sticky; bottom: 0;
-            padding: 14px 32px;
+            padding: var(--spacing-compact) var(--spacing-page);
             border-top: 1px solid var(--border-color);
             background: #FAFBFC;
+            border-radius: 0 0 var(--radius) var(--radius);
             display: flex; align-items: center; justify-content: center;
-            gap: 12px; flex-wrap: wrap;
+            gap: var(--spacing-compact); flex-wrap: wrap;
             z-index: 20;
         }
         .editor-footer .footer-label {
-            font-size: 14px; font-weight: 600; color: var(--text-primary);
+            font-size: var(--font-card-title); font-weight: 600; color: var(--text-primary);
             display: flex; align-items: center; gap: 6px;
         }
         .editor-footer select {
             padding: 7px 12px; border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm); font-size: 14px;
+            border-radius: var(--radius-sm); font-size: var(--font-card-title);
             background: #fff; cursor: pointer;
+            min-height: var(--touch-target-min);
         }
         .editor-footer .btn-publish {
-            padding: 8px 20px; background: #2563EB; color: #fff;
+            padding: 8px 20px; background: var(--primary-dark); color: #fff;
             border: none; border-radius: var(--radius-sm);
-            font-size: 14px; font-weight: 600; cursor: pointer;
+            font-size: var(--font-card-title); font-weight: 600; cursor: pointer;
+            min-height: var(--touch-target-min);
             transition: background .15s;
         }
         .editor-footer .btn-publish:hover { background: #1D4ED8; }
         .editor-footer .btn-draft {
             padding: 8px 16px; background: #fff;
             border: 1px solid var(--border-color); border-radius: var(--radius-sm);
-            font-size: 14px; font-weight: 600; cursor: pointer; color: var(--text-primary);
+            font-size: var(--font-card-title); font-weight: 600; cursor: pointer; color: var(--text-primary);
+            min-height: var(--touch-target-min);
             transition: all .15s;
         }
         .editor-footer .btn-draft:hover { background: var(--hover-bg); }
         .editor-footer .btn-leave {
             padding: 8px 16px; background: #fff;
             border: 1px solid var(--border-color); border-radius: var(--radius-sm);
-            font-size: 14px; font-weight: 600; cursor: pointer; color: var(--text-secondary);
+            font-size: var(--font-card-title); font-weight: 600; cursor: pointer; color: var(--text-secondary);
+            min-height: var(--touch-target-min);
             transition: all .15s;
         }
         .editor-footer .btn-leave:hover { background: var(--hover-bg); }
         .editor-footer .draft-status {
-            font-size: 13px; color: var(--text-muted);
+            font-size: var(--font-body); color: var(--text-muted);
             margin-top: 2px; width: 100%; text-align: center;
+        }
+
+        /* ===== RWD 響應式 — 僅處理佈局變化，字級/間距由 token 自動響應 ===== */
+
+        /* ≤960px：sidebar 收合，雙欄→單欄 */
+        @media (max-width: 960px) {
+            .editor-body {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ≤768px：手機，全面堆疊，觸控優先 */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .rich-editor-content {
+                min-height: 240px;
+            }
+            .rich-editor-toolbar button {
+                width: 32px; height: 32px;
+            }
+            .file-upload-area i { font-size: 22px; }
+            .editor-footer {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .editor-footer select {
+                width: 100%;
+            }
+            .editor-footer .btn-publish,
+            .editor-footer .btn-draft,
+            .editor-footer .btn-leave {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+                padding: 10px 16px;
+            }
+        }
+
+        /* ≤480px：極小螢幕 */
+        @media (max-width: 480px) {
+            .form-group {
+                margin-bottom: 10px;
+            }
+            .rich-editor-toolbar button {
+                width: 28px; height: 28px; font-size: 11px;
+            }
+            .rich-editor-content {
+                min-height: 180px;
+            }
         }
     </style>
 </head>
@@ -230,9 +320,6 @@
 
     <!-- 主要內容區 -->
     <div class="main-content">
-        <!-- KM 知識管理導航 -->
-        <div id="km-nav-container"></div>
-
         <div class="km-container">
             <!-- 返回 -->
             <div class="editor-back-bar">
@@ -243,19 +330,20 @@
             <div class="editor-card">
                 <!-- 標題區 -->
                 <div class="editor-header">
-                    <h1><i class="fa-solid fa-pen-to-square"></i> 新增知識庫文章</h1>
+                    <h2><i class="fa-solid fa-pen-to-square"></i> 新增知識庫文章</h2>
                 </div>
 
                 <!-- 表單 -->
                 <div class="editor-body">
-                    <!-- 文章標題 -->
-                    <div class="form-group">
-                        <label>文章標題 <span class="required">*</span></label>
-                        <input type="text" id="articleTitle" placeholder="請輸入文章標題">
-                    </div>
+                    <!-- 左欄：文章屬性 -->
+                    <div class="editor-panel">
+                        <!-- 文章標題 -->
+                        <div class="form-group">
+                            <label>文章標題 <span class="required">*</span> <span class="form-hint">最多 30 字</span></label>
+                            <input type="text" id="articleTitle" placeholder="請輸入文章標題" maxlength="30">
+                        </div>
 
-                    <!-- 雙欄：分類 + 部門 -->
-                    <div class="form-row">
+                        <!-- 分類 -->
                         <div class="form-group">
                             <label>文章分類 <span class="required">*</span></label>
                             <select id="articleCategory">
@@ -269,8 +357,10 @@
                                 <option value="other">其他</option>
                             </select>
                         </div>
+
+                        <!-- 部門 -->
                         <div class="form-group">
-                            <label>所屬部門</label>
+                            <label>所屬部門 <span class="required">*</span></label>
                             <select id="articleDept">
                                 <option value="">請選擇部門</option>
                                 <option value="HR">人力資源部</option>
@@ -281,69 +371,64 @@
                                 <option value="Sales">業務部</option>
                             </select>
                         </div>
-                    </div>
 
-                    <!-- 文件效期 -->
-                    <div class="form-group">
-                        <label>文件效期</label>
-                        <select id="articleValidity">
-                            <option value="permanent">永久有效</option>
-                            <option value="1year">一年</option>
-                            <option value="6months">六個月</option>
-                            <option value="custom">自訂到期日</option>
-                        </select>
-                    </div>
-
-                    <!-- 標籤 -->
-                    <div class="form-group">
-                        <label>文章標籤</label>
-                        <div class="tag-input-wrapper" id="tagInputWrapper">
-                            <input type="text" id="tagInput" placeholder="輸入標籤後按 Enter 新增">
+                        <!-- 文件效期 -->
+                        <div class="form-group">
+                            <label>文件效期</label>
+                            <select id="articleValidity">
+                                <option value="permanent">永久有效</option>
+                                <option value="1year">一年</option>
+                                <option value="6months">六個月</option>
+                                <option value="custom">自訂到期日</option>
+                            </select>
                         </div>
-                        <div class="form-hint">最多可新增 10 個標籤</div>
+
                     </div>
 
-                    <!-- 富文字編輯器 -->
-                    <div class="form-group">
-                        <label>文章內容 <span class="required">*</span></label>
-                        <div class="rich-editor-toolbar" id="editorToolbar">
-                            <button type="button" title="粗體" onclick="execCmd('bold')"><i class="fa-solid fa-bold"></i></button>
-                            <button type="button" title="斜體" onclick="execCmd('italic')"><i class="fa-solid fa-italic"></i></button>
-                            <button type="button" title="底線" onclick="execCmd('underline')"><i class="fa-solid fa-underline"></i></button>
-                            <button type="button" title="刪除線" onclick="execCmd('strikeThrough')"><i class="fa-solid fa-strikethrough"></i></button>
-                            <div class="toolbar-divider"></div>
-                            <button type="button" title="標題 1" onclick="execCmd('formatBlock','H2')"><b>H1</b></button>
-                            <button type="button" title="標題 2" onclick="execCmd('formatBlock','H3')"><b>H2</b></button>
-                            <button type="button" title="段落" onclick="execCmd('formatBlock','P')"><i class="fa-solid fa-paragraph"></i></button>
-                            <div class="toolbar-divider"></div>
-                            <button type="button" title="無序列表" onclick="execCmd('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
-                            <button type="button" title="有序列表" onclick="execCmd('insertOrderedList')"><i class="fa-solid fa-list-ol"></i></button>
-                            <div class="toolbar-divider"></div>
-                            <button type="button" title="插入連結" onclick="insertLink()"><i class="fa-solid fa-link"></i></button>
-                            <button type="button" title="插入圖片" onclick="insertImage()"><i class="fa-solid fa-image"></i></button>
-                            <button type="button" title="引用區塊" onclick="execCmd('formatBlock','BLOCKQUOTE')"><i class="fa-solid fa-quote-left"></i></button>
-                            <button type="button" title="程式碼" onclick="execCmd('formatBlock','PRE')"><i class="fa-solid fa-code"></i></button>
-                            <div class="toolbar-divider"></div>
-                            <button type="button" title="靠左對齊" onclick="execCmd('justifyLeft')"><i class="fa-solid fa-align-left"></i></button>
-                            <button type="button" title="置中對齊" onclick="execCmd('justifyCenter')"><i class="fa-solid fa-align-center"></i></button>
-                            <button type="button" title="靠右對齊" onclick="execCmd('justifyRight')"><i class="fa-solid fa-align-right"></i></button>
-                            <div class="toolbar-divider"></div>
-                            <button type="button" title="復原" onclick="execCmd('undo')"><i class="fa-solid fa-rotate-left"></i></button>
-                            <button type="button" title="重做" onclick="execCmd('redo')"><i class="fa-solid fa-rotate-right"></i></button>
+                    <!-- 右欄：文章內容 -->
+                    <div class="editor-panel">
+                        <!-- 富文字編輯器 -->
+                        <div class="form-group">
+                            <label>文章內容 <span class="required">*</span></label>
+                            <div class="rich-editor-toolbar" id="editorToolbar">
+                                <button type="button" title="粗體" onclick="execCmd('bold')"><i class="fa-solid fa-bold"></i></button>
+                                <button type="button" title="斜體" onclick="execCmd('italic')"><i class="fa-solid fa-italic"></i></button>
+                                <button type="button" title="底線" onclick="execCmd('underline')"><i class="fa-solid fa-underline"></i></button>
+                                <button type="button" title="刪除線" onclick="execCmd('strikeThrough')"><i class="fa-solid fa-strikethrough"></i></button>
+                                <div class="toolbar-divider"></div>
+                                <button type="button" title="標題 1" onclick="execCmd('formatBlock','H2')"><b>H1</b></button>
+                                <button type="button" title="標題 2" onclick="execCmd('formatBlock','H3')"><b>H2</b></button>
+                                <button type="button" title="段落" onclick="execCmd('formatBlock','P')"><i class="fa-solid fa-paragraph"></i></button>
+                                <div class="toolbar-divider"></div>
+                                <button type="button" title="無序列表" onclick="execCmd('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
+                                <button type="button" title="有序列表" onclick="execCmd('insertOrderedList')"><i class="fa-solid fa-list-ol"></i></button>
+                                <div class="toolbar-divider"></div>
+                                <button type="button" title="插入連結" onclick="insertLink()"><i class="fa-solid fa-link"></i></button>
+                                <button type="button" title="插入圖片" onclick="insertImage()"><i class="fa-solid fa-image"></i></button>
+                                <button type="button" title="引用區塊" onclick="execCmd('formatBlock','BLOCKQUOTE')"><i class="fa-solid fa-quote-left"></i></button>
+                                <button type="button" title="程式碼" onclick="execCmd('formatBlock','PRE')"><i class="fa-solid fa-code"></i></button>
+                                <div class="toolbar-divider"></div>
+                                <button type="button" title="靠左對齊" onclick="execCmd('justifyLeft')"><i class="fa-solid fa-align-left"></i></button>
+                                <button type="button" title="置中對齊" onclick="execCmd('justifyCenter')"><i class="fa-solid fa-align-center"></i></button>
+                                <button type="button" title="靠右對齊" onclick="execCmd('justifyRight')"><i class="fa-solid fa-align-right"></i></button>
+                                <div class="toolbar-divider"></div>
+                                <button type="button" title="復原" onclick="execCmd('undo')"><i class="fa-solid fa-rotate-left"></i></button>
+                                <button type="button" title="重做" onclick="execCmd('redo')"><i class="fa-solid fa-rotate-right"></i></button>
+                            </div>
+                            <div class="rich-editor-content" id="editorContent" contenteditable="true" data-placeholder="請輸入文章內容…"></div>
                         </div>
-                        <div class="rich-editor-content" id="editorContent" contenteditable="true" data-placeholder="請輸入文章內容…"></div>
-                    </div>
 
-                    <!-- 附件上傳 -->
-                    <div class="form-group">
-                        <label>附件上傳</label>
-                        <div class="file-upload-area" id="fileUploadArea">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                            <p>將檔案拖曳至此，或 <span class="upload-btn-text">點擊選擇檔案</span></p>
-                            <p style="font-size:11px; margin-top:4px;">支援 PDF、Word、Excel、PowerPoint、圖片，單檔上限 20MB</p>
+                        <!-- 附件上傳 -->
+                        <div class="form-group">
+                            <label>附件上傳</label>
+                            <div class="file-upload-area" id="fileUploadArea">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <p>將檔案拖曳至此，或 <span class="upload-btn-text">點擊選擇檔案</span></p>
+                                <p style="font-size:14px; margin-top:4px;">支援文件、圖片、音訊、影片、壓縮檔，單檔上限 10MB，最多 10 個</p>
+                            </div>
+                            <input type="file" id="fileInput" multiple hidden accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp,.txt,.csv,.rtf,.jpg,.jpeg,.png,.gif,.bmp,.svg,.webp,.tiff,.mp3,.wav,.ogg,.m4a,.mp4,.avi,.mov,.wmv,.webm,.zip,.rar,.7z">
+                            <div class="file-list" id="fileList"></div>
                         </div>
-                        <input type="file" id="fileInput" multiple hidden accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg,.gif">
-                        <div class="file-list" id="fileList"></div>
                     </div>
                 </div>
 
@@ -378,45 +463,18 @@
        KM 文章編輯器
        ============================================================ */
 
-    // ===== 標籤管理 =====
-    const _tags = [];
-    const tagInput = document.getElementById('tagInput');
-    const tagWrapper = document.getElementById('tagInputWrapper');
-
-    tagInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const val = this.value.trim();
-            if (!val) return;
-            if (_tags.length >= 10) { showToast('最多只能新增 10 個標籤', 'warning'); return; }
-            if (_tags.includes(val)) { showToast('標籤已存在', 'warning'); return; }
-            _tags.push(val);
-            this.value = '';
-            renderTags();
-        }
-    });
-
-    tagWrapper.addEventListener('click', function() { tagInput.focus(); });
-
-    function renderTags() {
-        tagWrapper.querySelectorAll('.tag-chip').forEach(el => el.remove());
-        _tags.forEach((t, i) => {
-            const chip = document.createElement('span');
-            chip.className = 'tag-chip';
-            chip.innerHTML = escHtml(t) + ' <span class="remove-tag" data-idx="' + i + '"><i class="fa-solid fa-xmark"></i></span>';
-            tagWrapper.insertBefore(chip, tagInput);
-        });
-        tagWrapper.querySelectorAll('.remove-tag').forEach(el => {
-            el.addEventListener('click', function(e) {
-                e.stopPropagation();
-                _tags.splice(parseInt(this.dataset.idx), 1);
-                renderTags();
-            });
-        });
-    }
-
     // ===== 附件管理 =====
     const _files = [];
+    const _allowedExts = [
+        'pdf','doc','docx','xls','xlsx','ppt','pptx','odt','ods','odp','txt','csv','rtf',
+        'jpg','jpeg','png','gif','bmp','svg','webp','tiff',
+        'mp3','wav','ogg','m4a',
+        'mp4','avi','mov','wmv','webm',
+        'zip','rar','7z'
+    ];
+    const _blockedExts = ['exe','bat','cmd','sh','msi','dll','com','vbs','js','ps1'];
+    const _maxFileSize = 10 * 1024 * 1024; // 10 MB
+    const _maxFileCount = 10;
     const fileUploadArea = document.getElementById('fileUploadArea');
     const fileInput = document.getElementById('fileInput');
 
@@ -442,8 +500,21 @@
 
     function handleFiles(files) {
         for (const f of files) {
-            if (f.size > 20 * 1024 * 1024) {
-                showToast('檔案 ' + f.name + ' 超過 20MB 上限', 'error');
+            if (_files.length >= _maxFileCount) {
+                showToast('最多只能上傳 ' + _maxFileCount + ' 個檔案', 'warning');
+                break;
+            }
+            const ext = f.name.split('.').pop().toLowerCase();
+            if (_blockedExts.includes(ext)) {
+                showToast('禁止上傳可執行檔：' + f.name, 'error');
+                continue;
+            }
+            if (!_allowedExts.includes(ext)) {
+                showToast('不支援此檔案格式：' + f.name, 'error');
+                continue;
+            }
+            if (f.size > _maxFileSize) {
+                showToast('檔案 ' + f.name + ' 超過 10MB 上限', 'error');
                 continue;
             }
             _files.push({ name: f.name, size: f.size });
@@ -474,10 +545,13 @@
 
     function getFileIcon(ext) {
         if (['pdf'].includes(ext)) return 'fa-solid fa-file-pdf';
-        if (['doc','docx'].includes(ext)) return 'fa-solid fa-file-word';
-        if (['xls','xlsx'].includes(ext)) return 'fa-solid fa-file-excel';
-        if (['ppt','pptx'].includes(ext)) return 'fa-solid fa-file-powerpoint';
-        if (['png','jpg','jpeg','gif'].includes(ext)) return 'fa-solid fa-file-image';
+        if (['doc','docx','odt','rtf'].includes(ext)) return 'fa-solid fa-file-word';
+        if (['xls','xlsx','ods','csv'].includes(ext)) return 'fa-solid fa-file-excel';
+        if (['ppt','pptx','odp'].includes(ext)) return 'fa-solid fa-file-powerpoint';
+        if (['png','jpg','jpeg','gif','bmp','svg','webp','tiff'].includes(ext)) return 'fa-solid fa-file-image';
+        if (['mp3','wav','ogg','m4a'].includes(ext)) return 'fa-solid fa-file-audio';
+        if (['mp4','avi','mov','wmv','webm'].includes(ext)) return 'fa-solid fa-file-video';
+        if (['zip','rar','7z'].includes(ext)) return 'fa-solid fa-file-zipper';
         return 'fa-solid fa-file';
     }
 
@@ -507,17 +581,21 @@
     function doPublish() {
         const title = document.getElementById('articleTitle').value.trim();
         const category = document.getElementById('articleCategory').value;
+        const dept = document.getElementById('articleDept').value;
         const content = document.getElementById('editorContent').innerHTML.trim();
+        const contentText = document.getElementById('editorContent').innerText.trim();
 
         if (!title) { showToast('請輸入文章標題', 'error'); document.getElementById('articleTitle').focus(); return; }
         if (!category) { showToast('請選擇文章分類', 'error'); document.getElementById('articleCategory').focus(); return; }
+        if (!dept) { showToast('請選擇所屬部門', 'error'); document.getElementById('articleDept').focus(); return; }
         if (!content || content === '<br>') { showToast('請輸入文章內容', 'error'); document.getElementById('editorContent').focus(); return; }
+        if (contentText.length > 10000) { showToast('文章內容超過 10,000 字上限（目前 ' + contentText.length + ' 字）', 'error'); return; }
 
-        showToast('文章已送出發佈！', 'success');
+        showToast('文章已送出審核！', 'success');
         setTimeout(() => { window.location.href = 'km-knowledge.html'; }, 1500);
     }
 
-    function doDraft() {
+    function doDraft(isAuto) {
         const now = new Date();
         const y = now.getFullYear();
         const m = String(now.getMonth() + 1).padStart(2, '0');
@@ -526,8 +604,8 @@
         const mm = String(now.getMinutes()).padStart(2, '0');
         const ss = String(now.getSeconds()).padStart(2, '0');
         const ts = y + '/' + m + '/' + d + ' ' + hh + ':' + mm + ':' + ss;
-        document.getElementById('draftStatus').textContent = '草稿儲存完成於 ' + ts;
-        showToast('草稿已儲存', 'success');
+        document.getElementById('draftStatus').textContent = (isAuto ? '自動' : '') + '草稿儲存完成於 ' + ts;
+        if (!isAuto) showToast('草稿已儲存', 'success');
     }
 
     function doLeave() {
@@ -562,6 +640,19 @@
         el.textContent = str;
         return el.innerHTML;
     }
+
+    // ===== 自動儲存草稿（每 60 秒） =====
+    let _autoSaveTimer = null;
+    function startAutoSave() {
+        _autoSaveTimer = setInterval(function() {
+            const title = document.getElementById('articleTitle').value.trim();
+            const content = document.getElementById('editorContent').innerHTML.trim();
+            if (title || (content && content !== '<br>')) {
+                doDraft(true);
+            }
+        }, 60000);
+    }
+    startAutoSave();
     </script>
     <script src="js/search.js"></script>
 </body>

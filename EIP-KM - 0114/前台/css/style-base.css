@@ -3,12 +3,34 @@
  * 基礎樣式表，定義整體網頁的基本樣式與變數
  */
 
+/* Google Fonts — Noto Sans TC + Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;600;700;900&display=swap');
+
+/* Header / Sidebar 容器預留位置，避免動態載入時跳動 */
+#header-container {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: var(--header-height); z-index: 50;
+    background: var(--header-bg);
+}
+#sidebar-container {
+    position: fixed; top: var(--header-height); left: 0;
+    width: var(--sidebar-width); height: calc(100vh - var(--header-height)); z-index: 50;
+    background: var(--sidebar-bg);
+}
+
 /* 重置與基礎設定 */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Microsoft JhengHei', '微軟正黑體', system-ui, "Noto Sans TC", Arial, sans-serif;
+    font-family: 'Inter', 'Noto Sans TC', system-ui, -apple-system, 'Microsoft JhengHei', sans-serif;
+}
+
+/* Heading Reset — 由各元件 CSS 賦予正確字級 */
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
 }
 
 /* CSS 變數定義 */
@@ -53,6 +75,83 @@
     --text-primary: #0F172A;
     --text-secondary: #64748B;
     --text-muted: #94A3B8;
+
+    /* ===== RWD Design Tokens ===== */
+    /* 斷點參考（CSS 變數無法用於 @media，此處為文件對齊用）
+       --bp-desktop : 1200px   寬螢幕 → 標準桌面
+       --bp-tablet  : 960px    平板 / sidebar 收合
+       --bp-mobile  : 768px    手機 / 全面堆疊
+       --bp-small   : 480px    小手機 / 極簡模式
+    */
+
+    /* 響應式字級 — Desktop 預設 */
+    --font-page-title: 22px;      /* h2 頁面標題 */
+    --font-section-title: 18px;   /* h3 區塊 / 卡片標題 */
+    --font-card-title: 16px;      /* 卡片標題 */
+    --font-body: 15px;            /* 正文 */
+    --font-body-small: 14px;      /* 正文（緊湊） */
+    --font-label: 13px;           /* 標籤 / Badge / Meta */
+    --font-caption: 12px;         /* 極小文字 / 說明 */
+
+    /* 響應式間距 — Desktop 預設 */
+    --spacing-page: 32px;         /* 頁面級 padding */
+    --spacing-section: 24px;      /* 區塊 padding / gap */
+    --spacing-card: 20px;         /* 卡片內 padding */
+    --spacing-element: 16px;      /* 元素間 gap */
+    --spacing-compact: 12px;      /* 緊湊 gap */
+
+    /* 觸控目標 */
+    --touch-target-min: 44px;     /* Apple HIG / WCAG 建議最小值 */
+
+    /* 響應式行高 */
+    --line-height-body: 1.7;
+    --line-height-tight: 1.4;
+}
+
+/* ===== RWD 響應式 Token 覆寫 ===== */
+
+/* Tablet ≤960px — sidebar 收合，間距微縮 */
+@media (max-width: 960px) {
+    :root {
+        --font-page-title: 20px;
+        --font-section-title: 17px;
+        --spacing-page: 24px;
+        --spacing-section: 20px;
+        --spacing-card: 18px;
+    }
+}
+
+/* Mobile ≤768px — 全面堆疊，觸控優先 */
+@media (max-width: 768px) {
+    :root {
+        --font-page-title: 18px;
+        --font-section-title: 16px;
+        --font-card-title: 15px;
+        --font-body: 14px;
+        --font-label: 12px;
+        --spacing-page: 16px;
+        --spacing-section: 16px;
+        --spacing-card: 14px;
+        --spacing-element: 12px;
+        --spacing-compact: 10px;
+        --line-height-body: 1.6;
+    }
+}
+
+/* Small ≤480px — 極簡模式 */
+@media (max-width: 480px) {
+    :root {
+        --font-page-title: 16px;
+        --font-section-title: 15px;
+        --font-card-title: 14px;
+        --font-body: 14px;
+        --font-caption: 11px;
+        --spacing-page: 12px;
+        --spacing-section: 12px;
+        --spacing-card: 12px;
+        --spacing-element: 10px;
+        --spacing-compact: 8px;
+    }
 }
 
 /* 全域設定 */
@@ -383,5 +482,22 @@ input:focus, select:focus, textarea:focus {
     .grid.cols-2,
     .grid.cols-3 {
         grid-template-columns: 1fr;
+    }
+}
+
+/* 側邊欄容器響應式 — 斷點: 960 / 768 */
+@media (max-width: 960px) {
+    #sidebar-container {
+        width: var(--sidebar-collapsed-width);
+    }
+}
+
+@media (max-width: 768px) {
+    #sidebar-container {
+        display: none;
+    }
+    #sidebar-container.mobile-open {
+        display: block;
+        width: var(--sidebar-width);
     }
 }

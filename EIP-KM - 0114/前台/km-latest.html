@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最新文章 - KM 知識管理</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-km-base.css">
+    <link rel="stylesheet" href="css/style-search.css">
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <div id="header-container"></div>
+
+    <!-- 側邊欄 -->
+    <div id="sidebar-container"></div>
+
+    <!-- 主要內容區 -->
+    <div class="main-content">
+        <!-- KM 知識管理導航 -->
+        <div id="km-nav-container"></div>
+
+        <div class="km-container">
+            <div class="km-page-header">
+                <h2>最新文章</h2>
+                <p>瀏覽所有最新發佈與更新的知識文章</p>
+            </div>
+
+            <!-- 文章列表 -->
+            <div class="km-block">
+                <div class="block-body" id="latestArticlesBody">
+                    <div class="empty-state" style="padding:60px 20px;text-align:center;">
+                        <i class="fa-solid fa-clock" style="font-size:36px;color:#94A3B8;display:block;margin-bottom:12px;"></i>
+                        <p style="color:#64748B;">此頁面尚在建置中，敬請期待</p>
+                        <a href="km-knowledge.html" style="display:inline-block;margin-top:16px;color:var(--primary-color);text-decoration:none;font-size:14px;">
+                            <i class="fa-solid fa-arrow-left"></i> 返回知識總覽
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- JS 引用 -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="shared/layout-loader.js"></script>
+    <script src="js/km-base.js"></script>
+    <script src="js/search.js"></script>
+</body>
+</html>

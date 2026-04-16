@@ -158,8 +158,8 @@
     font-weight: 500;
 }
 
-/* 響應式設計 */
-@media screen and (max-width: 768px) {
+/* 響應式設計 — 斷點: 768 / 480 */
+@media (max-width: 768px) {
     .search-box {
         min-width: 160px;
     }
@@ -177,7 +177,7 @@
     }
 }
 
-@media screen and (max-width: 480px) {
+@media (max-width: 480px) {
     .top-header {
         padding: 0 10px;
     }

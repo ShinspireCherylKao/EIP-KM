@@ -36,10 +36,14 @@ function initSidebar() {
  */
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
+    const sidebarContainer = document.getElementById('sidebar-container');
     
     if (window.innerWidth <= 640) {
         // 手機版：顯示/隱藏
         sidebar.classList.toggle('show');
+        if (sidebarContainer) {
+            sidebarContainer.classList.toggle('mobile-open');
+        }
     } else {
         // 桌面版：收合/展開
         sidebar.classList.toggle('collapsed');
@@ -53,10 +57,12 @@ function toggleSidebar() {
  */
 function handleResponsiveSidebar() {
     const sidebar = document.getElementById('sidebar');
+    const sidebarContainer = document.getElementById('sidebar-container');
     
     if (window.innerWidth <= 640) {
         sidebar.classList.remove('collapsed');
         sidebar.classList.remove('show');
+        if (sidebarContainer) sidebarContainer.classList.remove('mobile-open');
     } else if (window.innerWidth <= 960) {
         sidebar.classList.add('collapsed');
         sidebar.classList.remove('show');
@@ -81,5 +87,7 @@ document.addEventListener('click', function(e) {
         !sidebar.contains(e.target) && 
         !menuToggle.contains(e.target)) {
         sidebar.classList.remove('show');
+        const sidebarContainer = document.getElementById('sidebar-container');
+        if (sidebarContainer) sidebarContainer.classList.remove('mobile-open');
     }
 });

@@ -146,9 +146,6 @@ const KM_NAV_FALLBACK_HTML = `<div class="km-nav">
     <a href="km-recent.html" class="km-nav-btn" data-km-page="my-space">
         <i class="fa-solid fa-folder"></i> 近期存取
     </a>
-    <a href="km-tags.html" class="km-nav-btn" data-km-page="tags">
-        <i class="fa-solid fa-tags"></i> 標籤
-    </a>
     <a href="km-my-org.html" class="km-nav-btn" data-km-page="org">
         <i class="fa-solid fa-building"></i> 共享部門
     </a>
@@ -165,7 +162,6 @@ const KM_NAV_FALLBACK_HTML = `<div class="km-nav">
     const currentPage = window.location.pathname.split('/').pop();
     const pageMap = {
         'km-recent.html': 'my-space',
-        'km-tags.html': 'tags',
         'km-my-org.html': 'org',
         'km-my.html': 'my'
     };
@@ -184,15 +180,20 @@ const KM_KNOWLEDGE_NAV_FALLBACK_HTML = `<div class="km-nav">
     <a href="km-knowledge.html" class="km-nav-btn" data-km-page="km-home">
         <i class="fa-solid fa-brain"></i> 知識總覽
     </a>
-    <a href="km-shares.html" class="km-nav-btn" data-km-page="shares">
+    <a href="km-shares.html" class="km-nav-btn" data-km-page="shares" style="display:none;">
         <i class="fa-solid fa-share-nodes"></i> 分享中心
     </a>
-    <a href="km-ai.html" class="km-nav-btn ai-btn" data-km-page="ai">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> AI 加值
-    </a>
+    <div class="km-nav-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="kmSearchInput" placeholder="搜尋知識庫文章…"
+               onkeydown="if(event.key==='Enter'){event.preventDefault();window.location.href='km-search.html?q='+encodeURIComponent(this.value);}">
+    </div>
     <span class="km-nav-spacer"></span>
+    <a href="km-ai.html" class="km-nav-btn ai-btn" data-km-page="ai">
+        <i class="fa-solid fa-bolt"></i><span class="nav-label-full"> AI 加值</span><span class="nav-label-short"> AI</span>
+    </a>
     <a href="km-editor.html" class="km-nav-btn km-nav-btn-add" data-km-page="editor">
-        <i class="fa-solid fa-plus"></i> 新增知識庫文章
+        <i class="fa-solid fa-plus"></i><span class="nav-label-full"> 新增知識庫文章</span><span class="nav-label-short"> 文章</span>
     </a>
 </div>
 
@@ -202,7 +203,12 @@ const KM_KNOWLEDGE_NAV_FALLBACK_HTML = `<div class="km-nav">
     const pageMap = {
         'km-knowledge.html': 'km-home',
         'km-shares.html': 'shares',
-        'km-ai.html': 'ai'
+        'km-ai.html': 'ai',
+        'km-review.html': 'km-home',
+        'km-hot.html': 'km-home',
+        'km-favorites.html': 'km-home',
+        'km-manage.html': 'km-home',
+        'km-search.html': 'km-home',
     };
     const currentKmPage = pageMap[currentPage];
     if (currentKmPage) {
@@ -211,6 +217,14 @@ const KM_KNOWLEDGE_NAV_FALLBACK_HTML = `<div class="km-nav">
             activeBtn.classList.add('active');
         }
     }
+
+    // 已在當前頁面的導航按鈕，點擊時不重新載入
+    document.querySelectorAll('.km-nav-btn[href]').forEach(btn => {
+        const href = btn.getAttribute('href');
+        if (href && href.split('?')[0] === currentPage) {
+            btn.addEventListener('click', e => e.preventDefault());
+        }
+    });
 })();
 </script>`;
 
@@ -266,7 +280,7 @@ async function initSharedLayout() {
     if (kmNavContainer) {
         // 判斷是文件庫頁面還是 KM 知識管理頁面
         const currentPage = window.location.pathname.split('/').pop();
-        const kmKnowledgePages = ['km-knowledge.html', 'km-shares.html', 'km-ai.html', 'km-editor.html'];
+        const kmKnowledgePages = ['km-knowledge.html', 'km-shares.html', 'km-ai.html', 'km-editor.html', 'km-hot.html', 'km-favorites.html', 'km-manage.html', 'km-review.html', 'km-search.html', 'km-article.html'];
         
         if (kmKnowledgePages.includes(currentPage)) {
             await loadHTMLFragment('shared/km-knowledge-nav.html', 'km-nav-container', KM_KNOWLEDGE_NAV_FALLBACK_HTML);
@@ -282,15 +296,19 @@ async function initSharedLayout() {
     setActiveMenuItem();
 }
 
-// 初始化漢堡選單
+// 初始化漢堡選單（委派給 sidebar-script.js 的完整邏輯）
 function initMenuToggle() {
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    
-    if (menuToggle && sidebar) {
-        menuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('collapsed');
-        });
+    if (typeof initSidebar === 'function') {
+        initSidebar();
+    } else {
+        // fallback：sidebar-script.js 未載入時的簡易處理
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        if (menuToggle && sidebar) {
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+            });
+        }
     }
 }
 
@@ -305,7 +323,7 @@ function setActiveMenuItem() {
     
     // 根據當前頁面設置 active
     let selector = '';
-    const kmKnowledgePages = ['km-knowledge.html', 'km-shares.html', 'km-ai.html', 'km-editor.html'];
+    const kmKnowledgePages = ['km-knowledge.html', 'km-shares.html', 'km-ai.html', 'km-editor.html', 'km-hot.html', 'km-favorites.html', 'km-manage.html', 'km-review.html', 'km-search.html', 'km-article.html'];
     if (kmKnowledgePages.includes(currentPage)) {
         selector = '.nav-item[data-page="km-knowledge"]';
     } else if (currentPage === 'org-chart.html') {
@@ -327,7 +345,7 @@ function setActiveMenuItem() {
 // 頁面載入時初始化
 document.addEventListener('DOMContentLoaded', async function() {
     await initSharedLayout();
-    // 佈局載入完成，僅顯示主內容區（header/sidebar 容器一直可見）
+    // 佈局載入完成，僅顯示主內容區
     const mc = document.querySelector('.main-content');
     if (mc) mc.classList.add('layout-ready');
 

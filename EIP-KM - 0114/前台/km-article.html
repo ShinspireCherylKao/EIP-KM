@@ -41,16 +41,9 @@
             padding: 28px 32px 20px;
             border-bottom: 1px solid var(--border-color);
         }
-        .article-detail-header h1 {
-            font-size: 22px; font-weight: 700; color: var(--text-primary);
+        .article-detail-header h2 {
+            font-size: var(--font-page-title); font-weight: 700; color: var(--text-primary);
             margin: 0 0 16px; line-height: 1.5;
-        }
-        .article-detail-header .article-tags-row {
-            display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap;
-        }
-        .article-detail-header .article-tags-row .tag {
-            font-size: 12px; padding: 3px 10px; border-radius: 999px;
-            border: 1px solid var(--border-color); color: var(--text-secondary); background: #fff;
         }
 
         /* 文章 meta 資訊格 */
@@ -293,8 +286,7 @@
             <div class="article-detail-card" id="articleCard">
                 <!-- 標題區 -->
                 <div class="article-detail-header">
-                    <h1 id="articleTitle">—</h1>
-                    <div class="article-tags-row" id="articleTags"></div>
+                    <h2 id="articleTitle">—</h2>
                 </div>
 
                 <!-- Meta 資訊列 -->
@@ -594,11 +586,6 @@
     function renderArticle(a) {
         document.title = a.title + ' - KM 知識管理';
         document.getElementById('articleTitle').textContent = a.title;
-
-        // Tags
-        document.getElementById('articleTags').innerHTML = a.tags.map(t =>
-            '<span class="tag">' + escHtml(t) + '</span>'
-        ).join('');
 
         // Meta
         const validityHtml = renderValidity(a.validity);

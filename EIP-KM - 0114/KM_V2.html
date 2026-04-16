@@ -83,7 +83,6 @@
       <nav class="nav">
         <div class="sec">主功能</div>
         <a href="javascript:void(0)" class="btnnav" onclick="goto('home')">近期存取</a>
-        <a href="javascript:void(0)" class="btnnav" onclick="goto('tags');renderTags()">標籤</a>
         <a href="javascript:void(0)" class="btnnav" onclick="goto('shares');renderSharedLists()">分享中心</a>
         <a href="javascript:void(0)" class="btnnav" onclick="goto('my');renderMy()">我的</a>
         <a id="btnAdminNav" href="javascript:void(0)" class="btnnav" style="display:none" onclick="goto('admin');renderAdmin()">系統管理</a>
@@ -218,28 +217,6 @@
                 </table>
                 <div id="resultCards" style="display:none" class="grid cols-3"></div>
               </div>
-            </div>
-          </section>
-        </div>
-      </section>
-
-      <!-- 標籤 -->
-      <section data-view="tags">
-        <div class="layout">
-          <aside class="col">
-            <div class="hd"><div>熱門標籤</div><span class="pill">Top</span></div>
-            <div class="bd" id="tagCloud"></div>
-          </aside>
-          <section class="col">
-            <div class="hd">
-              <div>標籤詳頁：<span id="tagTitle">尚未選擇</span></div>
-              <div class="row"><button class="btn ghost" onclick="goto('search')">到搜尋中心</button></div>
-            </div>
-            <div class="bd">
-              <table>
-                <thead><tr><th style="width:38%">名稱</th><th style="width:24%">標籤</th><th>部門</th><th>類型</th><th>更新</th><th></th></tr></thead>
-                <tbody id="tagResultBody"></tbody>
-              </table>
             </div>
           </section>
         </div>
@@ -888,33 +865,6 @@
           <div class="row" style="margin-top:8px">${dlBtn}${tagsBtn}${permBtn}${linkBtn}</div>
         </div>`;
       }).join('');
-    }
-
-    // 標籤頁：修正點擊直接切頁並載入
-    function renderTags(){
-      const host = document.getElementById('tagCloud');
-      const popular = (window.__mockData.tags && window.__mockData.tags.popular) ? window.__mockData.tags.popular : [];
-      host.innerHTML = popular.map(t=>`<button class="btn" onclick="goto('tags'); openTag('${t.tag}')">#${t.tag} <span class="mut">(${t.count})</span></button>`).join(' ');
-      if(popular[0]) openTag(popular[0].tag);
-    }
-    function openTag(tag){
-      document.getElementById('tagTitle').textContent = '#'+tag;
-      const list = window.__mockData.indexItems.filter(it=> (it.tags||[]).includes(tag));
-      document.getElementById('tagResultBody').innerHTML = list.map(it=>{
-        const manageable = canManageItem(it);
-        const dlBtn = `<button class="btn" ${canDownload(it)?'':'disabled'} onclick='downloadItem(${JSON.stringify(it)})'>下載</button>`;
-        const tagsBtn = `<button class="btn" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可編輯'}" onclick="openTagsEditor(${JSON.stringify({ itemId:it.id, scope:'tag', name:it.name, currentTags:it.tags||[], deptId:it.deptId, path:it.path })})">標籤</button>`;
-        const permBtn = `<button class="btn ghost" ${manageable?'':'disabled'} title="${manageable?'':'不同部門：不可設定'}" onclick="${manageable?'openPerm()':'void(0)'}">權限</button>`;
-        return `
-        <tr>
-          <td><b>${displayName(it)}</b><div class="title-secondary">${it.name} · ${it.path}</div></td>
-          <td>${(it.tags||[]).map(t=>`<span class="pill">#${t}</span>`).join(' ') || '—'}</td>
-          <td>${it.deptId}</td>
-          <td>${it.type==='folder'?'資料夾':'檔案'}</td>
-          <td>${new Date(it.updatedAt).toLocaleDateString()}</td>
-          <td class="row">${dlBtn}${tagsBtn}${permBtn}</td>
-        </tr>`;
-      }).join('') || `<tr><td colspan="6" class="mut">此標籤目前沒有項目</td></tr>`;
     }
 
     // 分享中心

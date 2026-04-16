@@ -85,15 +85,29 @@
         };
     }
 
+    // ==================== KM 知識文章假資料 ====================
+    const _kmArticlesMock = [
+        { id:'a01', title:'差旅報銷規範修訂公告', author:'吳佳蓉', dept:'Finance', date:'2026-03-14', tags:['差旅','報銷','公告'] },
+        { id:'a02', title:'X 專案第四週進度報告', author:'張志豪', dept:'BU2', date:'2026-03-15', tags:['專案','進度'] },
+        { id:'a03', title:'2026年度新人訓練手冊已更新', author:'李美玲', dept:'HR', date:'2026-03-16', tags:['培訓','新人'] },
+        { id:'a04', title:'Code Review 規範 v2.0 發佈', author:'蔡明達', dept:'BU1', date:'2026-03-13', tags:['規範','CR'] },
+        { id:'a05', title:'2025年度財務報表摘要', author:'吳佳蓉', dept:'Finance', date:'2026-03-12', tags:['財報','年度'] },
+        { id:'a06', title:'請假制度常見問題 FAQ', author:'李美玲', dept:'HR', date:'2026-02-20', tags:['請假','FAQ'] },
+        { id:'a07', title:'入職流程 SOP 完整指南', author:'李美玲', dept:'HR', date:'2026-01-15', tags:['SOP','入職'] },
+        { id:'a08', title:'系統架構設計文件更新', author:'許家豪', dept:'BU1', date:'2026-03-11', tags:['架構','設計'] },
+        { id:'a09', title:'資安政策宣導 — 2026年度', author:'陳建宏', dept:'BU1', date:'2026-03-01', tags:['資安','政策'] },
+        { id:'a10', title:'專案管理流程標準化', author:'林志偉', dept:'BU2', date:'2026-02-15', tags:['專案','流程'] },
+    ];
+
     // ==================== 核心搜尋 ====================
 
     /**
      * 執行全站搜尋
      * @param {string} keyword - 搜尋關鍵字
-     * @returns {{ folders: Array, files: Array, total: number }}
+     * @returns {{ folders: Array, files: Array, kmArticles: Array, total: number }}
      */
     function performSearch(keyword) {
-        if (!keyword || !keyword.trim()) return { folders: [], files: [], total: 0 };
+        if (!keyword || !keyword.trim()) return { folders: [], files: [], kmArticles: [], total: 0 };
 
         const kw = keyword.trim().toLowerCase();
         const db = getFileDB();
@@ -138,10 +152,18 @@
         // 按匹配分數排序
         matchedFiles.sort((a, b) => b.matchScore - a.matchScore);
 
+        // 搜尋 KM 知識文章
+        const matchedKmArticles = _kmArticlesMock.filter(a => {
+            return a.title.toLowerCase().includes(kw)
+                || a.author.toLowerCase().includes(kw)
+                || a.dept.toLowerCase().includes(kw);
+        });
+
         return {
             folders: matchedFolders,
             files: matchedFiles,
-            total: matchedFolders.length + matchedFiles.length,
+            kmArticles: matchedKmArticles,
+            total: matchedFolders.length + matchedFiles.length + matchedKmArticles.length,
         };
     }
 
@@ -207,6 +229,19 @@
             });
         }
 
+        // KM 知識文章建議（最多 3 筆）
+        if (results.kmArticles && results.kmArticles.length > 0) {
+            html += '<div class="suggestion-header"><i class="fa-solid fa-brain"></i> KM 知識文章</div>';
+            results.kmArticles.slice(0, 3).forEach(a => {
+                html += `
+                    <div class="suggestion-item" data-type="km-article" data-id="${a.id}">
+                        <i class="fa-solid fa-file-lines" style="color: #4F46E5;"></i>
+                        <span class="suggestion-text">${highlightText(a.title, keyword)}</span>
+                        <span class="suggestion-path">${escapeHtmlStr(a.dept)}</span>
+                    </div>`;
+            });
+        }
+
         // 底部：檢視全部結果
         html += `<div class="suggestion-footer" data-action="view-all">
             <i class="fa-solid fa-magnifying-glass"></i> 查看全部 ${results.total} 筆搜尋結果
@@ -222,6 +257,8 @@
                 const type = this.dataset.type;
                 if (type === 'folder') {
                     navigateToFolder(this.dataset.path);
+                } else if (type === 'km-article') {
+                    window.location.href = 'km-article.html?id=' + this.dataset.id;
                 } else {
                     navigateToFile(this.dataset.name, this.dataset.folder);
                 }
@@ -247,38 +284,11 @@
 
     // ==================== 搜尋結果頁面 ====================
 
-    /** 執行全站搜尋（完整結果） */
+    /** 執行全站搜尋（完整結果）— 跳轉至獨立搜尋結果頁 */
     function executeGlobalSearch(keyword) {
         if (!keyword || !keyword.trim()) return;
-
         const kw = keyword.trim();
-        const results = performSearch(kw);
-        const startTime = performance.now();
-
-        // 判斷是否在 index.html 中
-        const searchSection = document.getElementById('page-search');
-
-        if (searchSection) {
-            // 在 index.html 中，切換到搜尋結果頁
-            renderSearchResults(searchSection, kw, results, performance.now() - startTime);
-            // 切換頁面
-            if (typeof gotoPage === 'function') {
-                gotoPage('search');
-            } else {
-                // 手動切換
-                document.querySelectorAll('.page-section').forEach(p => p.style.display = 'none');
-                searchSection.style.display = 'block';
-                // 更新側邊欄 active
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            }
-        } else {
-            // 在 KM 或其他頁面，跳轉到 index.html 帶搜尋參數
-            const currentPage = window.location.pathname.split('/').pop();
-            if (currentPage !== 'index.html' && currentPage !== '') {
-                window.location.href = 'index.html?search=' + encodeURIComponent(kw);
-                return;
-            }
-        }
+        window.location.href = 'search-results.html?q=' + encodeURIComponent(kw);
     }
 
     /** 渲染搜尋結果 */

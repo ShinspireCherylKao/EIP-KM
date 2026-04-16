@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全站搜尋結果 - 企業入口網站</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style-base.css">
+    <link rel="stylesheet" href="css/style-header.css">
+    <link rel="stylesheet" href="css/style-sidebar.css">
+    <link rel="stylesheet" href="css/style-content.css">
+    <link rel="stylesheet" href="css/style-search.css">
+    <style>
+        /* ===== 全站搜尋結果頁專用 ===== */
+
+        .search-page-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* ===== KM 知識文章區塊 icon ===== */
+        .search-section-title.km-article .section-icon {
+            background: #EEF2FF; color: #4F46E5;
+        }
+        .search-section-title.announce .section-icon {
+            background: #FEF3C7; color: #F59E0B;
+        }
+        .search-section-title.form .section-icon {
+            background: #D1FAE5; color: #10B981;
+        }
+
+        .search-result-icon.km-article {
+            background: #EEF2FF; color: #4F46E5;
+        }
+        .search-result-icon.announce {
+            background: #FEF3C7; color: #F59E0B;
+        }
+        .search-result-icon.form {
+            background: #D1FAE5; color: #10B981;
+        }
+
+        /* 搜尋結果摘要 */
+        .search-result-excerpt {
+            font-size: 13px; color: #6B7280; line-height: 1.5;
+            margin-top: 4px; display: -webkit-box;
+            -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .search-result-excerpt .highlight {
+            background: #FEF3C7; color: #92400E; padding: 0 2px; border-radius: 2px;
+        }
+
+        /* 相關搜尋建議 */
+        .search-suggest-bar {
+            background: #FFFBEB; border: 1px solid #FCD34D;
+            border-radius: 12px; padding: 14px 20px; margin-bottom: 20px;
+            display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+        }
+        .search-suggest-bar .suggest-label {
+            font-size: 13px; color: #92400E; font-weight: 600;
+            display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+        }
+        .search-suggest-bar .suggest-chip {
+            padding: 4px 14px; border-radius: 999px; font-size: 12px;
+            background: #fff; border: 1px solid #E5E7EB; color: #4F46E5;
+            cursor: pointer; transition: all .15s; text-decoration: none;
+        }
+        .search-suggest-bar .suggest-chip:hover {
+            background: #EEF2FF; border-color: #C7D2FE;
+        }
+
+        /* 排序列 */
+        .search-sort-bar {
+            display: flex; align-items: center; gap: 12px; margin-top: 16px;
+        }
+        .search-sort-bar .sort-label { font-size: 13px; color: #9CA3AF; }
+        .search-sort-bar select {
+            padding: 6px 12px; border: 1px solid #E5E8ED; border-radius: 8px;
+            font-size: 13px; background: #fff; color: #374151; cursor: pointer;
+        }
+        .search-sort-bar select:focus { outline: none; border-color: #4F46E5; }
+
+        /* pinned icon */
+        .pinned-icon { color: #EF4444; font-size: 12px; }
+        /* source link badge */
+        .source-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 11px; color: #4F46E5; background: #EEF2FF;
+            padding: 2px 8px; border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 頂部導航 -->
+    <div id="header-container"></div>
+
+    <!-- 側邊欄 -->
+    <div id="sidebar-container"></div>
+
+    <!-- 主要內容區 -->
+    <div class="main-content">
+        <div class="search-page-container">
+            <!-- 搜尋頭部 — 由 JS 動態渲染 -->
+            <div id="searchHeader"></div>
+
+            <!-- 相關建議 -->
+            <div id="searchSuggestions"></div>
+
+            <!-- 搜尋結果 -->
+            <div id="searchResults"></div>
+
+            <!-- 空狀態 -->
+            <div id="searchEmpty" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- JS 引用 -->
+    <script src="js/main-script.js"></script>
+    <script src="js/sidebar-script.js"></script>
+    <script src="shared/layout-loader.js"></script>
+
+    <script>
+    /* ============================================================
+       全站搜尋結果頁
+       ============================================================ */
+
+    // ===== KM 知識文章假資料 =====
+    const _kmArticles = [
+        { id:'a01', title:'差旅報銷規範修訂公告', author:'吳佳蓉', dept:'Finance', date:'2026-03-14', tags:['差旅','報銷','公告'], views:102, type:'km-article',
+          excerpt:'自 2026年4月1日起，差旅報銷規範將進行以下調整：國內出差住宿費上限調整為每晚 NT$3,500，交通費須於 3 個工作天內提交核銷…' },
+        { id:'a02', title:'X 專案第四週進度報告', author:'張志豪', dept:'BU2', date:'2026-03-15', tags:['專案','進度'], views:34, type:'km-article',
+          excerpt:'X 專案本週進度摘要：前端模組開發完成 85%，API 整合測試進行中，預計下週完成 UAT 環境部署…' },
+        { id:'a03', title:'2026年度新人訓練手冊已更新', author:'李美玲', dept:'HR', date:'2026-03-16', tags:['培訓','新人'], views:58, type:'km-article',
+          excerpt:'2026年度新人訓練手冊已完成更新，主要調整：新增公司福利與差旅報銷流程、更新請假制度與加班規範…' },
+        { id:'a04', title:'Code Review 規範 v2.0 發佈', author:'蔡明達', dept:'BU1', date:'2026-03-13', tags:['規範','CR'], views:76, type:'km-article',
+          excerpt:'Code Review 規範已更新至 v2.0：PR 必須至少 2 人 Approve 才可合併，新增安全性檢查清單…' },
+        { id:'a05', title:'2025年度財務報表摘要', author:'吳佳蓉', dept:'Finance', date:'2026-03-12', tags:['財報','年度'], views:45, type:'km-article',
+          excerpt:'2025年度財務結算已完成：營收較去年成長 12%，營業利益率維持 18%，研發投入佔營收比例提升至 15%…' },
+        { id:'a06', title:'請假制度常見問題 FAQ', author:'李美玲', dept:'HR', date:'2026-02-20', tags:['請假','FAQ'], views:876, type:'km-article',
+          excerpt:'特休假可以保留到隔年嗎？依勞基法規定，特休假應於當年度休完。病假需要提供證明嗎？連續請假 3 天以上需附醫療證明…' },
+        { id:'a07', title:'入職流程 SOP 完整指南', author:'李美玲', dept:'HR', date:'2026-01-15', tags:['SOP','入職'], views:654, type:'km-article',
+          excerpt:'新進人員入職流程：報到日攜帶身分證、畢業證書、存摺影本。IT 部門領取筆電及帳號。完成新人訓練（約 3 天）…' },
+        { id:'a08', title:'系統架構設計文件更新', author:'許家豪', dept:'BU1', date:'2026-03-11', tags:['架構','設計'], views:29, type:'km-article',
+          excerpt:'系統架構設計文件已更新，新增微服務拆分方案與 API Gateway 設計。請各開發人員於本週內完成閱讀…' },
+        { id:'a09', title:'資安政策宣導 — 2026年度', author:'陳建宏', dept:'BU1', date:'2026-03-01', tags:['資安','政策'], views:245, type:'km-article',
+          excerpt:'2026年度資安政策重點：密碼每 90 天更換一次，禁止使用個人雲端儲存公司資料，VPN 連線需啟用二階段驗證…' },
+        { id:'a10', title:'專案管理流程標準化', author:'林志偉', dept:'BU2', date:'2026-02-15', tags:['專案','流程'], views:198, type:'km-article',
+          excerpt:'專案管理標準流程包含五大階段：啟動、規劃、執行、監控、結案。每個階段皆需產出對應文件並經過審核…' },
+        { id:'a11', title:'員工福利手冊 2026 版', author:'李美玲', dept:'HR', date:'2026-01-10', tags:['福利','HR'], views:187, type:'km-article',
+          excerpt:'2026年度員工福利：年度健檢補助 NT$5,000、教育訓練補助每年 NT$20,000、社團活動補助、彈性工時制度…' },
+        { id:'a12', title:'API 設計規範 RESTful 指南', author:'許家豪', dept:'BU1', date:'2026-03-05', tags:['API','規範'], views:156, type:'km-article',
+          excerpt:'RESTful API 設計原則：使用標準 HTTP 動詞，資源名稱使用複數名詞，版本控制使用 URL prefix…' },
+    ];
+
+    // ===== 公告假資料 =====
+    const _announcements = [
+        { id:'ann01', title:'2026年差旅報銷規定更新', source:'人資部', date:'2026-03-15', pinned:true, type:'announce',
+          excerpt:'各位同仁好，因應公司政策調整，2026年起差旅報銷規定有所更新，請參閱附件說明…' },
+        { id:'ann02', title:'Q1 差旅費用結算公告', source:'財務部', date:'2026-03-10', pinned:false, type:'announce',
+          excerpt:'提醒各位同仁，Q1 差旅費用報銷截止日期為 3/31，請儘早提交…' },
+        { id:'ann03', title:'3月系統維護公告', source:'IT部門', date:'2026-03-01', pinned:false, type:'announce',
+          excerpt:'預定於 3/15 02:00-06:00 進行系統維護，期間部分服務可能暫停…' },
+        { id:'ann04', title:'年度員工旅遊活動公告', source:'人資部', date:'2026-02-20', pinned:false, type:'announce',
+          excerpt:'2026年度員工旅遊活動定於 5月舉辦，請各部門於 3/31 前提交參加名單…' },
+    ];
+
+    // ===== 表單假資料 =====
+    const _forms = [
+        { id:'fm01', title:'差旅費用報銷申請單', avgDays:3, applied:128, type:'form' },
+        { id:'fm02', title:'國內差旅申請單', avgDays:1, applied:456, type:'form' },
+        { id:'fm03', title:'海外差旅申請單', avgDays:5, applied:89, type:'form' },
+        { id:'fm04', title:'請假申請單', avgDays:1, applied:1024, type:'form' },
+    ];
+
+    // ===== 取得搜尋關鍵字 =====
+    const urlParams = new URLSearchParams(window.location.search);
+    const _keyword = urlParams.get('q') || urlParams.get('search') || '';
+    let _currentFilter = 'all';
+
+    // ===== 初始化 =====
+    (function init() {
+        // 同步 header 搜尋框
+        setTimeout(() => {
+            const headerInput = document.getElementById('globalSearch');
+            if (headerInput) headerInput.value = _keyword;
+        }, 300);
+
+        if (!_keyword.trim()) {
+            showEmpty('請輸入搜尋關鍵字', '請在頂部搜尋欄輸入關鍵字後按 Enter');
+            return;
+        }
+        renderPage();
+    })();
+
+    // ===== 搜尋核心 =====
+    function searchAll(keyword) {
+        const kw = keyword.trim().toLowerCase();
+        if (!kw) return { kmArticles: [], files: [], folders: [], announcements: [], forms: [], total: 0 };
+
+        // 搜尋 KM 知識文章
+        const kmArticles = _kmArticles.filter(a =>
+            a.title.toLowerCase().includes(kw) ||
+            (a.excerpt || '').toLowerCase().includes(kw) ||
+            a.author.toLowerCase().includes(kw) ||
+            a.dept.toLowerCase().includes(kw)
+        );
+
+        // 搜尋文件庫（from localStorage）
+        let files = [], folders = [];
+        try {
+            const db = JSON.parse(localStorage.getItem('fileDatabase') || '{}');
+            folders = (db.folders || []).filter(f => f.name.toLowerCase().includes(kw))
+                .map(f => ({ ...f, type: 'folder', displayName: f.name.split('/').pop() }));
+            files = (db.files || []).filter(f =>
+                f.name.toLowerCase().includes(kw) ||
+                (f.tags || []).some(t => t.toLowerCase().includes(kw))
+            ).map(f => ({ ...f, type: 'file' }));
+        } catch (e) {}
+
+        // 搜尋公告
+        const announcements = _announcements.filter(a =>
+            a.title.toLowerCase().includes(kw) || (a.excerpt || '').toLowerCase().includes(kw)
+        );
+
+        // 搜尋表單
+        const forms = _forms.filter(f => f.title.toLowerCase().includes(kw));
+
+        const total = kmArticles.length + files.length + folders.length + announcements.length + forms.length;
+        return { kmArticles, files, folders, announcements, forms, total };
+    }
+
+    // ===== 渲染頁面 =====
+    function renderPage() {
+        const startTime = performance.now();
+        const results = searchAll(_keyword);
+        const elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
+
+        // Header
+        renderHeader(results, elapsed);
+        // Suggestions
+        renderSuggestions();
+        // Results
+        renderResults(results);
+    }
+
+    function renderHeader(results, elapsed) {
+        const counts = {
+            all: results.total,
+            'km-article': results.kmArticles.length,
+            file: results.files.length + results.folders.length,
+            announce: results.announcements.length,
+            form: results.forms.length,
+        };
+
+        const tabs = [
+            { key: 'all', icon: 'fa-layer-group', label: '全部' },
+            { key: 'km-article', icon: 'fa-brain', label: 'KM 知識文章' },
+            { key: 'file', icon: 'fa-folder', label: '文件庫' },
+            { key: 'announce', icon: 'fa-bullhorn', label: '公告' },
+            { key: 'form', icon: 'fa-file-signature', label: '表單' },
+        ].filter(t => t.key === 'all' || counts[t.key] > 0);
+
+        document.getElementById('searchHeader').innerHTML = `
+            <div class="search-header">
+                <div class="search-query">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <h2>搜尋「<span class="keyword">${esc(_keyword)}</span>」的結果</h2>
+                </div>
+                <div class="search-stats">共找到 ${results.total} 筆結果，耗時 ${elapsed} 秒</div>
+                <div class="search-category-tabs">
+                    ${tabs.map(t => `
+                        <div class="search-category-tab ${_currentFilter === t.key ? 'active' : ''}" data-filter="${t.key}">
+                            <i class="fa-solid ${t.icon}"></i> ${t.label}
+                            <span class="tab-count">${counts[t.key]}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="search-sort-bar">
+                    <span class="sort-label">排序：</span>
+                    <select id="sortBy" onchange="renderPage()">
+                        <option value="relevance">最相關</option>
+                        <option value="newest">最新</option>
+                    </select>
+                </div>
+            </div>
+        `;
+
+        // Tab click
+        document.querySelectorAll('.search-category-tab').forEach(tab => {
+            tab.addEventListener('click', function () {
+                _currentFilter = this.dataset.filter;
+                renderPage();
+            });
+        });
+    }
+
+    function renderSuggestions() {
+        const kw = _keyword.trim().toLowerCase();
+        const suggestions = [];
+        if (kw.includes('差旅')) suggestions.push('差旅申請', '報銷流程', '國內差旅');
+        if (kw.includes('報銷')) suggestions.push('差旅報銷', '費用報銷');
+        if (kw.includes('規範') || kw.includes('sop')) suggestions.push('Code Review', '入職流程', '開發規範');
+        if (kw.includes('新人') || kw.includes('入職')) suggestions.push('新人指南', '入職 SOP', '培訓手冊');
+
+        if (!suggestions.length) { document.getElementById('searchSuggestions').innerHTML = ''; return; }
+        const unique = [...new Set(suggestions)].filter(s => s.toLowerCase() !== kw);
+        if (!unique.length) { document.getElementById('searchSuggestions').innerHTML = ''; return; }
+
+        document.getElementById('searchSuggestions').innerHTML = `
+            <div class="search-suggest-bar">
+                <span class="suggest-label"><i class="fa-solid fa-lightbulb"></i> 您可能也想搜尋：</span>
+                ${unique.slice(0, 5).map(s => `<a class="suggest-chip" href="search-results.html?q=${encodeURIComponent(s)}">${esc(s)}</a>`).join('')}
+            </div>
+        `;
+    }
+
+    function renderResults(results) {
+        const host = document.getElementById('searchResults');
+        const emptyHost = document.getElementById('searchEmpty');
+
+        if (results.total === 0) {
+            host.innerHTML = '';
+            showEmpty('找不到相關結果', '找不到符合「' + esc(_keyword) + '」的資料，請嘗試其他關鍵字');
+            return;
+        }
+
+        emptyHost.style.display = 'none';
+        let html = '';
+        const show = (type) => _currentFilter === 'all' || _currentFilter === type;
+
+        // KM 知識文章
+        if (results.kmArticles.length > 0 && show('km-article')) {
+            html += renderSection('km-article', 'fa-brain', 'KM 知識文章', results.kmArticles.map(a => `
+                <div class="search-result-item" onclick="window.location.href='km-article.html?id=${a.id}'">
+                    <div class="search-result-icon km-article"><i class="fa-solid fa-file-lines"></i></div>
+                    <div class="search-result-content">
+                        <div class="search-result-title">${highlight(a.title, _keyword)}</div>
+                        <div class="search-result-excerpt">${highlight(a.excerpt || '', _keyword)}</div>
+                        <div class="search-result-meta">
+                            <span><i class="fa-solid fa-user"></i> ${esc(a.author)}</span>
+                            <span><i class="fa-solid fa-building"></i> ${esc(a.dept)}</span>
+                            <span>${a.date}</span>
+                            <span><i class="fa-solid fa-eye"></i> ${a.views}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join(''));
+        }
+
+        // 文件庫
+        if ((results.files.length > 0 || results.folders.length > 0) && show('file')) {
+            const items = [];
+            results.folders.forEach(f => {
+                items.push(`
+                    <div class="search-result-item" onclick="window.location.href='km-recent.html?folder=${encodeURIComponent(f.name)}'">
+                        <div class="search-result-icon folder"><i class="fa-solid fa-folder"></i></div>
+                        <div class="search-result-content">
+                            <div class="search-result-title">${highlight(f.displayName, _keyword)}</div>
+                            <div class="search-result-meta"><span class="folder-path"><i class="fa-solid fa-folder-tree"></i> ${esc(f.name)}</span></div>
+                        </div>
+                    </div>`);
+            });
+            results.files.forEach(f => {
+                const ext = f.name.split('.').pop().toLowerCase();
+                const iconMap = { pdf:'fa-file-pdf', doc:'fa-file-word', docx:'fa-file-word', xls:'fa-file-excel', xlsx:'fa-file-excel', ppt:'fa-file-powerpoint', pptx:'fa-file-powerpoint' };
+                const iconCls = iconMap[ext] || 'fa-file';
+                const colorCls = ['pdf'].includes(ext) ? 'pdf' : ['doc','docx'].includes(ext) ? 'docx' : ['xls','xlsx'].includes(ext) ? 'xlsx' : ['ppt','pptx'].includes(ext) ? 'pptx' : 'default';
+                items.push(`
+                    <div class="search-result-item" onclick="window.location.href='km-recent.html?folder=${encodeURIComponent(f.folder||'')}&file=${encodeURIComponent(f.name)}'">
+                        <div class="search-result-icon ${colorCls}"><i class="fa-solid ${iconCls}"></i></div>
+                        <div class="search-result-content">
+                            <div class="search-result-title">${highlight(f.name, _keyword)}</div>
+                            <div class="search-result-meta">
+                                <span class="folder-path"><i class="fa-solid fa-folder"></i> ${esc(f.folder||'')}</span>
+                                <span>${f.uploadDate||''}</span>
+                            </div>
+                        </div>
+                        <div class="search-result-tags">${(f.tags||[]).slice(0,3).map(t=>'<span class="tag">'+highlight(t,_keyword)+'</span>').join('')}</div>
+                    </div>`);
+            });
+            html += renderSection('file', 'fa-folder', '文件庫', items.join(''));
+        }
+
+        // 公告
+        if (results.announcements.length > 0 && show('announce')) {
+            html += renderSection('announce', 'fa-bullhorn', '公告', results.announcements.map(a => `
+                <div class="search-result-item">
+                    <div class="search-result-icon announce"><i class="fa-solid fa-bullhorn"></i></div>
+                    <div class="search-result-content">
+                        <div class="search-result-title">
+                            ${a.pinned ? '<i class="fa-solid fa-thumbtack pinned-icon"></i>' : ''}
+                            ${highlight(a.title, _keyword)}
+                        </div>
+                        <div class="search-result-excerpt">${highlight(a.excerpt || '', _keyword)}</div>
+                        <div class="search-result-meta">
+                            <span>${esc(a.source)} 發布</span>
+                            <span>${a.date}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join(''));
+        }
+
+        // 表單
+        if (results.forms.length > 0 && show('form')) {
+            html += renderSection('form', 'fa-file-signature', '電子表單', results.forms.map(f => `
+                <div class="search-result-item">
+                    <div class="search-result-icon form"><i class="fa-solid fa-file-signature"></i></div>
+                    <div class="search-result-content">
+                        <div class="search-result-title">${highlight(f.title, _keyword)}</div>
+                        <div class="search-result-meta">
+                            <span><i class="fa-solid fa-clock"></i> 平均處理：${f.avgDays} 天</span>
+                            <span><i class="fa-solid fa-file-lines"></i> 已申請 ${f.applied} 次</span>
+                        </div>
+                    </div>
+                </div>
+            `).join(''));
+        }
+
+        host.innerHTML = html;
+    }
+
+    function renderSection(type, icon, title, itemsHtml) {
+        const count = (itemsHtml.match(/search-result-item/g) || []).length;
+        return `
+            <div class="search-result-section">
+                <div class="search-section-header">
+                    <div class="search-section-title ${type}">
+                        <span class="section-icon"><i class="fa-solid ${icon}"></i></span>
+                        ${title}
+                    </div>
+                    <span class="search-section-count">${count} 筆</span>
+                </div>
+                <div class="search-result-list">${itemsHtml}</div>
+            </div>
+        `;
+    }
+
+    function showEmpty(title, desc) {
+        const host = document.getElementById('searchEmpty');
+        host.style.display = 'block';
+        host.innerHTML = `
+            <div class="search-empty">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <h3>${esc(title)}</h3>
+                <p>${desc}</p>
+            </div>
+            <div class="search-tips">
+                <h4><i class="fa-solid fa-lightbulb"></i> 搜尋提示</h4>
+                <ul>
+                    <li>確認關鍵字沒有拼錯</li>
+                    <li>嘗試使用更簡短或不同的關鍵字</li>
+                    <li>搜尋範圍：KM 知識文章、文件庫、公告、電子表單</li>
+                </ul>
+            </div>
+        `;
+    }
+
+    // ===== 工具 =====
+    function esc(str) {
+        const el = document.createElement('span');
+        el.textContent = str;
+        return el.innerHTML;
+    }
+    function highlight(text, keyword) {
+        if (!keyword) return esc(text);
+        const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return esc(text).replace(new RegExp('(' + escaped + ')', 'gi'), '<span class="highlight">$1</span>');
+    }
+    </script>
+    <script src="js/search.js"></script>
+</body>
+</html>

@@ -11,10 +11,8 @@
     padding-top: 24px;
     background-color: var(--content-bg);
     min-height: calc(100vh - var(--header-height));
-    transition: margin-left var(--transition);
-    /* 防止切頁閃爍：主內容區先隱藏，layout 就緒後淡入 */
     opacity: 0;
-    transition: opacity 0.1s ease, margin-left var(--transition);
+    transition: opacity 0.3s ease, margin-left var(--transition);
 }
 
 .main-content.layout-ready {
@@ -235,26 +233,25 @@
     height: 16px;
 }
 
-/* 響應式設計 */
-@media screen and (max-width: 960px) {
+/* 響應式設計 — 斷點: 960 / 768 / 480 */
+@media (max-width: 960px) {
     .main-content {
         margin-left: var(--sidebar-collapsed-width);
     }
 }
 
-@media screen and (max-width: 768px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media screen and (max-width: 640px) {
+/* ≤768px：sidebar 隱藏，main-content 全寬 */
+@media (max-width: 768px) {
     .main-content {
         margin-left: 0;
     }
     
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
     .page-section {
-        padding: 12px;
+        padding: var(--spacing-page);
     }
 }
 
@@ -568,7 +565,7 @@
     transition: color 0.15s;
 }
 .file-actions .btn.small.ghost:hover .fa-share-nodes {
-    color: #4f46e5;
+    color: var(--primary-color);
 }
 
 /* 同名檔案覆蓋選項 */

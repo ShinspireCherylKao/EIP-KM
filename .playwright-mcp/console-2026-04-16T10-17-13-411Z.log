@@ -1,0 +1,59 @@
+[    1136ms] [LOG] Angular is running in development mode. @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:157025
+[    1184ms] [ERROR] ERROR Error: Uncaught (in promise): TypeError: Cannot read properties of undefined (reading 'unsubscribe')
+TypeError: Cannot read properties of undefined (reading 'unsubscribe')
+    at HeaderComponent.ngOnDestroy (https://eipnewfront.webtech888.com/main.5bb64dcd4541fae8.js:3447:33)
+    at executeOnDestroys (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:138168:20)
+    at cleanUpView (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:138080:5)
+    at destroyViewTree (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:137918:9)
+    at destroyLView (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:138058:5)
+    at RootViewRef.destroy (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:144408:5)
+    at ComponentRef.destroy (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:144852:19)
+    at RouterOutlet.deactivate (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:178197:22)
+    at ActivateRoutes.deactivateRouteAndOutlet (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:178763:24)
+    at ActivateRoutes.deactivateRouteAndItsChildren (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:178731:12)
+    at HeaderComponent.ngOnDestroy (https://eipnewfront.webtech888.com/main.5bb64dcd4541fae8.js:3447:33)
+    at executeOnDestroys (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:138168:20)
+    at cleanUpView (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:138080:5)
+    at destroyViewTree (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:137918:9)
+    at destroyLView (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:138058:5)
+    at RootViewRef.destroy (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:144408:5)
+    at ComponentRef.destroy (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:144852:19)
+    at RouterOutlet.deactivate (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:178197:22)
+    at ActivateRoutes.deactivateRouteAndOutlet (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:178763:24)
+    at ActivateRoutes.deactivateRouteAndItsChildren (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:178731:12)
+    at resolvePromise (https://eipnewfront.webtech888.com/polyfills.3799dbc1ab7495cf.js:1151:19)
+    at resolvePromise (https://eipnewfront.webtech888.com/polyfills.3799dbc1ab7495cf.js:1104:9)
+    at https://eipnewfront.webtech888.com/polyfills.3799dbc1ab7495cf.js:1212:9
+    at _ZoneDelegate.invokeTask (https://eipnewfront.webtech888.com/polyfills.3799dbc1ab7495cf.js:377:171)
+    at https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141510:49
+    at AsyncStackTaggingZoneSpec.onInvokeTask (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141510:30)
+    at _ZoneDelegate.invokeTask (https://eipnewfront.webtech888.com/polyfills.3799dbc1ab7495cf.js:377:54)
+    at Object.onInvokeTask (https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141824:25)
+    at _ZoneDelegate.invokeTask (https://eipnewfront.webtech888.com/polyfills.3799dbc1ab7495cf.js:377:54)
+    at Zone.runTask (https://eipnewfront.webtech888.com/polyfills.3799dbc1ab7495cf.js:181:37) @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141358
+[    1556ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://eipnewapi.webtech888.com/api/User/GetFrontMenu:0
+[    1580ms] [LOG] save func device 3 @ https://eipnewfront.webtech888.com/main.5bb64dcd4541fae8.js:59789
+[    1725ms] [ERROR] ERROR HttpErrorResponse @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141358
+[    1733ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ https://eipnewfront.webtech888.com/login:0
+[   31909ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://eipnewapi.webtech888.com/api/User/RefreshToken:0
+[   31913ms] [ERROR] ERROR HttpErrorResponse @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141358
+[   61786ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://eipnewapi.webtech888.com/api/User/RefreshToken:0
+[   61792ms] [ERROR] ERROR HttpErrorResponse @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141358
+[   92034ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://eipnewapi.webtech888.com/api/User/RefreshToken:0
+[   92039ms] [ERROR] ERROR HttpErrorResponse @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141358
+[  182258ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://eipnewapi.webtech888.com/api/User/RefreshToken:0
+[  182262ms] [ERROR] ERROR HttpErrorResponse @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141358
+[  313213ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://eipnewapi.webtech888.com/api/User/RefreshToken:0
+[  313219ms] [ERROR] ERROR HttpErrorResponse @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141358
+[  592866ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://eipnewapi.webtech888.com/api/User/RefreshToken:0
+[  592874ms] [ERROR] ERROR HttpErrorResponse @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141358
+[  719657ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://eipnewapi.webtech888.com/api/User/RefreshToken:0
+[  719661ms] [ERROR] ERROR HttpErrorResponse @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141358
+[ 1038760ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://eipnewapi.webtech888.com/api/User/RefreshToken:0
+[ 1038764ms] [ERROR] ERROR HttpErrorResponse @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141358
+[ 1138284ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://eipnewapi.webtech888.com/api/User/RefreshToken:0
+[ 1138289ms] [ERROR] ERROR HttpErrorResponse @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141358
+[ 1284607ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://eipnewapi.webtech888.com/api/User/RefreshToken:0
+[ 1284612ms] [ERROR] ERROR HttpErrorResponse @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141358
+[ 3353062ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://eipnewapi.webtech888.com/api/User/RefreshToken:0
+[ 3353066ms] [ERROR] ERROR HttpErrorResponse @ https://eipnewfront.webtech888.com/vendor.3c7ef4b01804c8bf.js:141358
