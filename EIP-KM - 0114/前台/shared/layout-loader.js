@@ -206,6 +206,7 @@ const KM_KNOWLEDGE_NAV_FALLBACK_HTML = `<div class="km-nav">
         'km-ai.html': 'ai',
         'km-review.html': 'km-home',
         'km-hot.html': 'km-home',
+        'km-latest.html': 'km-home',
         'km-favorites.html': 'km-home',
         'km-manage.html': 'km-home',
         'km-search.html': 'km-home',
@@ -280,7 +281,7 @@ async function initSharedLayout() {
     if (kmNavContainer) {
         // 判斷是文件庫頁面還是 KM 知識管理頁面
         const currentPage = window.location.pathname.split('/').pop();
-        const kmKnowledgePages = ['km-knowledge.html', 'km-shares.html', 'km-ai.html', 'km-editor.html', 'km-hot.html', 'km-favorites.html', 'km-manage.html', 'km-review.html', 'km-search.html', 'km-article.html'];
+        const kmKnowledgePages = ['km-knowledge.html', 'km-shares.html', 'km-ai.html', 'km-editor.html', 'km-hot.html', 'km-latest.html', 'km-favorites.html', 'km-manage.html', 'km-review.html', 'km-search.html', 'km-article.html'];
         
         if (kmKnowledgePages.includes(currentPage)) {
             await loadHTMLFragment('shared/km-knowledge-nav.html', 'km-nav-container', KM_KNOWLEDGE_NAV_FALLBACK_HTML);
@@ -323,7 +324,7 @@ function setActiveMenuItem() {
     
     // 根據當前頁面設置 active
     let selector = '';
-    const kmKnowledgePages = ['km-knowledge.html', 'km-shares.html', 'km-ai.html', 'km-editor.html', 'km-hot.html', 'km-favorites.html', 'km-manage.html', 'km-review.html', 'km-search.html', 'km-article.html'];
+    const kmKnowledgePages = ['km-knowledge.html', 'km-shares.html', 'km-ai.html', 'km-editor.html', 'km-hot.html', 'km-latest.html', 'km-favorites.html', 'km-manage.html', 'km-review.html', 'km-search.html', 'km-article.html'];
     if (kmKnowledgePages.includes(currentPage)) {
         selector = '.nav-item[data-page="km-knowledge"]';
     } else if (currentPage === 'org-chart.html') {

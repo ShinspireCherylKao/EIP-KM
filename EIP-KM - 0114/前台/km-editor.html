@@ -22,7 +22,7 @@
         }
         .editor-back-bar a {
             display: inline-flex; align-items: center; gap: 8px;
-            font-size: var(--font-section-title); color: var(--text-secondary); text-decoration: none;
+            font-size: 15px; color: var(--text-secondary); text-decoration: none;
             padding: 8px 14px; border-radius: var(--radius-sm);
             min-height: var(--touch-target-min);
             transition: all .15s;
@@ -65,6 +65,25 @@
             font-size: var(--font-card-title); font-weight: 700; color: var(--primary-color);
             margin-bottom: var(--spacing-card); padding-bottom: 10px;
             border-bottom: 2px solid var(--primary-color);
+        }
+
+        /* 自訂到期日 */
+        .custom-date-row {
+            display: none; margin-top: 8px;
+        }
+        .custom-date-row.show {
+            display: block;
+        }
+        .custom-date-row input[type="date"] {
+            width: 100%; padding: 10px 14px;
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            font-size: var(--font-body); background: #fff; color: var(--text-primary);
+            min-height: var(--touch-target-min);
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .custom-date-row input[type="date"]:focus {
+            outline: none; border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59,130,246,.1);
         }
 
         /* 表單群組 */
@@ -207,6 +226,14 @@
         .rich-editor-content:empty::before {
             content: attr(data-placeholder);
             color: var(--text-muted); pointer-events: none;
+        }
+        .rich-editor-content h2 {
+            font-size: var(--font-page-title); font-weight: 700;
+            margin: 16px 0 8px; color: #1E3A5F;
+        }
+        .rich-editor-content h3 {
+            font-size: var(--font-section-title); font-weight: 600;
+            margin: 12px 0 6px; color: #1E3A5F;
         }
 
         /* ===== 底部操作列 ===== */
@@ -375,12 +402,15 @@
                         <!-- 文件效期 -->
                         <div class="form-group">
                             <label>文件效期</label>
-                            <select id="articleValidity">
+                            <select id="articleValidity" onchange="toggleCustomDate()">
                                 <option value="permanent">永久有效</option>
                                 <option value="1year">一年</option>
                                 <option value="6months">六個月</option>
                                 <option value="custom">自訂到期日</option>
                             </select>
+                            <div class="custom-date-row" id="customDateRow">
+                                <input type="date" id="articleCustomDate" min="" placeholder="請選擇到期日">
+                            </div>
                         </div>
 
                     </div>
@@ -396,8 +426,8 @@
                                 <button type="button" title="底線" onclick="execCmd('underline')"><i class="fa-solid fa-underline"></i></button>
                                 <button type="button" title="刪除線" onclick="execCmd('strikeThrough')"><i class="fa-solid fa-strikethrough"></i></button>
                                 <div class="toolbar-divider"></div>
-                                <button type="button" title="標題 1" onclick="execCmd('formatBlock','H2')"><b>H1</b></button>
-                                <button type="button" title="標題 2" onclick="execCmd('formatBlock','H3')"><b>H2</b></button>
+                                <button type="button" title="標題 H2" onclick="execCmd('formatBlock','H2')"><b>H2</b></button>
+                                <button type="button" title="標題 H3" onclick="execCmd('formatBlock','H3')"><b>H3</b></button>
                                 <button type="button" title="段落" onclick="execCmd('formatBlock','P')"><i class="fa-solid fa-paragraph"></i></button>
                                 <div class="toolbar-divider"></div>
                                 <button type="button" title="無序列表" onclick="execCmd('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
@@ -561,6 +591,24 @@
         return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
 
+    // ===== 自訂到期日 =====
+    function toggleCustomDate() {
+        const sel = document.getElementById('articleValidity');
+        const row = document.getElementById('customDateRow');
+        const dateInput = document.getElementById('articleCustomDate');
+        if (sel.value === 'custom') {
+            row.classList.add('show');
+            // 設定最小日期為明天
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            dateInput.min = tomorrow.toISOString().split('T')[0];
+            dateInput.focus();
+        } else {
+            row.classList.remove('show');
+            dateInput.value = '';
+        }
+    }
+
     // ===== 富文字編輯器 =====
     function execCmd(cmd, value) {
         document.execCommand(cmd, false, value || null);
@@ -588,6 +636,10 @@
         if (!title) { showToast('請輸入文章標題', 'error'); document.getElementById('articleTitle').focus(); return; }
         if (!category) { showToast('請選擇文章分類', 'error'); document.getElementById('articleCategory').focus(); return; }
         if (!dept) { showToast('請選擇所屬部門', 'error'); document.getElementById('articleDept').focus(); return; }
+        if (document.getElementById('articleValidity').value === 'custom') {
+            const customDate = document.getElementById('articleCustomDate').value;
+            if (!customDate) { showToast('請選擇自訂到期日', 'error'); document.getElementById('articleCustomDate').focus(); return; }
+        }
         if (!content || content === '<br>') { showToast('請輸入文章內容', 'error'); document.getElementById('editorContent').focus(); return; }
         if (contentText.length > 10000) { showToast('文章內容超過 10,000 字上限（目前 ' + contentText.length + ' 字）', 'error'); return; }
 
@@ -605,7 +657,10 @@
         const ss = String(now.getSeconds()).padStart(2, '0');
         const ts = y + '/' + m + '/' + d + ' ' + hh + ':' + mm + ':' + ss;
         document.getElementById('draftStatus').textContent = (isAuto ? '自動' : '') + '草稿儲存完成於 ' + ts;
-        if (!isAuto) showToast('草稿已儲存', 'success');
+        if (!isAuto) {
+            showToast('草稿已儲存，即將前往草稿管理…', 'success');
+            setTimeout(function() { window.location.href = 'km-manage.html#draft'; }, 1200);
+        }
     }
 
     function doLeave() {
@@ -641,16 +696,45 @@
         return el.innerHTML;
     }
 
-    // ===== 自動儲存草稿（每 60 秒） =====
+    // ===== 自動儲存草稿（每 30 秒，dirty flag 機制） =====
     let _autoSaveTimer = null;
+    let _isDirty = false;
+    let _lastSnapshot = '';
+
+    function getSnapshot() {
+        return document.getElementById('articleTitle').value +
+               document.getElementById('articleCategory').value +
+               document.getElementById('articleDept').value +
+               document.getElementById('articleValidity').value +
+               document.getElementById('editorContent').innerHTML;
+    }
+
+    function markDirty() {
+        var snap = getSnapshot();
+        if (snap !== _lastSnapshot) {
+            _isDirty = true;
+            _lastSnapshot = snap;
+        }
+    }
+
+    // 監聽表單變更
+    document.getElementById('articleTitle').addEventListener('input', markDirty);
+    document.getElementById('articleCategory').addEventListener('change', markDirty);
+    document.getElementById('articleDept').addEventListener('change', markDirty);
+    document.getElementById('articleValidity').addEventListener('change', markDirty);
+    document.getElementById('editorContent').addEventListener('input', markDirty);
+
     function startAutoSave() {
+        _lastSnapshot = getSnapshot();
         _autoSaveTimer = setInterval(function() {
-            const title = document.getElementById('articleTitle').value.trim();
-            const content = document.getElementById('editorContent').innerHTML.trim();
+            if (!_isDirty) return; // 無變更就跳過
+            var title = document.getElementById('articleTitle').value.trim();
+            var content = document.getElementById('editorContent').innerHTML.trim();
             if (title || (content && content !== '<br>')) {
                 doDraft(true);
+                _isDirty = false;
             }
-        }, 60000);
+        }, 30000);
     }
     startAutoSave();
     </script>

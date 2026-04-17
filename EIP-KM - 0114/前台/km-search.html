@@ -16,6 +16,13 @@
     <style>
         /* ===== KM 搜尋結果頁專用 ===== */
 
+        .back-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 15px; color: #6B7280; text-decoration: none;
+            padding: 6px 12px; border-radius: 8px; transition: all .15s;
+        }
+        .back-link:hover { background: #F3F4F6; color: #4F46E5; }
+
         .km-search-header {
             background: #fff; border: 1px solid #E5E8ED; border-radius: 12px;
             padding: 20px 24px; margin-bottom: 20px;
@@ -133,15 +140,10 @@
 
     <!-- 主要內容區 -->
     <div class="main-content">
-        <!-- 頁面標題 -->
-        <div class="km-page-header">
-            <h2>KM 知識管理</h2>
-        </div>
-
-        <!-- KM 知識管理導航 -->
-        <div id="km-nav-container"></div>
-
         <div class="km-container">
+            <!-- 返回知識總覽 -->
+            <a class="back-link" href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> 返回知識總覽</a>
+
             <!-- 搜尋頭部 -->
             <div id="searchHeader"></div>
 

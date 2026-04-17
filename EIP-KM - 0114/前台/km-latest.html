@@ -12,6 +12,164 @@
     <link rel="stylesheet" href="css/style-content.css">
     <link rel="stylesheet" href="css/style-km-base.css">
     <link rel="stylesheet" href="css/style-search.css">
+    <style>
+        /* ===== 最新文章頁專用 ===== */
+
+        /* 頁面標題區 */
+        .page-title-bar {
+            padding: 24px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .page-title-bar h2 {
+            font-size: var(--font-page-title);
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .page-title-bar h2 i { color: #3B82F6; }
+        .page-title-bar .page-desc {
+            color: #9CA3AF;
+            font-size: 13px;
+            margin: 4px 0 0;
+        }
+        .back-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 15px; color: #6B7280; text-decoration: none;
+            padding: 6px 12px; border-radius: 8px;
+            transition: all .15s;
+        }
+        .back-link:hover { background: #F3F4F6; color: #4F46E5; }
+
+        /* 篩選列 */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0 16px;
+            flex-wrap: wrap;
+        }
+        .filter-bar select {
+            padding: 8px 14px;
+            border: 1px solid #E5E8ED;
+            border-radius: 8px;
+            font-size: 13px;
+            background: #fff;
+            color: #374151;
+            cursor: pointer;
+            transition: border-color .2s;
+        }
+        .filter-bar select:focus {
+            outline: none;
+            border-color: #4F46E5;
+        }
+        .filter-bar .filter-label {
+            font-size: 13px;
+            color: #9CA3AF;
+            font-weight: 600;
+        }
+
+        /* 結果統計 */
+        .result-count {
+            font-size: 13px;
+            color: #9CA3AF;
+            margin-bottom: 12px;
+        }
+        .result-count strong { color: #111827; }
+
+        /* 文章列表卡片 */
+        .latest-list-card {
+            background: #FFFFFF;
+            border: 1px solid #E5E8ED;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 1px 2px rgba(0,0,0,.02);
+            overflow: hidden;
+        }
+
+        /* 文章項 */
+        .latest-article-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 20px;
+            border-bottom: 1px solid #F0F1F3;
+            cursor: pointer;
+            transition: background .15s;
+        }
+        .latest-article-item:last-child { border-bottom: none; }
+        .latest-article-item:hover { background: #F3F4F6; }
+
+        .latest-article-item .date-badge {
+            width: 48px; height: 48px; border-radius: 10px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 600; flex-shrink: 0;
+            background: #EFF6FF; color: #3B82F6; border: 1px solid #BFDBFE;
+        }
+        .latest-article-item .date-badge .db-day {
+            font-size: 18px; font-weight: 800; line-height: 1;
+        }
+        .latest-article-item .date-badge .db-month {
+            font-size: 11px; font-weight: 500; color: #60A5FA;
+        }
+
+        .latest-article-item .article-info { flex: 1; min-width: 0; }
+        .latest-article-item .article-title {
+            font-size: 15px; font-weight: 600; color: #111827;
+            margin-bottom: 6px; line-height: 1.4;
+        }
+        .latest-article-item:hover .article-title { color: #4F46E5; }
+        .latest-article-item .article-meta {
+            display: flex; align-items: center; gap: 12px;
+            font-size: 12px; color: #9CA3AF; flex-wrap: wrap;
+        }
+        .latest-article-item .article-meta span {
+            display: flex; align-items: center; gap: 4px;
+        }
+        .latest-article-item .article-tags {
+            display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap;
+        }
+        .latest-article-item .article-tags .tag {
+            font-size: 11px; padding: 2px 8px; border-radius: 6px;
+            border: 1px solid #E5E8ED; color: #6B7280; background: #F9FAFB;
+        }
+
+        .latest-article-item .view-count {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; flex-shrink: 0; padding: 0 8px;
+        }
+        .latest-article-item .view-count .vc-num {
+            font-size: 16px; font-weight: 700; color: #6B7280;
+        }
+        .latest-article-item .view-count .vc-label {
+            font-size: 11px; color: #9CA3AF;
+        }
+
+        /* 分頁 */
+        .pagination {
+            display: flex; align-items: center; justify-content: center;
+            gap: 6px; padding: 20px 0;
+        }
+        .pagination .page-btn {
+            min-width: 36px; height: 36px; border-radius: 8px;
+            border: 1px solid #E5E8ED; background: #fff;
+            font-size: 13px; font-weight: 600; color: #6B7280;
+            cursor: pointer; display: flex; align-items: center;
+            justify-content: center; transition: all .15s;
+        }
+        .pagination .page-btn:hover { background: #F3F4F6; border-color: #D1D5DB; }
+        .pagination .page-btn.active {
+            background: #4F46E5; color: #fff; border-color: #4F46E5;
+        }
+        .pagination .page-btn:disabled {
+            opacity: .4; cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
     <!-- 頂部導航 -->
@@ -22,26 +180,58 @@
 
     <!-- 主要內容區 -->
     <div class="main-content">
-        <!-- KM 知識管理導航 -->
-        <div id="km-nav-container"></div>
-
         <div class="km-container">
-            <div class="km-page-header">
-                <h2>最新文章</h2>
-                <p>瀏覽所有最新發佈與更新的知識文章</p>
+            <!-- 返回 + 標題 -->
+            <a class="back-link" href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> 返回知識總覽</a>
+            <div class="page-title-bar">
+                <div>
+                    <h2><i class="fa-solid fa-clock"></i> 最新文章</h2>
+                    <p class="page-desc">依發佈時間排序，瀏覽所有最新發佈與更新的知識文章</p>
+                </div>
             </div>
 
+            <!-- 篩選列 -->
+            <div class="filter-bar">
+                <span class="filter-label">篩選：</span>
+                <select id="filterDept" onchange="filterArticles()">
+                    <option value="">全部部門</option>
+                    <option value="HR">HR</option>
+                    <option value="Finance">Finance</option>
+                    <option value="BU1">BU1</option>
+                    <option value="BU2">BU2</option>
+                    <option value="Admin">Admin</option>
+                </select>
+                <select id="filterPeriod" onchange="filterArticles()">
+                    <option value="all">不限時間</option>
+                    <option value="week">近一週</option>
+                    <option value="month" selected>近一個月</option>
+                    <option value="quarter">近一季</option>
+                    <option value="year">近一年</option>
+                </select>
+            </div>
+
+            <!-- 結果統計 -->
+            <div class="result-count" id="resultCount"></div>
+
             <!-- 文章列表 -->
-            <div class="km-block">
-                <div class="block-body" id="latestArticlesBody">
-                    <div class="empty-state" style="padding:60px 20px;text-align:center;">
-                        <i class="fa-solid fa-clock" style="font-size:36px;color:#94A3B8;display:block;margin-bottom:12px;"></i>
-                        <p style="color:#64748B;">此頁面尚在建置中，敬請期待</p>
-                        <a href="km-knowledge.html" style="display:inline-block;margin-top:16px;color:var(--primary-color);text-decoration:none;font-size:14px;">
-                            <i class="fa-solid fa-arrow-left"></i> 返回知識總覽
-                        </a>
-                    </div>
-                </div>
+            <div class="latest-list-card" id="latestListCard"></div>
+
+            <!-- 分頁 -->
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+
+    <!-- ===== 文章內頁 Modal ===== -->
+    <div class="article-modal-overlay" id="articleModal">
+        <div class="article-modal">
+            <div class="am-header">
+                <h3 id="amTitle">—</h3>
+                <button class="btn ghost" onclick="closeArticleModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="am-meta" id="amMeta"></div>
+            <div class="am-body" id="amBody"></div>
+            <div class="am-footer">
+                <button class="btn" onclick="closeArticleModal()">關閉</button>
             </div>
         </div>
     </div>
@@ -54,6 +244,168 @@
     <script src="js/sidebar-script.js"></script>
     <script src="shared/layout-loader.js"></script>
     <script src="js/km-base.js"></script>
+
+    <script>
+    /* ============================================================
+       最新文章 — 完整列表（假資料）
+       ============================================================ */
+
+    const _allLatestArticles = [
+        { id:'a01', title:'2026年度新人訓練手冊已更新', author:'李美玲', dept:'HR', date:'2026-03-16', tags:['培訓','新人'], views:58,
+          content:'<p>各位同仁好，2026年度新人訓練手冊已完成更新，主要調整內容如下：</p><p>1. 新增公司福利與差旅報銷流程<br>2. 更新請假制度與加班規範<br>3. 補充部門介紹與組織架構圖</p><p>請各部門主管協助轉知新進同仁下載閱讀，如有疑問請聯繫 HR 部門。</p>' },
+        { id:'a02', title:'X 專案第四週進度報告', author:'張志豪', dept:'BU2', date:'2026-03-15', tags:['專案','進度'], views:34,
+          content:'<p>X 專案本週進度摘要：</p><p>• 前端模組開發完成 85%<br>• API 整合測試進行中<br>• 預計下週完成 UAT 環境部署</p><p>風險項目：第三方 API 回應速度偶有延遲，已與廠商溝通改善中。</p>' },
+        { id:'a03', title:'差旅報銷規範修訂公告', author:'吳佳蓉', dept:'Finance', date:'2026-03-14', tags:['差旅','報銷','公告'], views:102,
+          content:'<p>自 2026年4月1日起，差旅報銷規範將進行以下調整：</p><p>1. 國內出差住宿費上限調整為每晚 NT$3,500<br>2. 交通費須於 3 個工作天內提交核銷<br>3. 新增線上簽核流程，無需紙本表單</p><p>詳細內容請參閱附件。</p>' },
+        { id:'a04', title:'Code Review 規範 v2.0 發佈', author:'蔡明達', dept:'BU1', date:'2026-03-13', tags:['規範','CR'], views:76,
+          content:'<p>Code Review 規範已更新至 v2.0，主要修訂：</p><p>• PR 必須至少 2 人 Approve 才可合併<br>• 新增安全性檢查清單<br>• CI pipeline 需全部通過<br>• 增加效能相關的 Review 項目</p>' },
+        { id:'a05', title:'2025年度財務報表摘要', author:'吳佳蓉', dept:'Finance', date:'2026-03-12', tags:['財報','年度'], views:45,
+          content:'<p>2025年度財務結算已完成，主要數據摘要如下：</p><p>• 營收較去年成長 12%<br>• 營業利益率維持 18%<br>• 研發投入佔營收比例提升至 15%</p><p>詳細報表已上傳至財務部門資料夾。</p>' },
+        { id:'a06', title:'系統架構設計文件更新', author:'許家豪', dept:'BU1', date:'2026-03-11', tags:['架構','設計'], views:29,
+          content:'<p>系統架構設計文件已更新，新增微服務拆分方案與 API Gateway 設計。</p><p>請各開發人員於本週內完成閱讀並提供回饋意見。</p>' },
+        { id:'a07', title:'X 專案技術架構圖 V3', author:'張志豪', dept:'BU2', date:'2026-03-10', tags:['架構','專案'], views:389,
+          content:'<p>X 專案第三版架構圖已更新，採用微服務架構，包含以下服務：</p><p>• API Gateway<br>• Auth Service<br>• User Service<br>• Notification Service</p>' },
+        { id:'a08', title:'BU2 新人訓練教材', author:'黃淑芬', dept:'BU2', date:'2026-03-08', tags:['培訓','BU2'], views:121,
+          content:'<p>BU2 新人訓練為期兩週，包含：技術基礎培訓、專案流程介紹、開發環境建置、程式碼規範說明。</p>' },
+        { id:'a09', title:'API 設計規範 RESTful 指南', author:'許家豪', dept:'BU1', date:'2026-03-05', tags:['API','規範'], views:156,
+          content:'<p>RESTful API 設計原則：</p><p>• 使用標準 HTTP 動詞<br>• 資源名稱使用複數名詞<br>• 版本控制使用 URL prefix<br>• 回傳統一格式的 JSON 結構</p>' },
+        { id:'a10', title:'資安政策宣導 — 2026年度', author:'陳建宏', dept:'BU1', date:'2026-03-01', tags:['資安','政策'], views:245,
+          content:'<p>2026年度資安政策重點：</p><p>• 密碼每 90 天更換一次<br>• 禁止使用個人雲端儲存公司資料<br>• VPN 連線需啟用二階段驗證</p>' },
+        { id:'a11', title:'會議室預約系統使用說明', author:'楊淑惠', dept:'Admin', date:'2026-02-28', tags:['會議室','系統'], views:165,
+          content:'<p>會議室預約系統已上線，請至 EIP 系統中進行預約。大型會議室需提前 3 天預約，並於使用後完成設備歸還。</p>' },
+        { id:'a12', title:'請假制度常見問題 FAQ', author:'李美玲', dept:'HR', date:'2026-02-20', tags:['請假','FAQ'], views:876,
+          content:'<p>Q: 特休假可以保留到隔年嗎？<br>A: 依勞基法規定，特休假應於當年度休完，未休完者依規定結算。</p><p>Q: 病假需要提供證明嗎？<br>A: 連續請假 3 天以上需附醫療證明。</p>' },
+        { id:'a13', title:'專案管理流程標準化', author:'林志偉', dept:'BU2', date:'2026-02-15', tags:['專案','流程'], views:198,
+          content:'<p>專案管理標準流程包含五大階段：啟動、規劃、執行、監控、結案。每個階段皆需產出對應文件並經過審核。</p>' },
+        { id:'a14', title:'雲端服務費用管理規範', author:'吳佳蓉', dept:'Finance', date:'2026-02-10', tags:['雲端','費用'], views:132,
+          content:'<p>各部門使用雲端服務（AWS、Azure、GCP）需事先提出預算申請，月費超過 NT$50,000 需經部門主管核准。</p>' },
+        { id:'a15', title:'新人指南 — 快速上手', author:'黃淑芬', dept:'BU2', date:'2026-02-01', tags:['新人','指南'], views:278,
+          content:'<p>歡迎加入！以下是快速上手指南：</p><p>1. 熟悉內部系統（EIP、KM、HR 系統）<br>2. 了解團隊協作工具（Teams、Jira）<br>3. 閱讀部門 Wiki 文件</p>' },
+        { id:'a16', title:'績效考核制度說明', author:'李美玲', dept:'HR', date:'2026-01-25', tags:['績效','HR'], views:143,
+          content:'<p>績效考核分為年中考核與年度考核，評核項目包含：工作目標達成率、職能展現、團隊合作等三大面向。</p>' },
+        { id:'a17', title:'入職流程 SOP 完整指南', author:'李美玲', dept:'HR', date:'2026-01-15', tags:['SOP','入職'], views:654,
+          content:'<p>新進人員入職流程：</p><p>1. 報到日攜帶身分證、畢業證書、存摺影本<br>2. IT 部門領取筆電及帳號<br>3. 完成新人訓練（約 3 天）<br>4. 部門主管安排工作交接</p>' },
+        { id:'a18', title:'員工福利手冊 2026 版', author:'李美玲', dept:'HR', date:'2026-01-10', tags:['福利','HR'], views:187,
+          content:'<p>2026年度員工福利包含：</p><p>• 年度健檢補助 NT$5,000<br>• 教育訓練補助每年 NT$20,000<br>• 社團活動補助<br>• 彈性工時制度</p>' },
+    ];
+
+    const PAGE_SIZE = 10;
+    let _currentPage = 1;
+    let _filtered = [];
+
+    (function init() {
+        filterArticles();
+    })();
+
+    function filterArticles() {
+        const dept = document.getElementById('filterDept').value;
+        const period = document.getElementById('filterPeriod').value;
+        const now = new Date();
+
+        _filtered = _allLatestArticles.filter(a => {
+            if (dept && a.dept !== dept) return false;
+            if (period !== 'all') {
+                const d = new Date(a.date);
+                const diff = (now - d) / (1000 * 60 * 60 * 24);
+                if (period === 'week' && diff > 7) return false;
+                if (period === 'month' && diff > 30) return false;
+                if (period === 'quarter' && diff > 90) return false;
+                if (period === 'year' && diff > 365) return false;
+            }
+            return true;
+        });
+
+        // 依日期由新到舊排序
+        _filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+        _currentPage = 1;
+        renderList();
+    }
+
+    function renderList() {
+        const start = (_currentPage - 1) * PAGE_SIZE;
+        const page = _filtered.slice(start, start + PAGE_SIZE);
+
+        document.getElementById('resultCount').innerHTML =
+            '共 <strong>' + _filtered.length + '</strong> 篇最新文章';
+
+        const host = document.getElementById('latestListCard');
+        if (!page.length) {
+            host.innerHTML = '<div style="padding:40px;text-align:center;color:#9CA3AF;"><i class="fa-solid fa-clock" style="font-size:24px;margin-bottom:8px;display:block;"></i>沒有符合條件的文章</div>';
+        } else {
+            host.innerHTML = page.map(function(a) {
+                var d = new Date(a.date);
+                var day = d.getDate();
+                var month = (d.getMonth() + 1) + '月';
+                return '\
+                <div class="latest-article-item" onclick="openArticle(\'' + a.id + '\')">\
+                    <div class="date-badge">\
+                        <div class="db-day">' + day + '</div>\
+                        <div class="db-month">' + month + '</div>\
+                    </div>\
+                    <div class="article-info">\
+                        <h4 class="article-title">' + escHtml(a.title) + '</h4>\
+                        <div class="article-meta">\
+                            <span><i class="fa-solid fa-user"></i> ' + escHtml(a.author) + '</span>\
+                            <span><i class="fa-solid fa-building"></i> ' + escHtml(a.dept) + '</span>\
+                            <span><i class="fa-regular fa-calendar"></i> ' + a.date + '</span>\
+                            <span><i class="fa-solid fa-eye"></i> ' + a.views + '</span>\
+                        </div>\
+                        <div class="article-tags">' + (a.tags || []).map(function(t) { return '<span class="tag">' + escHtml(t) + '</span>'; }).join('') + '</div>\
+                    </div>\
+                </div>';
+            }).join('');
+        }
+
+        renderPagination();
+    }
+
+    function renderPagination() {
+        var totalPages = Math.ceil(_filtered.length / PAGE_SIZE);
+        if (totalPages <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
+        var html = '<button class="page-btn" onclick="goPage(' + (_currentPage - 1) + ')" ' + (_currentPage === 1 ? 'disabled' : '') + '><i class="fa-solid fa-chevron-left"></i></button>';
+        for (var i = 1; i <= totalPages; i++) {
+            html += '<button class="page-btn ' + (i === _currentPage ? 'active' : '') + '" onclick="goPage(' + i + ')">' + i + '</button>';
+        }
+        html += '<button class="page-btn" onclick="goPage(' + (_currentPage + 1) + ')" ' + (_currentPage === totalPages ? 'disabled' : '') + '><i class="fa-solid fa-chevron-right"></i></button>';
+        document.getElementById('pagination').innerHTML = html;
+    }
+
+    function goPage(p) {
+        var totalPages = Math.ceil(_filtered.length / PAGE_SIZE);
+        if (p < 1 || p > totalPages) return;
+        _currentPage = p;
+        renderList();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ===== 文章 Modal =====
+    function openArticle(id) {
+        var article = _allLatestArticles.find(function(a) { return a.id === id; });
+        if (!article) return;
+        document.getElementById('amTitle').textContent = article.title;
+        document.getElementById('amMeta').innerHTML =
+            '<span><i class="fa-solid fa-user"></i> ' + escHtml(article.author) + '</span>' +
+            '<span><i class="fa-solid fa-building"></i> ' + escHtml(article.dept) + '</span>' +
+            (article.date ? '<span><i class="fa-regular fa-calendar"></i> ' + article.date + '</span>' : '') +
+            '<span><i class="fa-solid fa-eye"></i> ' + article.views + ' 次瀏覽</span>' +
+            (article.tags || []).map(function(t) { return '<span style="font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid #E5E8ED;background:#fff;">' + escHtml(t) + '</span>'; }).join('');
+        document.getElementById('amBody').innerHTML = article.content || '<p style="color:#9CA3AF;text-align:center;padding:40px 0;">文章內容載入中…</p>';
+        document.getElementById('articleModal').classList.add('show');
+    }
+    function closeArticleModal() {
+        document.getElementById('articleModal').classList.remove('show');
+    }
+    document.getElementById('articleModal').addEventListener('click', function(e) {
+        if (e.target === this) closeArticleModal();
+    });
+
+    // ===== 工具 =====
+    function escHtml(str) {
+        var el = document.createElement('span');
+        el.textContent = str;
+        return el.innerHTML;
+    }
+    </script>
     <script src="js/search.js"></script>
 </body>
 </html>
