@@ -325,6 +325,7 @@
 - 邊框：`1px solid var(--border-color)`
 - 無圖片時顯示灰底 + image icon placeholder
 - 文章資料可透過 `noThumb: true` 標記為不顯示縮圖
+- **縮圖取用規則**：列表頁顯示的縮圖一律取用**文章內文中的第一張圖片**；若文章內含多張圖片，僅第一張作為列表縮圖，其餘圖片不影響列表顯示
 
 #### 文章標題
 - `font-size: var(--font-card-title)`、`font-weight: 600`、`color: #1E293B`
