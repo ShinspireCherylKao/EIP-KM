@@ -364,18 +364,7 @@
 
     // ===== 文章 Modal =====
     function openArticle(id) {
-        const article = _allHotArticles.find(a => a.id === id);
-        if (!article) return;
-        document.getElementById('amTitle').textContent = article.title;
-        document.getElementById('amMeta').innerHTML = `
-            <span><i class="fa-solid fa-user"></i> ${escHtml(article.author)}</span>
-            <span><i class="fa-solid fa-building"></i> ${escHtml(article.dept)}</span>
-            ${article.date ? '<span><i class="fa-regular fa-calendar"></i> ' + article.date + '</span>' : ''}
-            <span><i class="fa-solid fa-eye"></i> ${article.views.toLocaleString()} 次瀏覽</span>
-            ${(article.tags || []).map(t => '<span style="font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid #E5E8ED;background:#fff;">' + escHtml(t) + '</span>').join('')}
-        `;
-        document.getElementById('amBody').innerHTML = article.content || '<p style="color:#9CA3AF;text-align:center;padding:40px 0;">文章內容載入中…</p>';
-        document.getElementById('articleModal').classList.add('show');
+        window.location.href = 'km-article.html?id=' + encodeURIComponent(id) + '&from=hot';
     }
     function closeArticleModal() {
         document.getElementById('articleModal').classList.remove('show');

@@ -126,7 +126,7 @@
 
         /* 左側圖片 */
         .latest-article-item .article-thumb {
-            width: 90px; height: 68px;
+            width: 155px; height: 95px;
             border-radius: 0;
             background: #F3F4F6;
             border: 1px solid var(--border-color);
@@ -333,10 +333,12 @@
         { id:'a02', title:'X 專案第四週進度報告', author:'張志豪', dept:'BU2', date:'2026-03-15', category:'專案相關', views:34,
           content:'<p>X 專案本週進度摘要：</p><p>• 前端模組開發完成 85%<br>• API 整合測試進行中<br>• 預計下週完成 UAT 環境部署</p><p>風險項目：第三方 API 回應速度偶有延遲，已與廠商溝通改善中。</p>' },
         { id:'a03', title:'差旅報銷規範修訂公告', author:'吳佳蓉', dept:'Finance', date:'2026-03-14', category:'規範辦法', views:102,
+          thumb:'images/travel-landmarks.jpg',
           content:'<p>自 2026年4月1日起，差旅報銷規範將進行以下調整：</p><p>1. 國內出差住宿費上限調整為每晚 NT$3,500<br>2. 交通費須於 3 個工作天內提交核銷<br>3. 新增線上簽核流程，無需紙本表單</p><p>詳細內容請參閱附件。</p>' },
-        { id:'a04', title:'Code Review 規範 v2.0 發佈', author:'蔡明達', dept:'BU1', date:'2026-03-13', category:'規範辦法', views:76, noThumb:true,
+        { id:'a04', title:'Code Review 規範 v2.0 發佈', author:'蔡明達', dept:'BU1', date:'2026-03-13', category:'規範辦法', views:76,
+          thumb:'https://picsum.photos/seed/a04-codereview/400/300',
           content:'<p>Code Review 規範已更新至 v2.0，主要修訂：</p><p>• PR 必須至少 2 人 Approve 才可合併<br>• 新增安全性檢查清單<br>• CI pipeline 需全部通過<br>• 增加效能相關的 Review 項目</p>' },
-        { id:'a05', title:'2025年度財務報表摘要', author:'吳佳蓉', dept:'Finance', date:'2026-03-12', category:'公告通知', views:45, noThumb:true,
+        { id:'a05', title:'2025年度財務報表摘要', author:'吳佳蓉', dept:'Finance', date:'2026-03-12', category:'公告通知', views:45,
           content:'<p>2025年度財務結算已完成，主要數據摘要如下：</p><p>• 營收較去年成長 12%<br>• 營業利益率維持 18%<br>• 研發投入佔營收比例提升至 15%</p><p>詳細報表已上傳至財務部門資料夾。</p>' },
         { id:'a06', title:'系統架構設計文件更新', author:'許家豪', dept:'BU1', date:'2026-03-11', category:'技術文件', views:29,
           content:'<p>系統架構設計文件已更新，新增微服務拆分方案與 API Gateway 設計。</p><p>請各開發人員於本週內完成閱讀並提供回饋意見。</p>' },
@@ -421,7 +423,9 @@
             host.innerHTML = page.map(function(a) {
                 var excerpt = stripHtml(a.content);
                 if (excerpt.length > 80) excerpt = excerpt.substring(0, 80) + '…';
-                var thumbHtml = a.noThumb ? '' : '\
+                var thumbHtml = a.thumb
+                    ? '<div class="article-thumb"><img src="' + a.thumb + '" alt=""></div>'
+                    : '\
                     <div class="article-thumb">\
                         <span class="thumb-placeholder"><i class="fa-regular fa-image"></i></span>\
                     </div>';
@@ -494,7 +498,7 @@
 
     // ===== 文章導航 =====
     function openArticle(id) {
-        window.location.href = 'km-article.html?id=' + id;
+        window.location.href = 'km-article.html?id=' + id + '&from=latest';
     }
 
     // ===== 工具 =====

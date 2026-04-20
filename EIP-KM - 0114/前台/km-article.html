@@ -238,7 +238,7 @@
         <div class="km-container">
             <!-- 返回 -->
             <div class="article-back-bar">
-                <a href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> 返回知識總覽</a>
+                <a id="backLink" href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> <span id="backText">返回知識總覽</span></a>
             </div>
 
             <!-- 文章主卡片 -->
@@ -547,10 +547,12 @@
         'a03': {
             id: 'a03', title: '差旅報銷規範修訂公告', author: '吳佳蓉', dept: 'Finance',
             createdDate: '2026-02-20', lastModified: '2026-03-14', views: 102,
+            thumb: 'images/travel-landmarks.jpg',
             tags: ['差旅', '報銷', '公告'], validity: { type: 'until-delete', label: '文件刪除前有效', icon: 'fa-infinity' },
             content: `
                 <h3>一、修訂背景</h3>
                 <p>為配合公司 2026 年度政策調整，財務部門經內部審議後，決議修訂差旅報銷相關規範。</p>
+                <p><img src="images/travel-landmarks.jpg" alt="差旅報銷示意圖" style="max-width:100%;border-radius:8px;margin:8px 0;"></p>
                 <h3>二、主要修訂項目</h3>
                 <ol>
                     <li><b>國內出差住宿費</b>：上限由 NT$3,000 調整為 <b>NT$3,500/晚</b></li>
@@ -573,10 +575,12 @@
         'a04': {
             id: 'a04', title: 'Code Review 規範 v2.0 發佈', author: '蔡明達', dept: 'BU1',
             createdDate: '2026-03-10', lastModified: '2026-03-13', views: 76,
+            thumb: 'https://picsum.photos/seed/a04-codereview/400/300',
             tags: ['規範', 'CR'], validity: { type: 'permanent', label: '永久有效', icon: 'fa-shield-check' },
             content: `
                 <h3>一、修訂目的</h3>
                 <p>隨著團隊規模擴大，為確保程式碼品質與安全性，Code Review 規範更新至 v2.0。</p>
+                <p><img src="https://picsum.photos/seed/a04-codereview/400/300" alt="Code Review 示意圖" style="max-width:100%;border-radius:8px;margin:8px 0;"></p>
                 <h3>二、主要修訂內容</h3>
                 <ol>
                     <li>PR 必須至少 <b>2 人 Approve</b> 才可合併（原為 1 人）</li>
@@ -1003,6 +1007,29 @@
         const params = new URLSearchParams(window.location.search);
         return params.get('id') || 'h01';
     }
+
+    // ===== 動態返回鍵 =====
+    (function initBackLink() {
+        const params = new URLSearchParams(window.location.search);
+        const from = params.get('from');
+        const backLink = document.getElementById('backLink');
+        const backText = document.getElementById('backText');
+        if (from === 'latest') {
+            backLink.href = 'km-latest.html';
+            backText.textContent = '返回列表';
+        } else if (from === 'search') {
+            backLink.href = 'km-search.html';
+            backText.textContent = '返回搜尋結果';
+        } else if (!from && document.referrer) {
+            try {
+                const ref = new URL(document.referrer).pathname;
+                if (ref.endsWith('km-latest.html')) {
+                    backLink.href = 'km-latest.html';
+                    backText.textContent = '返回列表';
+                }
+            } catch(e) {}
+        }
+    })();
 
     // ===== 初始化 =====
     (function init() {
