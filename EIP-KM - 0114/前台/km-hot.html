@@ -65,40 +65,46 @@
             -moz-appearance: none;
             appearance: none;
             padding: 8px 32px 8px 14px;
-            border: 1px solid #E5E8ED;
-            border-radius: 8px;
-            font-size: 13px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-body-small);
             background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;
-            color: #374151;
+            color: var(--text-primary);
             cursor: pointer;
             transition: border-color .2s;
         }
         .filter-bar select:focus {
             outline: none;
-            border-color: #4F46E5;
+            border-color: var(--primary-color);
         }
         .filter-bar .filter-label {
-            font-size: 13px;
-            color: #9CA3AF;
+            font-size: var(--font-body-small);
+            color: var(--text-muted);
             font-weight: 600;
         }
 
         /* 結果統計 */
         .result-count {
-            font-size: 13px;
-            color: #9CA3AF;
+            font-size: var(--font-body-small);
+            color: var(--text-muted);
             margin: 0 0 12px 14px;
         }
-        .result-count strong { color: #111827; }
+        .result-count strong { color: var(--text-primary); }
 
-        /* 文章列表卡片 */
+        /* 覆蓋容器 overflow，讓陰影不被裁切 */
+        .km-container { overflow: visible; }
+
+        /* 文章列表卡片 — 對齊最新文章頁風格 */
         .hot-list-card {
-            background: #FFFFFF;
-            border: 1px solid #E5E8ED;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 1px 2px rgba(0,0,0,.02);
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid rgba(0, 0, 0, .125);
+            border-radius: .25rem;
+            box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
             overflow: hidden;
             margin-left: 14px;
+            min-width: 0;
+            word-wrap: break-word;
         }
 
         /* 文章項 */
@@ -106,12 +112,25 @@
             display: flex;
             align-items: flex-start;
             gap: 14px;
-            padding: 16px 20px;
-            border-bottom: 1px solid #F0F1F3;
+            padding: 16px calc(var(--spacing-card, 20px) + 16px);
+            border-bottom: none;
             cursor: pointer;
+            min-height: var(--touch-target-min);
             transition: background .15s;
+            position: relative;
         }
-        .hot-article-item:last-child { border-bottom: none; }
+        .hot-article-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            right: 16px;
+            height: 1px;
+            background: #E5E7EB;
+        }
+        .hot-article-item:first-child { padding-top: 36px; }
+        .hot-article-item:last-child { padding-bottom: 36px; }
+        .hot-article-item:last-child::after { display: none; }
         .hot-article-item:hover { background: #F3F4F6; }
 
         .hot-article-item .rank-badge {
@@ -124,25 +143,74 @@
         .rank-badge.rank-3 { background: #FFF7ED; color: #C2410C; }
         .rank-badge.rank-other { background: #F9FAFB; color: #9CA3AF; }
 
+        /* 左側圖片 */
+        .hot-article-item .article-thumb {
+            width: 155px; height: 95px;
+            border-radius: 0;
+            background: #F3F4F6;
+            border: 1px solid var(--border-color, #E5E8ED);
+            flex-shrink: 0;
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .hot-article-item .article-thumb img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .hot-article-item .article-thumb .thumb-placeholder {
+            color: #D1D5DB; font-size: 22px;
+        }
+
+        /* 分類 badge */
+        .category-badge {
+            display: inline-block;
+            font-size: var(--font-label, 12px);
+            font-weight: 500;
+            padding: 1px 8px;
+            border-radius: 3px;
+            white-space: nowrap;
+            background: #4B5563;
+            color: #fff;
+            border: none;
+        }
+
         .hot-article-item .article-info { flex: 1; min-width: 0; }
         .hot-article-item .article-title {
-            font-size: 15px; font-weight: 600; color: #111827;
-            margin-bottom: 6px; line-height: 1.4;
+            font-size: var(--font-card-title, 15px);
+            font-weight: 600;
+            color: #1E293B;
+            margin-bottom: 6px;
+            line-height: var(--line-height-tight, 1.4);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            letter-spacing: -0.01em;
         }
-        .hot-article-item:hover .article-title { color: #4F46E5; }
+        .hot-article-item:hover .article-title { color: var(--primary-color, #4F46E5); }
         .hot-article-item .article-meta {
-            display: flex; align-items: center; gap: 12px;
-            font-size: 12px; color: #9CA3AF; flex-wrap: wrap;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-size: var(--font-body-small, 12px);
+            color: #7F7F7F;
+            margin-top: 6px;
         }
         .hot-article-item .article-meta span {
-            display: flex; align-items: center; gap: 4px;
+            display: flex; align-items: center; gap: 3px;
         }
-        .hot-article-item .article-tags {
-            display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap;
+        .hot-article-item .article-meta i {
+            color: var(--text-muted, #9CA3AF); font-size: 12px; width: 14px; text-align: center;
         }
-        .hot-article-item .article-tags .tag {
-            font-size: 11px; padding: 2px 8px; border-radius: 6px;
-            border: 1px solid #E5E8ED; color: #6B7280; background: #F9FAFB;
+
+        /* 文章摘要 */
+        .hot-article-item .article-excerpt {
+            font-size: var(--font-body-small, 12px);
+            color: #7F7F7F;
+            margin-top: 6px;
+            line-height: 1.5;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .hot-article-item .view-count {
@@ -156,25 +224,50 @@
             font-size: 11px; color: #9CA3AF;
         }
 
-        /* 分頁 */
-        .pagination {
+        /* 分頁（卡片內） */
+        .pagination-bar {
             display: flex; align-items: center; justify-content: center;
-            gap: 6px; padding: 20px 0;
-            margin-left: 14px;
+            gap: 10px; padding: 20px 0;
+            border-top: 1px solid #E5E7EB;
+            margin: 0 16px;
+            font-size: var(--font-label, 12px);
+            color: var(--text-muted, #9CA3AF);
         }
-        .pagination .page-btn {
-            min-width: 36px; height: 36px; border-radius: 8px;
-            border: 1px solid #E5E8ED; background: #fff;
-            font-size: 13px; font-weight: 600; color: #6B7280;
+        .pagination-bar .page-btn {
+            min-width: 36px; height: 36px; border-radius: var(--radius-sm, 8px);
+            border: 1px solid var(--border-color, #E5E8ED); background: #fff;
+            font-size: var(--font-label, 12px); font-weight: 600; color: #6B7280;
             cursor: pointer; display: flex; align-items: center;
             justify-content: center; transition: all .15s;
         }
-        .pagination .page-btn:hover { background: #F3F4F6; border-color: #D1D5DB; }
-        .pagination .page-btn.active {
-            background: #4F46E5; color: #fff; border-color: #4F46E5;
+        .pagination-bar .page-btn:hover { background: #F3F4F6; border-color: #D1D5DB; }
+        .pagination-bar .page-btn.active {
+            background: var(--primary-color, #4F46E5); color: #fff; border-color: var(--primary-color, #4F46E5);
         }
-        .pagination .page-btn:disabled {
+        .pagination-bar .page-btn:disabled {
             opacity: .4; cursor: not-allowed;
+        }
+        .pagination-bar select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            padding: 8px 32px 8px 14px;
+            border: 1px solid var(--border-color, #E5E8ED);
+            border-radius: var(--radius-sm, 8px);
+            font-size: var(--font-body-small, 12px);
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+            color: var(--text-primary, #374151);
+            cursor: pointer;
+            transition: border-color .2s;
+        }
+        .pagination-bar select:focus {
+            outline: none;
+            border-color: var(--primary-color, #4F46E5);
+        }
+        .pagination-bar .page-info {
+            font-size: var(--font-label, 12px);
+            color: var(--text-muted, #9CA3AF);
+            margin-left: 8px;
         }
     </style>
 </head>
@@ -209,6 +302,16 @@
                     <option value="BU2">BU2</option>
                     <option value="Admin">Admin</option>
                 </select>
+                <select id="filterCategory" onchange="filterArticles()">
+                    <option value="">全部分類</option>
+                    <option value="公告通知">公告通知</option>
+                    <option value="規範辦法">規範辦法</option>
+                    <option value="SOP 流程">SOP 流程</option>
+                    <option value="技術文件">技術文件</option>
+                    <option value="教育訓練">教育訓練</option>
+                    <option value="專案相關">專案相關</option>
+                    <option value="其他">其他</option>
+                </select>
                 <select id="filterPeriod" onchange="filterArticles()">
                     <option value="all">不限時間</option>
                     <option value="week">近一週</option>
@@ -222,24 +325,9 @@
             <div class="result-count" id="resultCount"></div>
 
             <!-- 文章列表 -->
-            <div class="hot-list-card" id="hotListCard"></div>
-
-            <!-- 分頁 -->
-            <div class="pagination" id="pagination"></div>
-        </div>
-    </div>
-
-    <!-- ===== 文章內頁 Modal ===== -->
-    <div class="article-modal-overlay" id="articleModal">
-        <div class="article-modal">
-            <div class="am-header">
-                <h3 id="amTitle">—</h3>
-                <button class="btn ghost" onclick="closeArticleModal()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="am-meta" id="amMeta"></div>
-            <div class="am-body" id="amBody"></div>
-            <div class="am-footer">
-                <button class="btn" onclick="closeArticleModal()">關閉</button>
+            <div class="hot-list-card" id="hotListCard">
+                <div id="articleListBody"></div>
+                <div class="pagination-bar" id="pagination"></div>
             </div>
         </div>
     </div>
@@ -259,39 +347,40 @@
        ============================================================ */
 
     const _allHotArticles = [
-        { id:'h01', title:'差旅報銷規範修訂公告', author:'吳佳蓉', dept:'Finance', date:'2026-03-14', views:1024, tags:['差旅','報銷','公告'],
+        { id:'h01', title:'差旅報銷規範修訂公告', author:'吳佳蓉', dept:'Finance', date:'2026-03-14', views:1024, category:'規範辦法',
+          thumb:'images/travel-landmarks.jpg',
           content:'<p>自 2026年4月1日起，差旅報銷規範將進行以下調整：</p><p>1. 國內出差住宿費上限調整為每晚 NT$3,500<br>2. 交通費須於 3 個工作天內提交核銷<br>3. 新增線上簽核流程，無需紙本表單</p>' },
-        { id:'h02', title:'請假制度常見問題 FAQ', author:'李美玲', dept:'HR', date:'2026-02-20', views:876, tags:['請假','FAQ'],
+        { id:'h02', title:'請假制度常見問題 FAQ', author:'李美玲', dept:'HR', date:'2026-02-20', views:876, category:'規範辦法',
           content:'<p>Q: 特休假可以保留到隔年嗎？<br>A: 依勞基法規定，特休假應於當年度休完，未休完者依規定結算。</p><p>Q: 病假需要提供證明嗎？<br>A: 連續請假 3 天以上需附醫療證明。</p>' },
-        { id:'h03', title:'入職流程 SOP 完整指南', author:'李美玲', dept:'HR', date:'2026-01-15', views:654, tags:['SOP','入職'],
+        { id:'h03', title:'入職流程 SOP 完整指南', author:'李美玲', dept:'HR', date:'2026-01-15', views:654, category:'SOP 流程',
           content:'<p>新進人員入職流程：</p><p>1. 報到日攜帶身分證、畢業證書、存摺影本<br>2. IT 部門領取筆電及帳號<br>3. 完成新人訓練（約 3 天）<br>4. 部門主管安排工作交接</p>' },
-        { id:'h04', title:'Code Review 規範 v2.0', author:'蔡明達', dept:'BU1', date:'2026-03-13', views:512, tags:['規範','CR'],
+        { id:'h04', title:'Code Review 規範 v2.0', author:'蔡明達', dept:'BU1', date:'2026-03-13', views:512, category:'規範辦法',
           content:'<p>Code Review 規範主要修訂：</p><p>• PR 必須至少 2 人 Approve 才可合併<br>• 新增安全性檢查清單<br>• CI pipeline 需全部通過</p>' },
-        { id:'h05', title:'X 專案技術架構圖 V3', author:'張志豪', dept:'BU2', date:'2026-03-10', views:389, tags:['架構','專案'],
+        { id:'h05', title:'X 專案技術架構圖 V3', author:'張志豪', dept:'BU2', date:'2026-03-10', views:389, category:'技術文件',
           content:'<p>X 專案第三版架構圖已更新，採用微服務架構，包含以下服務：</p><p>• API Gateway<br>• Auth Service<br>• User Service<br>• Notification Service</p>' },
-        { id:'h06', title:'2025年度財務報表摘要', author:'吳佳蓉', dept:'Finance', date:'2026-03-12', views:301, tags:['財報','年度'],
+        { id:'h06', title:'2025年度財務報表摘要', author:'吳佳蓉', dept:'Finance', date:'2026-03-12', views:301, category:'公告通知',
           content:'<p>2025年度主要數據：</p><p>• 營收較去年成長 12%<br>• 營業利益率維持 18%<br>• 研發投入佔營收比例提升至 15%</p>' },
-        { id:'h07', title:'新人指南 — 快速上手', author:'黃淑芬', dept:'BU2', date:'2026-02-01', views:278, tags:['新人','指南'],
+        { id:'h07', title:'新人指南 — 快速上手', author:'黃淑芬', dept:'BU2', date:'2026-02-01', views:278, category:'教育訓練',
           content:'<p>歡迎加入！以下是快速上手指南：</p><p>1. 熟悉內部系統（EIP、KM、HR 系統）<br>2. 了解團隊協作工具（Teams、Jira）<br>3. 閱讀部門 Wiki 文件</p>' },
-        { id:'h08', title:'資安政策宣導 — 2026年度', author:'陳建宏', dept:'BU1', date:'2026-03-01', views:245, tags:['資安','政策'],
+        { id:'h08', title:'資安政策宣導 — 2026年度', author:'陳建宏', dept:'BU1', date:'2026-03-01', views:245, category:'公告通知',
           content:'<p>2026年度資安政策重點：</p><p>• 密碼每 90 天更換一次<br>• 禁止使用個人雲端儲存公司資料<br>• VPN 連線需啟用二階段驗證</p>' },
-        { id:'h09', title:'專案管理流程標準化', author:'林志偉', dept:'BU2', date:'2026-02-15', views:198, tags:['專案','流程'],
+        { id:'h09', title:'專案管理流程標準化', author:'林志偉', dept:'BU2', date:'2026-02-15', views:198, category:'SOP 流程',
           content:'<p>專案管理標準流程包含五大階段：啟動、規劃、執行、監控、結案。每個階段皆需產出對應文件並經過審核。</p>' },
-        { id:'h10', title:'員工福利手冊 2026 版', author:'李美玲', dept:'HR', date:'2026-01-10', views:187, tags:['福利','HR'],
+        { id:'h10', title:'員工福利手冊 2026 版', author:'李美玲', dept:'HR', date:'2026-01-10', views:187, category:'其他',
           content:'<p>2026年度員工福利包含：</p><p>• 年度健檢補助 NT$5,000<br>• 教育訓練補助每年 NT$20,000<br>• 社團活動補助<br>• 彈性工時制度</p>' },
-        { id:'h11', title:'會議室預約系統使用說明', author:'楊淑惠', dept:'Admin', date:'2026-02-28', views:165, tags:['會議室','系統'],
+        { id:'h11', title:'會議室預約系統使用說明', author:'楊淑惠', dept:'Admin', date:'2026-02-28', views:165, category:'SOP 流程',
           content:'<p>會議室預約系統已上線，請至 EIP 系統中進行預約。大型會議室需提前 3 天預約，並於使用後完成設備歸還。</p>' },
-        { id:'h12', title:'API 設計規範 RESTful 指南', author:'許家豪', dept:'BU1', date:'2026-03-05', views:156, tags:['API','規範'],
+        { id:'h12', title:'API 設計規範 RESTful 指南', author:'許家豪', dept:'BU1', date:'2026-03-05', views:156, category:'技術文件',
           content:'<p>RESTful API 設計原則：</p><p>• 使用標準 HTTP 動詞<br>• 資源名稱使用複數名詞<br>• 版本控制使用 URL prefix<br>• 回傳統一格式的 JSON 結構</p>' },
-        { id:'h13', title:'績效考核制度說明', author:'李美玲', dept:'HR', date:'2026-01-25', views:143, tags:['績效','HR'],
+        { id:'h13', title:'績效考核制度說明', author:'李美玲', dept:'HR', date:'2026-01-25', views:143, category:'公告通知',
           content:'<p>績效考核分為年中考核與年度考核，評核項目包含：工作目標達成率、職能展現、團隊合作等三大面向。</p>' },
-        { id:'h14', title:'雲端服務費用管理規範', author:'吳佳蓉', dept:'Finance', date:'2026-02-10', views:132, tags:['雲端','費用'],
+        { id:'h14', title:'雲端服務費用管理規範', author:'吳佳蓉', dept:'Finance', date:'2026-02-10', views:132, category:'規範辦法',
           content:'<p>各部門使用雲端服務（AWS、Azure、GCP）需事先提出預算申請，月費超過 NT$50,000 需經部門主管核准。</p>' },
-        { id:'h15', title:'BU2 新人訓練教材', author:'黃淑芬', dept:'BU2', date:'2026-03-08', views:121, tags:['培訓','BU2'],
+        { id:'h15', title:'BU2 新人訓練教材', author:'黃淑芬', dept:'BU2', date:'2026-03-08', views:121, category:'教育訓練',
           content:'<p>BU2 新人訓練為期兩週，包含：技術基礎培訓、專案流程介紹、開發環境建置、程式碼規範說明。</p>' },
     ];
 
-    const PAGE_SIZE = 10;
+    var _pageSize = 10;
     let _currentPage = 1;
     let _filtered = [];
 
@@ -301,42 +390,61 @@
 
     function filterArticles() {
         const dept = document.getElementById('filterDept').value;
-        _filtered = _allHotArticles.filter(a => !dept || a.dept === dept);
+        const cat  = document.getElementById('filterCategory').value;
+        _filtered = _allHotArticles.filter(a => {
+            if (dept && a.dept !== dept) return false;
+            if (cat && a.category !== cat) return false;
+            return true;
+        });
         _currentPage = 1;
         renderList();
     }
 
+    function stripHtml(html) {
+        var tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || '';
+    }
+
     function renderList() {
-        const start = (_currentPage - 1) * PAGE_SIZE;
-        const page = _filtered.slice(start, start + PAGE_SIZE);
+        var start = (_currentPage - 1) * _pageSize;
+        var page = _filtered.slice(start, start + _pageSize);
 
         document.getElementById('resultCount').innerHTML =
-            `共 <strong>${_filtered.length}</strong> 篇熱門文章`;
+            '共 <strong>' + _filtered.length + '</strong> 篇熱門文章';
 
-        const host = document.getElementById('hotListCard');
+        var host = document.getElementById('articleListBody');
         if (!page.length) {
             host.innerHTML = '<div style="padding:40px;text-align:center;color:#9CA3AF;"><i class="fa-solid fa-fire" style="font-size:24px;margin-bottom:8px;display:block;"></i>沒有符合條件的文章</div>';
+            document.getElementById('pagination').style.display = 'none';
         } else {
-            host.innerHTML = page.map((a, idx) => {
-                const globalIdx = start + idx;
-                const rankClass = globalIdx < 3 ? 'rank-' + (globalIdx + 1) : 'rank-other';
-                return `
-                <div class="hot-article-item" onclick="openArticle('${a.id}')">
-                    <div class="rank-badge ${rankClass}">${globalIdx + 1}</div>
-                    <div class="article-info">
-                        <h4 class="article-title">${escHtml(a.title)}</h4>
-                        <div class="article-meta">
-                            <span><i class="fa-solid fa-user"></i> ${escHtml(a.author)}</span>
-                            <span><i class="fa-solid fa-building"></i> ${escHtml(a.dept)}</span>
-                            <span><i class="fa-regular fa-calendar"></i> ${a.date}</span>
-                        </div>
-                        <div class="article-tags">${(a.tags || []).map(t => '<span class="tag">' + escHtml(t) + '</span>').join('')}</div>
-                    </div>
-                    <div class="view-count">
-                        <div class="vc-num">${a.views.toLocaleString()}</div>
-                        <div class="vc-label">瀏覽</div>
-                    </div>
-                </div>`;
+            document.getElementById('pagination').style.display = '';
+            host.innerHTML = page.map(function(a, idx) {
+                var globalIdx = start + idx;
+                var rankClass = globalIdx < 3 ? 'rank-' + (globalIdx + 1) : 'rank-other';
+                var excerpt = stripHtml(a.content);
+                if (excerpt.length > 80) excerpt = excerpt.substring(0, 80) + '…';
+                var thumbHtml = a.thumb
+                    ? '<div class="article-thumb"><img src="' + a.thumb + '" alt=""></div>'
+                    : '<div class="article-thumb"><span class="thumb-placeholder"><i class="fa-regular fa-image"></i></span></div>';
+                return '<div class="hot-article-item" onclick="openArticle(\'' + a.id + '\')">' +
+                    '<div class="rank-badge ' + rankClass + '">' + (globalIdx + 1) + '</div>' +
+                    thumbHtml +
+                    '<div class="article-info">' +
+                        '<h4 class="article-title">' + escHtml(a.title) + '</h4>' +
+                        '<div class="article-meta">' +
+                            '<span class="category-badge">' + escHtml(a.category) + '</span>' +
+                            '<span><i class="fa-solid fa-user"></i> ' + escHtml(a.author) + '</span>' +
+                            '<span><i class="fa-solid fa-building"></i> ' + escHtml(a.dept) + '</span>' +
+                            '<span><i class="fa-solid fa-eye"></i> ' + a.views + '</span>' +
+                        '</div>' +
+                        '<div class="article-excerpt">' + escHtml(excerpt) + '</div>' +
+                    '</div>' +
+                    '<div class="view-count">' +
+                        '<div class="vc-num">' + a.views.toLocaleString() + '</div>' +
+                        '<div class="vc-label">瀏覽</div>' +
+                    '</div>' +
+                '</div>';
             }).join('');
         }
 
@@ -344,38 +452,51 @@
     }
 
     function renderPagination() {
-        const totalPages = Math.ceil(_filtered.length / PAGE_SIZE);
-        if (totalPages <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
-        let html = `<button class="page-btn" onclick="goPage(${_currentPage - 1})" ${_currentPage === 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i></button>`;
-        for (let i = 1; i <= totalPages; i++) {
-            html += `<button class="page-btn ${i === _currentPage ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
+        var totalPages = Math.ceil(_filtered.length / _pageSize);
+        var total = _filtered.length;
+        var start = (_currentPage - 1) * _pageSize + 1;
+        var end = Math.min(_currentPage * _pageSize, total);
+        if (total === 0) { document.getElementById('pagination').innerHTML = ''; return; }
+
+        var html = '';
+        html += '<button class="page-btn" onclick="goPage(' + (_currentPage - 1) + ')" ' + (_currentPage === 1 ? 'disabled' : '') + '><i class="fa-solid fa-chevron-left"></i></button>';
+        for (var i = 1; i <= totalPages; i++) {
+            html += '<button class="page-btn ' + (i === _currentPage ? 'active' : '') + '" onclick="goPage(' + i + ')">' + i + '</button>';
         }
-        html += `<button class="page-btn" onclick="goPage(${_currentPage + 1})" ${_currentPage === totalPages ? 'disabled' : ''}><i class="fa-solid fa-chevron-right"></i></button>`;
+        html += '<button class="page-btn" onclick="goPage(' + (_currentPage + 1) + ')" ' + (_currentPage === totalPages ? 'disabled' : '') + '><i class="fa-solid fa-chevron-right"></i></button>';
+        html += '<select onchange="changePageSize(this.value)">';
+        [10, 20, 50].forEach(function(n) {
+            html += '<option value="' + n + '"' + (n === _pageSize ? ' selected' : '') + '>' + n + ' 筆</option>';
+        });
+        html += '</select>';
+        html += '<span class="page-info">每頁筆數</span>';
+        html += '<span class="page-info">' + start + '-' + end + ' of ' + total + '</span>';
+
         document.getElementById('pagination').innerHTML = html;
     }
 
+    function changePageSize(val) {
+        _pageSize = parseInt(val, 10);
+        _currentPage = 1;
+        renderList();
+    }
+
     function goPage(p) {
-        const totalPages = Math.ceil(_filtered.length / PAGE_SIZE);
+        var totalPages = Math.ceil(_filtered.length / _pageSize);
         if (p < 1 || p > totalPages) return;
         _currentPage = p;
         renderList();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // ===== 文章 Modal =====
+    // ===== 文章導航 =====
     function openArticle(id) {
         window.location.href = 'km-article.html?id=' + encodeURIComponent(id) + '&from=hot';
     }
-    function closeArticleModal() {
-        document.getElementById('articleModal').classList.remove('show');
-    }
-    document.getElementById('articleModal').addEventListener('click', function (e) {
-        if (e.target === this) closeArticleModal();
-    });
 
     // ===== 工具 =====
     function escHtml(str) {
-        const el = document.createElement('span');
+        var el = document.createElement('span');
         el.textContent = str;
         return el.innerHTML;
     }
