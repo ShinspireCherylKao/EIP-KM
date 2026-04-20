@@ -39,39 +39,7 @@
         }
         .back-link-bar a:hover { background: var(--hover-bg); color: var(--primary-color); }
 
-        /* 統計卡片 */
-        .stat-cards {
-            display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 16px; margin: 24px 0 20px 14px;
-        }
-        @media (max-width: 900px) { .stat-cards { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 500px) { .stat-cards { grid-template-columns: 1fr; } }
-        .stat-card {
-            background: #fff; border: 1px solid #E5E8ED; border-radius: 12px;
-            padding: 20px; display: flex; align-items: center; gap: 14px;
-            transition: box-shadow .2s; cursor: pointer;
-        }
-        .stat-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.06); }
-        .stat-card .stat-icon {
-            width: 44px; height: 44px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px; flex-shrink: 0;
-        }
-        .stat-card .stat-body { flex: 1; }
-        .stat-card .stat-number {
-            font-size: 24px; font-weight: 800; line-height: 1; margin-bottom: 2px;
-        }
-        .stat-card .stat-label {
-            font-size: 12px; color: #9CA3AF; font-weight: 600;
-        }
-        .stat-card.published .stat-icon { background: #ECFDF5; color: #059669; }
-        .stat-card.published .stat-number { color: #059669; }
-        .stat-card.draft .stat-icon { background: #FEF3C7; color: #D97706; }
-        .stat-card.draft .stat-number { color: #D97706; }
-        .stat-card.reviewing .stat-icon { background: #DBEAFE; color: #2563EB; }
-        .stat-card.reviewing .stat-number { color: #2563EB; }
-        .stat-card.expired .stat-icon { background: #FEF2F2; color: #DC2626; }
-        .stat-card.expired .stat-number { color: #DC2626; }
+
 
         /* 操作列 */
         .toolbar {
@@ -82,19 +50,22 @@
             display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
         }
         .toolbar .search-box {
-            position: relative;
+            display: flex; align-items: center; gap: 8px;
+            border: 1px solid #E5E8ED; border-radius: 8px;
+            background: #fff; padding: 0 12px;
+            min-width: 180px; max-width: 280px; flex: 1;
+            transition: border-color .2s;
         }
+        .toolbar .search-box:focus-within { border-color: #4F46E5; }
         .toolbar .search-box i {
-            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-            color: #9CA3AF; font-size: 13px;
+            color: #9CA3AF; font-size: 13px; flex-shrink: 0;
         }
         .toolbar .search-box input {
-            padding: 8px 12px 8px 34px; width: 240px;
-            border: 1px solid #E5E8ED; border-radius: 8px;
-            font-size: 13px; background: #fff;
-            transition: border-color .2s; box-sizing: border-box;
+            border: none; background: transparent;
+            padding: 8px 0; font-size: 13px;
+            width: 100%; min-width: 0;
         }
-        .toolbar .search-box input:focus { outline: none; border-color: #4F46E5; }
+        .toolbar .search-box input:focus { outline: none; }
         .toolbar select {
             -webkit-appearance: none; -moz-appearance: none; appearance: none;
             padding: 8px 32px 8px 14px; border: 1px solid #E5E8ED; border-radius: 8px;
@@ -171,23 +142,21 @@
 
         /* Tabs */
         .manage-tabs {
-            display: flex; border-bottom: 2px solid #F0F1F3;
-            margin: 0 0 20px 14px; gap: 0;
+            display: flex; border-bottom: 1px solid #E5E8ED;
+            margin: 0 0 16px; gap: 0;
         }
         .manage-tab {
-            padding: 10px 20px; font-size: 13px; font-weight: 600;
+            padding: 9px 16px; font-size: 13px; font-weight: 500;
             cursor: pointer; border: none; background: none;
-            color: #9CA3AF; border-bottom: 2px solid transparent;
-            margin-bottom: -2px; transition: all .2s;
-            display: flex; align-items: center; gap: 6px;
+            color: #6B7280; border-bottom: 2px solid transparent;
+            margin-bottom: -1px; transition: color .15s, border-color .15s;
         }
-        .manage-tab:hover { color: #6B7280; }
-        .manage-tab.active { color: #4F46E5; border-bottom-color: #4F46E5; }
+        .manage-tab:hover { color: #374151; }
+        .manage-tab.active { color: #4F46E5; border-bottom-color: #4F46E5; font-weight: 600; }
         .manage-tab .tab-count {
-            font-size: 11px; padding: 1px 7px; border-radius: 999px;
-            background: #F3F4F6; color: #9CA3AF; font-weight: 700;
+            font-size: 11px; margin-left: 4px; color: #9CA3AF; font-weight: 600;
         }
-        .manage-tab.active .tab-count { background: #EEF2FF; color: #4F46E5; }
+        .manage-tab.active .tab-count { color: #4F46E5; }
 
         /* 分頁 */
         .pagination {
@@ -214,6 +183,145 @@
 
         /* 快速操作 Tooltip */
         .manage-table .action-btn[title] { position: relative; }
+
+        /* ===== 個人專區左側選單 ===== */
+        .personal-sidebar .panel-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid #E5E8ED;
+            background: #F9FAFB;
+        }
+        .personal-sidebar .panel-header strong {
+            font-size: 15px; font-weight: 700; color: #111827;
+        }
+        .personal-sidebar .panel-body {
+            padding: 12px 14px;
+        }
+        .sidebar-section {
+            margin-bottom: 8px;
+        }
+        .sidebar-section-title {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 13px; font-weight: 700; color: #374151;
+            padding: 8px 8px 6px; cursor: default;
+        }
+        .sidebar-section-title i {
+            font-size: 12px; color: #9CA3AF;
+        }
+        .sidebar-nav-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 7px 12px 7px 28px; margin: 1px 0;
+            border-radius: 6px; font-size: 13px; color: #6B7280;
+            cursor: pointer; transition: all .15s; text-decoration: none;
+        }
+        .sidebar-nav-item:hover {
+            background: #F3F4F6; color: #374151;
+        }
+        .sidebar-nav-item.active {
+            background: #EEF2FF; color: #4F46E5; font-weight: 600;
+        }
+        .sidebar-nav-item .nav-badge {
+            font-size: 11px; padding: 1px 7px; border-radius: 999px;
+            background: #F3F4F6; color: #9CA3AF; font-weight: 700;
+        }
+        .sidebar-nav-item.active .nav-badge {
+            background: #C7D2FE; color: #4F46E5;
+        }
+        .sidebar-section + .sidebar-section {
+            border-top: 1px solid #F0F1F3;
+            padding-top: 8px;
+        }
+
+        /* 右側主區域：移除多餘 margin-left */
+        .manage-right-panel .manage-tabs,
+        .manage-right-panel .toolbar,
+        .manage-right-panel .manage-table-card,
+        .manage-right-panel .page-title-bar {
+            margin-left: 0;
+        }
+
+        @media (max-width: 960px) {
+            .km-layout { grid-template-columns: 1fr; }
+        }
+
+        /* ===== 審核人/送審人頭像 ===== */
+        .person-cell {
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .person-avatar {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: #EEF2FF; color: #4F46E5;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; flex-shrink: 0;
+        }
+
+        /* ===== 審核詳情 Modal ===== */
+        .review-modal-overlay {
+            position: fixed; inset: 0; display: none;
+            align-items: center; justify-content: center;
+            background: rgba(15,23,42,.5); z-index: 100;
+            padding: 16px; backdrop-filter: blur(4px);
+        }
+        .review-modal-overlay.show { display: flex; }
+        .review-modal {
+            width: min(700px, 96vw); max-height: 90vh; overflow-y: auto;
+            background: #fff; border-radius: 16px;
+            box-shadow: 0 24px 48px rgba(0,0,0,.16);
+        }
+        .rm-header {
+            padding: 20px 24px; border-bottom: 1px solid #F0F1F3;
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+        }
+        .rm-header h3 { font-size: var(--font-section-title); font-weight: 700; margin: 0; line-height: 1.4; }
+        .rm-header .close-btn {
+            background: none; border: none; font-size: 18px; color: #9CA3AF;
+            cursor: pointer; padding: 4px; transition: color .15s;
+        }
+        .rm-header .close-btn:hover { color: #374151; }
+        .rm-meta-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 12px; padding: 16px 24px; background: #F9FAFB;
+            border-bottom: 1px solid #F0F1F3;
+        }
+        .rm-meta-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .rm-meta-item .meta-label { color: #9CA3AF; font-size: 12px; }
+        .rm-meta-item .meta-value { font-weight: 600; color: #111827; }
+        .rm-body { padding: 24px; font-size: 14px; line-height: 1.8; color: #374151; }
+        .rm-body p { margin-bottom: 14px; }
+        .rm-history-section {
+            padding: 16px 24px; border-top: 1px solid #F0F1F3;
+        }
+        .rm-history-section h4 {
+            font-size: 14px; font-weight: 700; color: #111827;
+            margin: 0 0 10px; display: flex; align-items: center; gap: 6px;
+        }
+        .review-history-item {
+            display: flex; gap: 12px; padding: 10px 0;
+            border-bottom: 1px solid #F0F1F3; font-size: 13px;
+        }
+        .review-history-item:last-child { border-bottom: none; }
+        .rh-icon {
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; flex-shrink: 0;
+        }
+        .rh-icon.created  { background: #EEF2FF; color: #4F46E5; }
+        .rh-icon.approved  { background: #ECFDF5; color: #059669; }
+        .rh-icon.rejected  { background: #FEF2F2; color: #DC2626; }
+        .rh-icon.reviewing { background: #DBEAFE; color: #1D4ED8; }
+        .rh-content { flex: 1; }
+        .rh-action { font-weight: 600; color: #111827; }
+        .rh-time { font-size: 11px; color: #9CA3AF; margin-top: 2px; }
+        .rh-comment { font-size: 12px; color: #6B7280; margin-top: 4px; font-style: italic; }
+        .rm-footer {
+            padding: 14px 24px; border-top: 1px solid #F0F1F3;
+            display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+        }
+        .btn-cancel {
+            padding: 8px 18px; border: 1px solid #E5E8ED; border-radius: 8px;
+            background: #fff; color: #6B7280; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: all .15s;
+        }
+        .btn-cancel:hover { background: #F3F4F6; }
     </style>
 </head>
 <body>
@@ -230,44 +338,97 @@
             <div class="back-link-bar">
                 <a href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> 返回知識總覽</a>
             </div>
-            <div class="page-title-bar">
+            <div class="page-title-bar" style="margin-left:14px;" id="pageTitleBar">
                 <div>
                     <h2>管理文章</h2>
                 </div>
                 <a class="btn-primary" href="km-editor.html"><i class="fa-solid fa-plus"></i> 新增文章</a>
             </div>
 
-            <!-- 統計卡片 -->
-            <div class="stat-cards" id="statCards"></div>
-
-            <!-- Tabs -->
-            <div class="manage-tabs" id="manageTabs"></div>
-
-            <!-- 搜尋列 -->
-            <div class="toolbar">
-                <div class="toolbar-left">
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="搜尋文章標題…" id="searchInput" oninput="searchArticles()">
+            <!-- 雙欄佈局：左側選單 + 右側主內容 -->
+            <div class="km-layout">
+                <!-- 左側：個人專區選單 -->
+                <div class="km-sidebar-panel personal-sidebar">
+                    <div class="panel-header">
+                        <strong>個人專區</strong>
                     </div>
-                    <select id="filterSort" onchange="searchArticles()">
-                        <option value="date-desc">最新在前</option>
-                        <option value="date-asc">最舊在前</option>
-                        <option value="views-desc">瀏覽量高→低</option>
-                        <option value="title-asc">標題 A→Z</option>
-                    </select>
+                    <div class="panel-body">
+                        <!-- 個人收藏 -->
+                        <div class="sidebar-section">
+                            <div class="sidebar-section-title"><i class="fa-solid fa-bookmark"></i> 個人收藏</div>
+                            <a class="sidebar-nav-item" href="km-favorites.html" data-nav="favorite">我的收藏</a>
+                        </div>
+                        <!-- 個人貢獻 -->
+                        <div class="sidebar-section">
+                            <div class="sidebar-section-title"><i class="fa-solid fa-pen-to-square"></i> 個人貢獻</div>
+                            <a class="sidebar-nav-item" href="#published" data-nav="published">已發表文件 <span class="nav-badge" id="badgePublished">7</span></a>
+                            <a class="sidebar-nav-item" href="#draft" data-nav="draft">草稿 <span class="nav-badge" id="badgeDraft">3</span></a>
+                            <a class="sidebar-nav-item" href="#expired" data-nav="expired">失效(過期)文件 <span class="nav-badge" id="badgeExpired">3</span></a>
+                            <a class="sidebar-nav-item" href="#pending-effect" data-nav="pending-effect">未生效文件</a>
+                        </div>
+                        <!-- 文件審核 -->
+                        <div class="sidebar-section">
+                            <div class="sidebar-section-title"><i class="fa-solid fa-clipboard-check"></i> 文件審核</div>
+                            <a class="sidebar-nav-item" href="#my-submit" data-nav="my-submit">我送審的文件 <span class="nav-badge" id="badgeMySubmit">5</span></a>
+                            <a class="sidebar-nav-item" href="#wait-me" data-nav="wait-me">等我審的文件 <span class="nav-badge" id="badgeWaitMe">3</span></a>
+                        </div>
+                    </div>
                 </div>
-                <div class="toolbar-right">
-                    <button class="btn-outline" onclick="exportArticles()"><i class="fa-solid fa-download"></i> 匯出</button>
+
+                <!-- 右側：主內容 -->
+                <div class="manage-right-panel">
+                    <!-- 統計卡片 -->
+                    <div class="stat-cards" id="statCards"></div>
+
+                    <!-- Tabs -->
+                    <div class="manage-tabs" id="manageTabs"></div>
+
+                    <!-- 搜尋列 -->
+                    <div class="toolbar">
+                        <div class="toolbar-left">
+                            <div class="search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" placeholder="搜尋文章標題…" id="searchInput" oninput="searchArticles()">
+                            </div>
+                            <select id="filterSort" onchange="searchArticles()">
+                                <option value="date-desc">最新在前</option>
+                                <option value="date-asc">最舊在前</option>
+                                <option value="views-desc">瀏覽量高→低</option>
+                                <option value="title-asc">標題 A→Z</option>
+                            </select>
+                        </div>
+                        <div class="toolbar-right">
+                            <button class="btn-outline" onclick="exportArticles()"><i class="fa-solid fa-download"></i> 匯出</button>
+                        </div>
+                    </div>
+
+                    <!-- 文章表格 -->
+                    <div class="manage-table-card">
+                        <table class="manage-table">
+                            <thead id="tableHead"></thead>
+                            <tbody id="tableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- 文章表格 -->
-            <div class="manage-table-card">
-                <table class="manage-table">
-                    <thead id="tableHead"></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
+    <!-- ===== 審核詳情 Modal ===== -->
+    <div class="review-modal-overlay" id="reviewModal">
+        <div class="review-modal">
+            <div class="rm-header">
+                <h3 id="rmTitle">—</h3>
+                <button class="close-btn" onclick="closeReviewModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="rm-meta-grid" id="rmMeta"></div>
+            <div class="rm-body" id="rmBody"></div>
+            <div class="rm-history-section">
+                <h4><i class="fa-solid fa-clock-rotate-left"></i> 審核歷程</h4>
+                <div id="rmHistory"></div>
+            </div>
+            <div class="rm-footer">
+                <button class="btn-cancel" onclick="closeReviewModal()">關閉</button>
             </div>
         </div>
     </div>
@@ -283,9 +444,10 @@
 
     <script>
     /* ============================================================
-       管理文章 — 假資料
+       管理文章 / 文件審核 — 雙模式頁面
        ============================================================ */
 
+    // ===== 個人貢獻假資料 =====
     const _myArticles = {
         published: [
             { id:'p01', title:'差旅報銷規範修訂公告', date:'2026-03-14', views:102, tags:['差旅','報銷'] },
@@ -312,183 +474,426 @@
         ],
     };
 
-    let _currentTab = 'published';
-
-    const TAB_CONFIG = [
-        { key: 'published', label: '已發表', icon: 'fa-circle-check' },
-        { key: 'draft', label: '草稿', icon: 'fa-file-pen' },
-        { key: 'reviewing', label: '審核中', icon: 'fa-spinner' },
-        { key: 'expired', label: '已失效', icon: 'fa-file-circle-xmark' },
+    // ===== 文件審核假資料 =====
+    const _mySubmitted = [
+        { id:'s01', title:'BU2 部門月報 — 2026年3月', reviewer:'黃淑芬', dept:'BU2', submitDate:'2026-03-15', status:'reviewing', statusText:'審核中',
+          content:'<p>BU2 部門 2026 年 3 月份月報，包含專案進度、人力配置與下月計畫。</p>',
+          history:[
+              { action:'送審', user:'我', time:'2026-03-15 09:30', icon:'created' },
+              { action:'審核中', user:'黃淑芬', time:'2026-03-15 14:00', icon:'reviewing' }
+          ]
+        },
+        { id:'s02', title:'X 專案提案書 v2', reviewer:'鄭總經理', dept:'BU2', submitDate:'2026-03-12', status:'pending', statusText:'待審核',
+          content:'<p>X 專案第二版提案書，新增市場分析與競品比較章節。</p>',
+          history:[
+              { action:'送審', user:'我', time:'2026-03-12 10:15', icon:'created' }
+          ]
+        },
+        { id:'s03', title:'技術選型評估報告', reviewer:'蔡明達', dept:'BU1', submitDate:'2026-03-08', status:'approved', statusText:'已通過',
+          content:'<p>針對新專案的前後端技術選型評估，包含效能、社群活躍度、學習曲線等面向分析。</p>',
+          history:[
+              { action:'送審', user:'我', time:'2026-03-08 11:00', icon:'created' },
+              { action:'審核通過', user:'蔡明達', time:'2026-03-10 14:30', icon:'approved', comment:'內容完整，符合規範，同意發表。' }
+          ]
+        },
+        { id:'s04', title:'Q1 績效自評表', reviewer:'黃淑芬', dept:'BU2', submitDate:'2026-03-05', status:'rejected', statusText:'退回修改',
+          content:'<p>2026 年第一季個人績效自評表。</p>',
+          history:[
+              { action:'送審', user:'我', time:'2026-03-05 09:00', icon:'created' },
+              { action:'退回修改', user:'黃淑芬', time:'2026-03-06 10:45', icon:'rejected', comment:'缺少量化數據支撐，請補充具體達成率後重新送審。' }
+          ]
+        },
+        { id:'s05', title:'新版 API 設計規格書', reviewer:'許家豪', dept:'BU1', submitDate:'2026-03-18', status:'pending', statusText:'待審核',
+          content:'<p>REST API v3 設計規格書，涵蓋端點定義、認證機制、錯誤碼規範。</p>',
+          history:[
+              { action:'送審', user:'我', time:'2026-03-18 16:00', icon:'created' }
+          ]
+        },
     ];
 
+    const _pendingMyReview = [
+        { id:'w01', title:'新進人員培訓計畫書', submitter:'李美玲', dept:'HR', submitDate:'2026-03-16', status:'pending', statusText:'待審核',
+          content:'<p>2026年度新進人員培訓計畫書，涵蓋公司文化介紹、系統操作訓練、部門輪調見習等。</p>',
+          history:[
+              { action:'送審', user:'李美玲', time:'2026-03-16 14:30', icon:'created' }
+          ]
+        },
+        { id:'w02', title:'BU1 開發規範修訂草案', submitter:'許家豪', dept:'BU1', submitDate:'2026-03-14', status:'pending', statusText:'待審核',
+          content:'<p>本次修訂主要針對程式碼風格統一、Git 分支策略、CI/CD pipeline 強制檢查等項目。</p>',
+          history:[
+              { action:'送審', user:'許家豪', time:'2026-03-14 09:15', icon:'created' },
+              { action:'補充附件', user:'許家豪', time:'2026-03-15 10:00', icon:'created' }
+          ]
+        },
+        { id:'w03', title:'會議室使用管理辦法', submitter:'楊淑惠', dept:'Admin', submitDate:'2026-03-10', status:'pending', statusText:'待審核',
+          content:'<p>為提升會議室使用效率，制定預約規則、未報到釋出機制、設備管理等辦法。</p>',
+          history:[
+              { action:'送審', user:'楊淑惠', time:'2026-03-10 16:45', icon:'created' }
+          ]
+        },
+    ];
+
+    // ===== Hash → Mode/Tab 對照 =====
+    var HASH_MAP = {
+        '':              { mode:'contribution', tab:'published' },
+        'published':     { mode:'contribution', tab:'published' },
+        'draft':         { mode:'contribution', tab:'draft' },
+        'reviewing':     { mode:'contribution', tab:'reviewing' },
+        'expired':       { mode:'contribution', tab:'expired' },
+        'pending-effect':{ mode:'contribution', tab:'pending-effect' },
+        'my-submit':     { mode:'review', tab:'my-submit' },
+        'wait-me':       { mode:'review', tab:'wait-me' },
+        'review':        { mode:'review', tab:'my-submit' },
+    };
+
+    var _currentMode = 'contribution';
+    var _currentTab  = 'published';
+
+    // ===== 初始化 =====
     (function init() {
-        // 支援從 URL hash 切換分頁（如 #draft）
-        var hash = window.location.hash.replace('#', '');
-        if (hash && _myArticles[hash]) {
-            _currentTab = hash;
-        }
-        renderStatCards();
-        renderTabs();
-        renderTable();
+        parseHash();
+        renderAll();
+        window.addEventListener('hashchange', function() {
+            parseHash();
+            renderAll();
+        });
+        // Sidebar hash-link click
+        document.querySelectorAll('.personal-sidebar .sidebar-nav-item').forEach(function(item) {
+            item.addEventListener('click', function(e) {
+                var href = item.getAttribute('href');
+                if (href && href.charAt(0) === '#') {
+                    e.preventDefault();
+                    window.location.hash = href.substring(1);
+                }
+            });
+        });
     })();
 
-    function renderStatCards() {
-        const data = [
-            { key: 'published', label: '已發表', icon: 'fa-circle-check', count: _myArticles.published.length },
-            { key: 'draft', label: '草稿', icon: 'fa-file-pen', count: _myArticles.draft.length },
-            { key: 'reviewing', label: '審核中', icon: 'fa-spinner', count: _myArticles.reviewing.length },
-            { key: 'expired', label: '已失效', icon: 'fa-file-circle-xmark', count: _myArticles.expired.length },
-        ];
-        document.getElementById('statCards').innerHTML = data.map(d => `
-            <div class="stat-card ${d.key}" onclick="switchTab('${d.key}')">
-                <div class="stat-icon"><i class="fa-solid ${d.icon}"></i></div>
-                <div class="stat-body">
-                    <div class="stat-number">${d.count}</div>
-                    <div class="stat-label">${d.label}</div>
-                </div>
-            </div>
-        `).join('');
+    function parseHash() {
+        var hash = window.location.hash.replace('#', '');
+        var mapped = HASH_MAP[hash] || HASH_MAP[''];
+        _currentMode = mapped.mode;
+        _currentTab  = mapped.tab;
     }
 
-    function renderTabs() {
-        document.getElementById('manageTabs').innerHTML = TAB_CONFIG.map(t => `
-            <button class="manage-tab ${t.key === _currentTab ? 'active' : ''}" onclick="switchTab('${t.key}')" data-tab="${t.key}">
-                <i class="fa-solid ${t.icon}"></i> ${t.label}
-                <span class="tab-count">${_myArticles[t.key].length}</span>
-            </button>
-        `).join('');
-    }
-
-    function switchTab(tab) {
-        _currentTab = tab;
-        document.querySelectorAll('.manage-tab').forEach(el => {
-            el.classList.toggle('active', el.dataset.tab === tab);
-        });
-        document.getElementById('searchInput').value = '';
+    function renderAll() {
+        renderPageTitle();
+        renderStatCards();
+        renderTabs();
+        renderToolbar();
         renderTable();
+        updateSidebarActive();
+        updateSidebarBadges();
     }
 
-    function searchArticles() {
-        renderTable();
-    }
-
-    function getFiltered() {
-        const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-        let items = [..._myArticles[_currentTab]];
-        if (keyword) {
-            items = items.filter(a =>
-                a.title.toLowerCase().includes(keyword)
-            );
+    // ===== Page Title =====
+    function renderPageTitle() {
+        var bar = document.getElementById('pageTitleBar');
+        if (_currentMode === 'contribution') {
+            bar.innerHTML = '<div><h2>管理文章</h2></div>' +
+                '<a class="btn-primary" href="km-editor.html"><i class="fa-solid fa-plus"></i> 新增文章</a>';
+        } else {
+            bar.innerHTML = '<div><h2><i class="fa-solid fa-clipboard-check"></i> 文件審核</h2>' +
+                '<p class="page-desc">查看送審進度與待審核文件</p></div>';
         }
-        const sort = document.getElementById('filterSort').value;
-        items.sort((a, b) => {
-            const dateA = a.date || a.submitDate || '';
-            const dateB = b.date || b.submitDate || '';
-            if (sort === 'date-desc') return dateB.localeCompare(dateA);
-            if (sort === 'date-asc') return dateA.localeCompare(dateB);
-            if (sort === 'views-desc') return (b.views || 0) - (a.views || 0);
-            if (sort === 'title-asc') return a.title.localeCompare(b.title);
+    }
+
+    // ===== Stat Cards（僅個人貢獻模式）=====
+    function renderStatCards() {
+        var container = document.getElementById('statCards');
+        if (_currentMode !== 'contribution') { container.style.display = 'none'; return; }
+        container.style.display = '';
+        var data = [
+            { key:'published', label:'已發表', icon:'fa-circle-check', count: _myArticles.published.length },
+            { key:'draft',     label:'草稿',   icon:'fa-file-pen',      count: _myArticles.draft.length },
+            { key:'reviewing', label:'審核中', icon:'fa-spinner',       count: _myArticles.reviewing.length },
+            { key:'expired',   label:'已失效', icon:'fa-file-circle-xmark', count: _myArticles.expired.length },
+        ];
+        container.innerHTML = data.map(function(d) {
+            return '<div class="stat-card ' + d.key + '" onclick="switchTab(\'' + d.key + '\')">'+
+                '<div class="stat-icon"><i class="fa-solid ' + d.icon + '"></i></div>'+
+                '<div class="stat-body"><div class="stat-number">' + d.count + '</div>'+
+                '<div class="stat-label">' + d.label + '</div></div></div>';
+        }).join('');
+    }
+
+    // ===== Tabs =====
+    function renderTabs() {
+        var container = document.getElementById('manageTabs');
+        var tabs;
+        if (_currentMode === 'contribution') {
+            tabs = [
+                { key:'published', label:'已發表', icon:'fa-circle-check' },
+                { key:'draft',     label:'草稿',   icon:'fa-file-pen' },
+                { key:'reviewing', label:'審核中', icon:'fa-spinner' },
+                { key:'expired',   label:'已失效', icon:'fa-file-circle-xmark' },
+            ];
+        } else {
+            tabs = [
+                { key:'my-submit', label:'我送審的', icon:'fa-paper-plane' },
+                { key:'wait-me',   label:'等我審核', icon:'fa-inbox' },
+            ];
+        }
+        container.innerHTML = tabs.map(function(t) {
+            var count = getTabCount(t.key);
+            return '<button class="manage-tab ' + (t.key === _currentTab ? 'active' : '') + '" onclick="switchTab(\'' + t.key + '\')" data-tab="' + t.key + '">'+
+                '<i class="fa-solid ' + t.icon + '"></i> ' + t.label +
+                ' <span class="tab-count">' + count + '</span></button>';
+        }).join('');
+    }
+
+    function getTabCount(key) {
+        if (_myArticles[key]) return _myArticles[key].length;
+        if (key === 'my-submit') return _mySubmitted.length;
+        if (key === 'wait-me')   return _pendingMyReview.length;
+        return 0;
+    }
+
+    // ===== Switch Tab =====
+    function switchTab(tab) {
+        if (['published','draft','reviewing','expired','pending-effect'].indexOf(tab) >= 0) {
+            _currentMode = 'contribution';
+        } else {
+            _currentMode = 'review';
+        }
+        _currentTab = tab;
+        history.replaceState(null, '', '#' + tab);
+        renderAll();
+    }
+
+    // ===== Toolbar =====
+    function renderToolbar() {
+        var sortEl    = document.getElementById('filterSort');
+        var exportBtn = document.querySelector('.toolbar-right');
+        if (_currentMode === 'review') {
+            sortEl.style.display    = 'none';
+            if (exportBtn) exportBtn.style.display = 'none';
+        } else {
+            sortEl.style.display    = '';
+            if (exportBtn) exportBtn.style.display = '';
+        }
+        document.getElementById('searchInput').value = '';
+    }
+
+    // ===== Sidebar =====
+    function updateSidebarActive() {
+        document.querySelectorAll('.personal-sidebar .sidebar-nav-item').forEach(function(el) {
+            el.classList.toggle('active', el.dataset.nav === _currentTab);
+        });
+    }
+    function updateSidebarBadges() {
+        setBadge('badgePublished', _myArticles.published.length);
+        setBadge('badgeDraft',     _myArticles.draft.length);
+        setBadge('badgeExpired',   _myArticles.expired.length);
+        setBadge('badgeMySubmit',  _mySubmitted.length);
+        setBadge('badgeWaitMe',    _pendingMyReview.length);
+    }
+    function setBadge(id, n) { var el = document.getElementById(id); if (el) el.textContent = n; }
+
+    // ===== Search / Filter =====
+    function searchArticles() { renderTable(); }
+
+    function getFilteredContribution() {
+        var keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+        var items = _myArticles[_currentTab] ? [].concat(_myArticles[_currentTab]) : [];
+        if (keyword) { items = items.filter(function(a) { return a.title.toLowerCase().indexOf(keyword) >= 0; }); }
+        var sort = document.getElementById('filterSort').value;
+        items.sort(function(a, b) {
+            var dA = a.date || a.submitDate || '', dB = b.date || b.submitDate || '';
+            if (sort === 'date-desc')  return dB.localeCompare(dA);
+            if (sort === 'date-asc')   return dA.localeCompare(dB);
+            if (sort === 'views-desc') return (b.views||0) - (a.views||0);
+            if (sort === 'title-asc')  return a.title.localeCompare(b.title);
             return 0;
         });
         return items;
     }
 
+    function getFilteredReview() {
+        var keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+        var list = _currentTab === 'my-submit' ? _mySubmitted : _pendingMyReview;
+        return list.filter(function(item) { return !keyword || item.title.toLowerCase().indexOf(keyword) >= 0; });
+    }
+
+    // ===== Table =====
     function renderTable() {
-        const items = getFiltered();
-        const thead = document.getElementById('tableHead');
-        const tbody = document.getElementById('tableBody');
+        if (_currentMode === 'contribution') { renderContributionTable(); }
+        else { renderReviewTable(); }
+    }
+
+    function renderContributionTable() {
+        var items = getFilteredContribution();
+        var thead = document.getElementById('tableHead');
+        var tbody = document.getElementById('tableBody');
 
         if (_currentTab === 'published') {
             thead.innerHTML = '<tr><th>文章標題</th><th>發表日期</th><th>瀏覽</th><th>操作</th></tr>';
             if (!items.length) { tbody.innerHTML = emptyRow(4); return; }
-            tbody.innerHTML = items.map(a => `<tr>
-                <td class="article-title-cell" onclick="goArticle('${a.id}')">${escHtml(a.title)}</td>
-                <td>${a.date}</td>
-                <td><i class="fa-solid fa-eye" style="color:#9CA3AF;margin-right:3px;"></i> ${a.views}</td>
-                <td><div class="actions-cell">
-                    <button class="action-btn" title="編輯" onclick="editArticle('${a.id}')"><i class="fa-solid fa-pen"></i></button>
-                    <button class="action-btn" title="分享" onclick="shareArticle('${a.id}')"><i class="fa-solid fa-share-nodes"></i></button>
-                    <button class="action-btn danger" title="下架" onclick="archiveArticle('${a.id}')"><i class="fa-solid fa-box-archive"></i></button>
-                </div></td>
-            </tr>`).join('');
+            tbody.innerHTML = items.map(function(a) {
+                return '<tr><td class="article-title-cell" onclick="goArticle(\'' + a.id + '\')">' + escHtml(a.title) + '</td>' +
+                    '<td>' + a.date + '</td>' +
+                    '<td><i class="fa-solid fa-eye" style="color:#9CA3AF;margin-right:3px;"></i> ' + a.views + '</td>' +
+                    '<td><div class="actions-cell">' +
+                    '<button class="action-btn" title="編輯" onclick="editArticle(\'' + a.id + '\')"><i class="fa-solid fa-pen"></i></button>' +
+                    '<button class="action-btn" title="分享" onclick="shareArticle(\'' + a.id + '\')"><i class="fa-solid fa-share-nodes"></i></button>' +
+                    '<button class="action-btn danger" title="下架" onclick="archiveArticle(\'' + a.id + '\')"><i class="fa-solid fa-box-archive"></i></button>' +
+                    '</div></td></tr>';
+            }).join('');
         } else if (_currentTab === 'draft') {
             thead.innerHTML = '<tr><th>文章標題</th><th>建立日期</th><th>最後編輯</th><th>操作</th></tr>';
             if (!items.length) { tbody.innerHTML = emptyRow(4); return; }
-            tbody.innerHTML = items.map(a => `<tr>
-                <td class="article-title-cell" onclick="editArticle('${a.id}')">${escHtml(a.title)}</td>
-                <td>${a.date}</td>
-                <td>${a.lastEdit}</td>
-                <td><div class="actions-cell">
-                    <button class="action-btn" title="繼續編輯" onclick="editArticle('${a.id}')"><i class="fa-solid fa-pen"></i></button>
-                    <button class="action-btn" title="送審" onclick="submitReview('${a.id}')"><i class="fa-solid fa-paper-plane"></i></button>
-                    <button class="action-btn danger" title="刪除" onclick="deleteArticle('${a.id}')"><i class="fa-solid fa-trash-can"></i></button>
-                </div></td>
-            </tr>`).join('');
+            tbody.innerHTML = items.map(function(a) {
+                return '<tr><td class="article-title-cell" onclick="editArticle(\'' + a.id + '\')">' + escHtml(a.title) + '</td>' +
+                    '<td>' + a.date + '</td><td>' + a.lastEdit + '</td>' +
+                    '<td><div class="actions-cell">' +
+                    '<button class="action-btn" title="繼續編輯" onclick="editArticle(\'' + a.id + '\')"><i class="fa-solid fa-pen"></i></button>' +
+                    '<button class="action-btn" title="送審" onclick="submitReview(\'' + a.id + '\')"><i class="fa-solid fa-paper-plane"></i></button>' +
+                    '<button class="action-btn danger" title="刪除" onclick="deleteArticle(\'' + a.id + '\')"><i class="fa-solid fa-trash-can"></i></button>' +
+                    '</div></td></tr>';
+            }).join('');
         } else if (_currentTab === 'reviewing') {
             thead.innerHTML = '<tr><th>文章標題</th><th>送審日期</th><th>審核人</th><th>狀態</th><th>操作</th></tr>';
             if (!items.length) { tbody.innerHTML = emptyRow(5); return; }
-            tbody.innerHTML = items.map(a => `<tr>
-                <td class="article-title-cell">${escHtml(a.title)}</td>
-                <td>${a.submitDate}</td>
-                <td><i class="fa-solid fa-user-check" style="color:#9CA3AF;margin-right:3px;"></i> ${escHtml(a.reviewer)}</td>
-                <td><span class="status-badge ${a.status}"><i class="fa-solid ${getStatusIcon(a.status)}"></i> ${a.statusText}</span></td>
-                <td><div class="actions-cell">
-                    <button class="action-btn" title="查看" onclick="goArticle('${a.id}')"><i class="fa-solid fa-eye"></i></button>
-                    <button class="action-btn danger" title="撤回" onclick="withdrawReview('${a.id}')"><i class="fa-solid fa-rotate-left"></i></button>
-                </div></td>
-            </tr>`).join('');
+            tbody.innerHTML = items.map(function(a) {
+                return '<tr><td class="article-title-cell">' + escHtml(a.title) + '</td>' +
+                    '<td>' + a.submitDate + '</td>' +
+                    '<td><i class="fa-solid fa-user-check" style="color:#9CA3AF;margin-right:3px;"></i> ' + escHtml(a.reviewer) + '</td>' +
+                    '<td><span class="status-badge ' + a.status + '"><i class="fa-solid ' + getStatusIcon(a.status) + '"></i> ' + a.statusText + '</span></td>' +
+                    '<td><div class="actions-cell">' +
+                    '<button class="action-btn" title="查看" onclick="goArticle(\'' + a.id + '\')"><i class="fa-solid fa-eye"></i></button>' +
+                    '<button class="action-btn danger" title="撤回" onclick="withdrawReview(\'' + a.id + '\')"><i class="fa-solid fa-rotate-left"></i></button>' +
+                    '</div></td></tr>';
+            }).join('');
         } else if (_currentTab === 'expired') {
             thead.innerHTML = '<tr><th>文章標題</th><th>原發表日</th><th>失效日期</th><th>操作</th></tr>';
             if (!items.length) { tbody.innerHTML = emptyRow(4); return; }
-            tbody.innerHTML = items.map(a => `<tr>
-                <td class="article-title-cell">${escHtml(a.title)}</td>
-                <td>${a.date}</td>
-                <td style="color:#DC2626;font-weight:600;">${a.expiredDate}</td>
-                <td><div class="actions-cell">
-                    <button class="action-btn" title="重新發表" onclick="republishArticle('${a.id}')"><i class="fa-solid fa-rotate-right"></i></button>
-                    <button class="action-btn" title="編輯更新" onclick="editArticle('${a.id}')"><i class="fa-solid fa-pen"></i></button>
-                    <button class="action-btn danger" title="永久刪除" onclick="deleteArticle('${a.id}')"><i class="fa-solid fa-trash-can"></i></button>
-                </div></td>
-            </tr>`).join('');
+            tbody.innerHTML = items.map(function(a) {
+                return '<tr><td class="article-title-cell">' + escHtml(a.title) + '</td>' +
+                    '<td>' + a.date + '</td>' +
+                    '<td style="color:#DC2626;font-weight:600;">' + a.expiredDate + '</td>' +
+                    '<td><div class="actions-cell">' +
+                    '<button class="action-btn" title="重新發表" onclick="republishArticle(\'' + a.id + '\')"><i class="fa-solid fa-rotate-right"></i></button>' +
+                    '<button class="action-btn" title="編輯更新" onclick="editArticle(\'' + a.id + '\')"><i class="fa-solid fa-pen"></i></button>' +
+                    '<button class="action-btn danger" title="永久刪除" onclick="deleteArticle(\'' + a.id + '\')"><i class="fa-solid fa-trash-can"></i></button>' +
+                    '</div></td></tr>';
+            }).join('');
+        } else {
+            thead.innerHTML = '<tr><th>文章標題</th><th>預計生效日</th><th>操作</th></tr>';
+            tbody.innerHTML = emptyRow(3);
         }
     }
 
-    function emptyRow(cols) {
-        return `<tr><td colspan="${cols}" style="text-align:center;padding:40px;color:#9CA3AF;"><i class="fa-solid fa-folder-open" style="font-size:24px;display:block;margin-bottom:8px;"></i>沒有符合條件的文章</td></tr>`;
+    function renderReviewTable() {
+        var items = getFilteredReview();
+        var thead = document.getElementById('tableHead');
+        var tbody = document.getElementById('tableBody');
+
+        if (_currentTab === 'my-submit') {
+            thead.innerHTML = '<tr><th>文章標題</th><th>審核人</th><th>送審日期</th><th>狀態</th></tr>';
+            if (!items.length) { tbody.innerHTML = emptyRow(4, '沒有送審中的文件'); return; }
+            tbody.innerHTML = items.map(function(item) {
+                return '<tr style="cursor:pointer;" onclick="openReviewModal(\'submitted\',\'' + item.id + '\')">' +
+                    '<td class="article-title-cell">' + escHtml(item.title) + '</td>' +
+                    '<td><span class="person-cell"><span class="person-avatar">' + item.reviewer[0] + '</span>' + escHtml(item.reviewer) + '</span></td>' +
+                    '<td>' + item.submitDate + '</td>' +
+                    '<td><span class="status-badge ' + item.status + '"><i class="fa-solid ' + getStatusIcon(item.status) + '"></i> ' + item.statusText + '</span></td></tr>';
+            }).join('');
+        } else {
+            thead.innerHTML = '<tr><th>文章標題</th><th>送審人</th><th>部門</th><th>送審日期</th><th>狀態</th></tr>';
+            if (!items.length) { tbody.innerHTML = emptyRow(5, '沒有待審核的文件'); return; }
+            tbody.innerHTML = items.map(function(item) {
+                return '<tr style="cursor:pointer;" onclick="openReviewModal(\'pending\',\'' + item.id + '\')">' +
+                    '<td class="article-title-cell">' + escHtml(item.title) + '</td>' +
+                    '<td><span class="person-cell"><span class="person-avatar">' + item.submitter[0] + '</span>' + escHtml(item.submitter) + '</span></td>' +
+                    '<td>' + escHtml(item.dept) + '</td>' +
+                    '<td>' + item.submitDate + '</td>' +
+                    '<td><span class="status-badge ' + item.status + '"><i class="fa-solid ' + getStatusIcon(item.status) + '"></i> ' + item.statusText + '</span></td></tr>';
+            }).join('');
+        }
     }
 
+    // ===== Helpers =====
+    function emptyRow(cols, msg) {
+        return '<tr><td colspan="' + cols + '" style="text-align:center;padding:40px;color:#9CA3AF;">' +
+            '<i class="fa-solid fa-folder-open" style="font-size:24px;display:block;margin-bottom:8px;"></i>' +
+            (msg || '沒有符合條件的文章') + '</td></tr>';
+    }
     function getStatusIcon(status) {
         switch (status) {
-            case 'pending': return 'fa-clock';
+            case 'pending':   return 'fa-clock';
             case 'reviewing': return 'fa-spinner';
-            case 'approved': return 'fa-check';
-            case 'rejected': return 'fa-rotate-left';
-            default: return 'fa-circle';
+            case 'approved':  return 'fa-check';
+            case 'rejected':  return 'fa-rotate-left';
+            default:          return 'fa-circle';
         }
     }
 
     // ===== 操作函式（Prototype 階段僅 Toast 提示）=====
-    function goArticle(id) { showToast('正在開啟文章…'); }
-    function editArticle(id) { window.location.href = 'km-editor.html'; }
-    function shareArticle(id) { showToast('已複製分享連結'); }
-    function archiveArticle(id) { showToast('文章已下架'); }
-    function submitReview(id) { showToast('已送出審核'); }
-    function withdrawReview(id) { showToast('已撤回審核申請'); }
-    function republishArticle(id) { showToast('文章已重新上架'); }
-    function deleteArticle(id) { showToast('文章已刪除'); }
-    function exportArticles() { showToast('匯出功能開發中…'); }
+    function goArticle(id)       { showToast('正在開啟文章…'); }
+    function editArticle(id)     { window.location.href = 'km-editor.html'; }
+    function shareArticle(id)    { showToast('已複製分享連結'); }
+    function archiveArticle(id)  { showToast('文章已下架'); }
+    function submitReview(id)    { showToast('已送出審核'); }
+    function withdrawReview(id)  { showToast('已撤回審核申請'); }
+    function republishArticle(id){ showToast('文章已重新上架'); }
+    function deleteArticle(id)   { showToast('文章已刪除'); }
+    function exportArticles()    { showToast('匯出功能開發中…'); }
 
+    // ===== 審核詳情 Modal =====
+    function openReviewModal(type, id) {
+        var list = type === 'submitted' ? _mySubmitted : _pendingMyReview;
+        var item = list.find(function(i) { return i.id === id; });
+        if (!item) return;
+
+        document.getElementById('rmTitle').textContent = item.title;
+
+        var metaHtml = '';
+        if (type === 'submitted') {
+            metaHtml =
+                '<div class="rm-meta-item"><span class="meta-label">審核人</span><span class="meta-value">' + escHtml(item.reviewer) + '</span></div>' +
+                '<div class="rm-meta-item"><span class="meta-label">送審日期</span><span class="meta-value">' + item.submitDate + '</span></div>' +
+                '<div class="rm-meta-item"><span class="meta-label">狀態</span><span class="meta-value"><span class="status-badge ' + item.status + '"><i class="fa-solid ' + getStatusIcon(item.status) + '"></i> ' + item.statusText + '</span></span></div>';
+        } else {
+            metaHtml =
+                '<div class="rm-meta-item"><span class="meta-label">送審人</span><span class="meta-value">' + escHtml(item.submitter) + '</span></div>' +
+                '<div class="rm-meta-item"><span class="meta-label">部門</span><span class="meta-value">' + escHtml(item.dept) + '</span></div>' +
+                '<div class="rm-meta-item"><span class="meta-label">送審日期</span><span class="meta-value">' + item.submitDate + '</span></div>' +
+                '<div class="rm-meta-item"><span class="meta-label">狀態</span><span class="meta-value"><span class="status-badge ' + item.status + '"><i class="fa-solid ' + getStatusIcon(item.status) + '"></i> ' + item.statusText + '</span></span></div>';
+        }
+        document.getElementById('rmMeta').innerHTML = metaHtml;
+        document.getElementById('rmBody').innerHTML = item.content || '<p style="color:#9CA3AF;text-align:center;padding:40px 0;">文章內容載入中…</p>';
+
+        document.getElementById('rmHistory').innerHTML = (item.history || []).map(function(h) {
+            var iconCls = h.icon === 'approved' ? 'fa-check' : h.icon === 'rejected' ? 'fa-rotate-left' : h.icon === 'reviewing' ? 'fa-spinner' : 'fa-paper-plane';
+            return '<div class="review-history-item"><div class="rh-icon ' + h.icon + '"><i class="fa-solid ' + iconCls + '"></i></div>' +
+                '<div class="rh-content"><div class="rh-action">' + escHtml(h.user) + ' — ' + escHtml(h.action) + '</div>' +
+                '<div class="rh-time">' + h.time + '</div>' +
+                (h.comment ? '<div class="rh-comment">「' + escHtml(h.comment) + '」</div>' : '') +
+                '</div></div>';
+        }).join('');
+
+        document.getElementById('reviewModal').classList.add('show');
+    }
+
+    function closeReviewModal() {
+        document.getElementById('reviewModal').classList.remove('show');
+    }
+    document.getElementById('reviewModal').addEventListener('click', function(e) {
+        if (e.target === this) closeReviewModal();
+    });
+
+    // ===== Toast =====
     function showToast(msg) {
-        const container = document.getElementById('toastContainer');
-        const toast = document.createElement('div');
+        var container = document.getElementById('toastContainer');
+        var toast = document.createElement('div');
         toast.className = 'toast';
         toast.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#059669;"></i> ' + escHtml(msg);
         toast.style.cssText = 'display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #E5E8ED;border-radius:10px;padding:12px 18px;box-shadow:0 4px 12px rgba(0,0,0,.1);font-size:13px;animation:slideIn .3s ease;';
         container.appendChild(toast);
-        setTimeout(() => { toast.style.animation = 'slideOut .3s ease'; setTimeout(() => toast.remove(), 300); }, 2500);
+        setTimeout(function() { toast.style.animation = 'slideOut .3s ease'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }
 
-    function escHtml(str) { const el = document.createElement('span'); el.textContent = str; return el.innerHTML; }
+    function escHtml(str) { var el = document.createElement('span'); el.textContent = str; return el.innerHTML; }
     </script>
     <script src="js/search.js"></script>
 </body>
