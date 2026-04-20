@@ -138,7 +138,7 @@
 |------|------|------|
 | 文章標題 | ✅ | 最多 **30 字**；列表顯示時超過 25 字以「…」截斷 |
 | 文章分類 | ✅ | 下拉選單，選項由**後台維護**（可新增/刪除）；預設分類包括：公告通知、規範辦法、SOP 流程、技術文件、教育訓練、專案相關、其他 |
-| 所屬部門 | ✅ | 下拉選單，**必填**（因審核流程需指定審核人員）；部門清單由**後台自訂維護** |
+| 所屬部門 | ✅ | 下拉選單，**必填**（因審核流程需指定審核人員）；部門清單**自動同步組織圖**（後台「組織圖設定」維護），前台不可自行新增部門 |
 | 文件效期 | 否 | 選項：永久有效（預設）/ 一年 / 六個月 / 自訂到期日 |
 | 文章標籤 | 否 | 自由輸入，按 Enter 新增；輸入時**自動建議已存在的標籤** |
 | 文章內容 | ✅ | 富文字編輯器（Rich Text Editor） |
@@ -241,6 +241,125 @@
 
 #### 相關推薦區塊
 - 相關文章 / 延伸閱讀：<!-- TODO: Phase 3 後續規劃，暫不實作 -->
+
+### 2.9 最新文章（km-latest.html）
+
+> 入口：知識總覽頁「最新文章」區塊的「查看全部」連結。
+
+#### 頁面定位
+- 顯示**所有已發佈文章**，依**發佈日期由新到舊**排序
+- 本質為全文章的時間序列表，非僅限「近期」文章
+
+#### 篩選條件
+| 篩選項 | 選項 | 預設值 |
+|--------|------|--------|
+| 部門 | 全部部門 / HR / Finance / BU1 / BU2 / Admin | 全部部門 |
+| 分類 | 全部分類 / 公告通知 / 規範辦法 / SOP 流程 / 技術文件 / 教育訓練 / 專案相關 / 其他 | 全部分類 |
+| 時間區間 | 不限時間 / 近一週 / 近一個月 / 近一季 / 近一年 | 不限時間 |
+
+- 篩選為即時套用（`onchange`），不需額外按鈕
+- 篩選後重置至第 1 頁
+
+#### 列表項資訊
+- 縮圖（選填，可透過 `noThumb` 標記隱藏）
+- 文章標題（單行截斷）
+- Meta：分類標籤 → 發佈者 → 單位 → 瀏覽數
+- 摘要（單行截斷，≤80 字）
+- 發佈日期（右側，`YYYY-MM-DD`）
+
+#### 點擊行為
+- 點擊文章列 → 跳轉 `km-article.html?id={articleId}`
+
+#### 分頁
+- 分頁列位於**卡片內部**底端，上方以分隔線區隔
+- 每頁筆數選項：10 / 20 / 50（預設 10）
+- 顯示範圍資訊：`{start}-{end} of {total}`
+
+#### 樣式
+- 套用 **2.10 KM 列表頁通用樣式**，不另建專屬樣式
+
+### 2.10 KM 列表頁通用樣式
+
+> 適用於所有 KM 功能模組的列表式頁面（最新文章、熱門文章、收藏、管理等）。  
+> 各頁面不另建專屬樣式，統一套用以下規範。
+
+#### 頁面佈局
+- 返回列：`margin-bottom: var(--spacing-element)`
+- 頁面標題 `h2`：`font-size: var(--font-page-title)`、`font-weight: 700`、`margin-left: 14px`
+- 所有內容區塊（篩選列、統計、列表卡片、分頁）左側對齊 `margin-left: 14px`
+- 容器 `.km-container` 設為 `overflow: visible`，確保卡片陰影不被裁切
+
+#### 篩選列
+- 篩選標籤：`font-size: var(--font-body-small)`、`color: var(--text-muted)`、`font-weight: 600`
+- 下拉選單：
+  - `font-size: var(--font-body-small)`
+  - `padding: 8px 32px 8px 14px`
+  - `border: 1px solid var(--border-color)`、`border-radius: var(--radius-sm)`
+  - 自訂下拉箭頭（SVG chevron），原生外觀隱藏
+  - `:focus` 邊框色：`var(--primary-color)`
+- 此下拉選單樣式為**全 KM 模組通用**，分頁區的每頁筆數選單亦套用相同樣式
+
+#### 結果統計列
+- `font-size: var(--font-body-small)`、`color: var(--text-muted)`
+- 筆數數字加粗：`color: var(--text-primary)`
+
+#### 列表卡片容器
+- 對齊總覽頁 `.km-block` 樣式：
+  - `background: #fff`
+  - `border: 1px solid rgba(0, 0, 0, .125)`
+  - `border-radius: .25rem`
+  - `box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px`
+  - `overflow: hidden`
+
+#### 列表項（文章列）
+- 佈局：`display: flex`、`align-items: flex-start`、`gap: 14px`
+- 內距：`padding: 16px`（左右含額外 16px 使內容縮排）
+- 分隔線：使用 `::after` 偽元素，`left: 16px`、`right: 16px`，與卡片左右邊框保持距離
+- 最後一筆無分隔線
+- Hover 背景：`#F3F4F6`，填滿整列（不受分隔線縮排影響）
+- 點擊：跳轉 `km-article.html?id={articleId}`
+
+#### 文章縮圖（選填）
+- 位置：列表項**左側第一個元素**
+- 尺寸：`90px × 68px`、`border-radius: 0`（無圓角）
+- 邊框：`1px solid var(--border-color)`
+- 無圖片時顯示灰底 + image icon placeholder
+- 文章資料可透過 `noThumb: true` 標記為不顯示縮圖
+
+#### 文章標題
+- `font-size: var(--font-card-title)`、`font-weight: 600`、`color: #1E293B`
+- 單行截斷：`overflow: hidden; text-overflow: ellipsis; white-space: nowrap`
+- Hover 變色：`color: var(--primary-color)`
+
+#### 分類標籤
+- 位於文章標題下方 meta 列**最左側**
+- 樣式：`background: #4B5563`（深灰底）、`color: #fff`（白字）
+- `font-size: var(--font-label)`、`padding: 1px 8px`、`border-radius: 3px`
+- 無邊框
+- 分類選項對齊編輯器：公告通知、規範辦法、SOP 流程、技術文件、教育訓練、專案相關、其他
+
+#### Meta 資訊列
+- 位於標題下方，`margin-top: 6px`
+- `font-size: var(--font-body-small)`、`color: #7F7F7F`
+- 順序：分類標籤 → 發佈者（user icon）→ 單位（building icon）→ 瀏覽數（eye icon）
+- icon `font-size: 12px`、`color: var(--text-muted)`
+
+#### 文章摘要
+- `font-size: var(--font-body-small)`、`color: #7F7F7F`、`margin-top: 6px`
+- 單行截斷，最多約 80 字
+
+#### 發佈日期
+- 位於列表項**最右側**，不帶 icon
+- `font-size: var(--font-body-small)`、`color: #7F7F7F`
+- 格式：`YYYY-MM-DD`
+
+#### 分頁列
+- 置中顯示，`padding: 20px 0`
+- 頁碼按鈕：`36px × 36px`、`border-radius: var(--radius-sm)`、`font-weight: 600`
+- 當前頁：`background: var(--primary-color)`、`color: #fff`
+- 上/下頁按鈕：chevron icon，無可用時 `opacity: .4; cursor: not-allowed`
+- 每頁筆數選單：**套用通用下拉選單樣式**（同篩選列），選項為 10 / 20 / 50 筆
+- 範圍資訊：`{start}-{end} of {total}`、`font-size: var(--font-label)`、`color: var(--text-muted)`
 
 ---
 

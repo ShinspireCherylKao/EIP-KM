@@ -16,7 +16,8 @@
         /* ===== 我的收藏頁專用 ===== */
 
         .page-title-bar {
-            padding: 24px 0 0;
+            padding: 4px 0 0;
+            margin-left: 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -29,17 +30,22 @@
         }
         .page-title-bar h2 i { color: #F59E0B; }
         .page-title-bar .page-desc { color: #9CA3AF; font-size: 13px; margin: 4px 0 0; }
-        .back-link {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 15px; color: #6B7280; text-decoration: none;
-            padding: 6px 12px; border-radius: 8px; transition: all .15s;
+        .back-link-bar {
+            margin-bottom: var(--spacing-element);
         }
-        .back-link:hover { background: #F3F4F6; color: #4F46E5; }
+        .back-link-bar a {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-size: 15px; color: var(--text-secondary); text-decoration: none;
+            padding: 8px 14px; border-radius: var(--radius-sm);
+            min-height: var(--touch-target-min);
+            transition: all .15s;
+        }
+        .back-link-bar a:hover { background: var(--hover-bg); color: var(--primary-color); }
 
         /* 操作列 */
         .action-bar {
             display: flex; align-items: center; justify-content: space-between;
-            gap: 12px; margin: 20px 0 16px; flex-wrap: wrap;
+            gap: 12px; margin: 20px 0 16px 14px; flex-wrap: wrap;
         }
         .action-bar .search-box {
             position: relative; flex: 1; max-width: 360px;
@@ -68,7 +74,7 @@
         .action-bar .view-toggle button.active { background: #4F46E5; color: #fff; border-color: #4F46E5; }
 
         /* 結果統計 */
-        .result-count { font-size: 13px; color: #9CA3AF; margin-bottom: 12px; }
+        .result-count { font-size: 13px; color: #9CA3AF; margin: 0 0 12px 14px; }
         .result-count strong { color: #111827; }
 
         /* 收藏卡片 Grid 視圖 */
@@ -76,6 +82,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 16px;
+            margin-left: 14px;
         }
         .fav-card {
             background: #FFFFFF;
@@ -128,7 +135,7 @@
         .fav-card .fav-card-actions button:hover { color: #EF4444; border-color: #FECACA; background: #FEF2F2; }
 
         /* 收藏列表視圖 */
-        .fav-list-view { display: none; }
+        .fav-list-view { display: none; margin-left: 14px; }
         .fav-list-card {
             background: #FFFFFF;
             border: 1px solid #E5E8ED;
@@ -192,12 +199,13 @@
     <!-- 主要內容區 -->
     <div class="main-content">
         <div class="km-container">
-            <!-- 返回 + 標題 -->
-            <a class="back-link" href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> 返回知識總覽</a>
+            <!-- 返回 -->
+            <div class="back-link-bar">
+                <a href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> 返回知識總覽</a>
+            </div>
             <div class="page-title-bar">
                 <div>
-                    <h2><i class="fa-solid fa-bookmark"></i> 我的收藏</h2>
-                    <p class="page-desc">管理您收藏的知識庫文章</p>
+                    <h2>我的收藏</h2>
                 </div>
             </div>
 

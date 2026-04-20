@@ -17,7 +17,8 @@
 
         /* 頁面標題區 */
         .page-title-bar {
-            padding: 24px 0 0;
+            padding: 4px 0 0;
+            margin-left: 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -39,28 +40,35 @@
             font-size: 13px;
             margin: 4px 0 0;
         }
-        .back-link {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 15px; color: #6B7280; text-decoration: none;
-            padding: 6px 12px; border-radius: 8px;
+        .back-link-bar {
+            margin-bottom: var(--spacing-element);
+        }
+        .back-link-bar a {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-size: 15px; color: var(--text-secondary); text-decoration: none;
+            padding: 8px 14px; border-radius: var(--radius-sm);
+            min-height: var(--touch-target-min);
             transition: all .15s;
         }
-        .back-link:hover { background: #F3F4F6; color: #4F46E5; }
+        .back-link-bar a:hover { background: var(--hover-bg); color: var(--primary-color); }
 
         /* 篩選列 */
         .filter-bar {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin: 20px 0 16px;
+            margin: 20px 0 16px 14px;
             flex-wrap: wrap;
         }
         .filter-bar select {
-            padding: 8px 14px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            padding: 8px 32px 8px 14px;
             border: 1px solid #E5E8ED;
             border-radius: 8px;
             font-size: 13px;
-            background: #fff;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;
             color: #374151;
             cursor: pointer;
             transition: border-color .2s;
@@ -79,7 +87,7 @@
         .result-count {
             font-size: 13px;
             color: #9CA3AF;
-            margin-bottom: 12px;
+            margin: 0 0 12px 14px;
         }
         .result-count strong { color: #111827; }
 
@@ -90,6 +98,7 @@
             border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 1px 2px rgba(0,0,0,.02);
             overflow: hidden;
+            margin-left: 14px;
         }
 
         /* 文章項 */
@@ -151,6 +160,7 @@
         .pagination {
             display: flex; align-items: center; justify-content: center;
             gap: 6px; padding: 20px 0;
+            margin-left: 14px;
         }
         .pagination .page-btn {
             min-width: 36px; height: 36px; border-radius: 8px;
@@ -178,12 +188,13 @@
     <!-- 主要內容區 -->
     <div class="main-content">
         <div class="km-container">
-            <!-- 返回 + 標題 -->
-            <a class="back-link" href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> 返回知識總覽</a>
+            <!-- 返回 -->
+            <div class="back-link-bar">
+                <a href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> 返回知識總覽</a>
+            </div>
             <div class="page-title-bar">
                 <div>
-                    <h2><i class="fa-solid fa-fire"></i> 熱門文章</h2>
-                    <p class="page-desc">依瀏覽量排序的熱門知識庫文章</p>
+                    <h2>熱門文章</h2>
                 </div>
             </div>
 

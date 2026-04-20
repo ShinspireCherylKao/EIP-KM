@@ -17,12 +17,13 @@
 
         /* 返回列 */
         .article-back-bar {
-            margin-bottom: 16px;
+            margin-bottom: var(--spacing-element);
         }
         .article-back-bar a {
-            display: inline-flex; align-items: center; gap: 6px;
+            display: inline-flex; align-items: center; gap: 8px;
             font-size: 15px; color: var(--text-secondary); text-decoration: none;
-            padding: 6px 12px; border-radius: var(--radius-sm);
+            padding: 8px 14px; border-radius: var(--radius-sm);
+            min-height: var(--touch-target-min);
             transition: all .15s;
         }
         .article-back-bar a:hover { background: var(--hover-bg); color: var(--primary-color); }
@@ -32,6 +33,7 @@
             background: #fff;
             border: 1px solid rgba(0,0,0,.125);
             border-radius: .25rem;
+            margin-left: 14px;
             box-shadow: rgba(176,184,214,0.09) 0px 10px 10px 20px,
                         rgb(176,184,214) 10px 10px 15px -5px;
             overflow: hidden;
@@ -483,9 +485,520 @@
                   ] },
             ],
         },
-    };
 
-    // ===== 從 URL 參數取得文章 ID =====
+        // ===== 最新文章 (a01–a18) =====
+        'a01': {
+            id: 'a01', title: '2026年度新人訓練手冊已更新', author: '李美玲', dept: 'HR',
+            createdDate: '2026-03-10', lastModified: '2026-03-16', views: 58,
+            tags: ['培訓', '新人'], validity: { type: 'until-delete', label: '文件刪除前有效', icon: 'fa-infinity' },
+            content: `
+                <h3>一、更新背景</h3>
+                <p>因應組織調整與制度變更，2026年度新人訓練手冊已完成全面更新，新版內容更貼近目前實際作業流程。</p>
+                <h3>二、主要更新內容</h3>
+                <ol>
+                    <li><b>公司福利與差旅報銷流程</b>：新增線上報帳系統操作說明，差旅費上限調整</li>
+                    <li><b>請假制度與加班規範</b>：更新特休計算方式，新增補休期限說明</li>
+                    <li><b>部門介紹與組織架構圖</b>：反映 2026 年度組織改組後的最新編制</li>
+                    <li><b>資訊安全須知</b>：新增遠端工作資安規範</li>
+                </ol>
+                <div class="info-box"><i class="fa-solid fa-circle-info"></i> 請各部門主管協助轉知新進同仁下載閱讀，如有疑問請聯繫 HR 部門。</div>
+                <h3>三、適用對象</h3>
+                <p>本手冊適用於 2026 年度所有新進人員（含正職、約聘及實習生），建議現有同仁亦可參閱了解最新制度異動。</p>
+            `,
+            attachments: [
+                { name: '2026新人訓練手冊_v3.0.pdf', size: '4.5 MB', type: 'pdf', source: 'HR/培訓', approvedDate: '2026-03-10' },
+            ],
+            related: [
+                { title: '入職流程 SOP 完整指南', dept: 'HR', date: '2026-01-15' },
+                { title: '員工福利手冊 2026 版', dept: 'HR', date: '2026-01-10' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a02': {
+            id: 'a02', title: 'X 專案第四週進度報告', author: '張志豪', dept: 'BU2',
+            createdDate: '2026-03-15', lastModified: '2026-03-15', views: 34,
+            tags: ['專案', '進度'], validity: { type: 'until-delete', label: '文件刪除前有效', icon: 'fa-infinity' },
+            content: `
+                <h3>一、本週進度摘要</h3>
+                <ul>
+                    <li><b>前端模組</b>：開發完成 85%，主要頁面已通過 Code Review</li>
+                    <li><b>API 整合測試</b>：進行中，已完成 12/15 支 API 的整合驗證</li>
+                    <li><b>UAT 環境</b>：預計下週完成部署，已協調 IT 完成伺服器配置</li>
+                </ul>
+                <h3>二、風險項目</h3>
+                <div class="highlight-box"><i class="fa-solid fa-triangle-exclamation"></i> 第三方支付 API 回應速度偶有延遲（平均 > 3 秒），已與廠商溝通改善中，預計下週提供修正版。</div>
+                <h3>三、下週計畫</h3>
+                <ol>
+                    <li>完成剩餘 3 支 API 整合測試</li>
+                    <li>UAT 環境部署與煙霧測試</li>
+                    <li>準備 Sprint Review 簡報</li>
+                </ol>
+            `,
+            attachments: [
+                { name: 'X專案_W4進度報告.pptx', size: '2.3 MB', type: 'ppt', source: 'BU2/專案', approvedDate: '2026-03-15' },
+            ],
+            related: [
+                { title: 'X 專案技術架構圖 V3', dept: 'BU2', date: '2026-03-10' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a03': {
+            id: 'a03', title: '差旅報銷規範修訂公告', author: '吳佳蓉', dept: 'Finance',
+            createdDate: '2026-02-20', lastModified: '2026-03-14', views: 102,
+            tags: ['差旅', '報銷', '公告'], validity: { type: 'until-delete', label: '文件刪除前有效', icon: 'fa-infinity' },
+            content: `
+                <h3>一、修訂背景</h3>
+                <p>為配合公司 2026 年度政策調整，財務部門經內部審議後，決議修訂差旅報銷相關規範。</p>
+                <h3>二、主要修訂項目</h3>
+                <ol>
+                    <li><b>國內出差住宿費</b>：上限由 NT$3,000 調整為 <b>NT$3,500/晚</b></li>
+                    <li><b>交通費核銷時限</b>：從 5 個工作天縮短為 <b>3 個工作天</b>內提交</li>
+                    <li><b>線上簽核流程</b>：全面導入電子簽核，無需再使用紙本表單</li>
+                </ol>
+                <div class="highlight-box"><i class="fa-solid fa-triangle-exclamation"></i> <b>重要提醒：</b>2026/3/31 前的差旅案件仍適用舊規範。</div>
+                <h3>三、適用範圍</h3>
+                <p>本規範適用於全公司所有正式員工與約聘人員。</p>
+            `,
+            attachments: [
+                { name: '差旅報銷規範_v3.1.pdf', size: '1.2 MB', type: 'pdf', source: 'Finance/政策', approvedDate: '2026-02-18' },
+            ],
+            related: [
+                { title: '2025年度財務報表摘要', dept: 'Finance', date: '2026-03-12' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a04': {
+            id: 'a04', title: 'Code Review 規範 v2.0 發佈', author: '蔡明達', dept: 'BU1',
+            createdDate: '2026-03-10', lastModified: '2026-03-13', views: 76,
+            tags: ['規範', 'CR'], validity: { type: 'permanent', label: '永久有效', icon: 'fa-shield-check' },
+            content: `
+                <h3>一、修訂目的</h3>
+                <p>隨著團隊規模擴大，為確保程式碼品質與安全性，Code Review 規範更新至 v2.0。</p>
+                <h3>二、主要修訂內容</h3>
+                <ol>
+                    <li>PR 必須至少 <b>2 人 Approve</b> 才可合併（原為 1 人）</li>
+                    <li>新增安全性檢查清單（OWASP Top 10 對照）</li>
+                    <li>CI pipeline 需 <b>全部通過</b>（含 lint、unit test、security scan）</li>
+                    <li>增加效能相關的 Review 項目（N+1 查詢、記憶體洩漏檢查）</li>
+                </ol>
+                <h3>三、Review 流程</h3>
+                <p>1. 開發者建立 PR → 2. 自動觸發 CI → 3. 指派 Reviewer → 4. Review 通過 → 5. Merge</p>
+                <div class="info-box"><i class="fa-solid fa-circle-info"></i> 完整規範文件請參閱附件。</div>
+            `,
+            attachments: [
+                { name: 'CodeReview_規範_v2.0.pdf', size: '890 KB', type: 'pdf', source: 'BU1/規範', approvedDate: '2026-03-10' },
+            ],
+            related: [
+                { title: 'API 設計規範 RESTful 指南', dept: 'BU1', date: '2026-03-05' },
+                { title: '系統架構設計文件更新', dept: 'BU1', date: '2026-03-11' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a05': {
+            id: 'a05', title: '2025年度財務報表摘要', author: '吳佳蓉', dept: 'Finance',
+            createdDate: '2026-03-08', lastModified: '2026-03-12', views: 45,
+            tags: ['財報', '年度'], validity: { type: 'until-delete', label: '文件刪除前有效', icon: 'fa-infinity' },
+            content: `
+                <h3>一、年度財務概況</h3>
+                <p>2025年度財務結算已完成，主要數據摘要如下：</p>
+                <ul>
+                    <li><b>營收</b>：較去年成長 <b>12%</b>，達 NT$28.6 億</li>
+                    <li><b>營業利益率</b>：維持 <b>18%</b>，與去年持平</li>
+                    <li><b>研發投入</b>：佔營收比例提升至 <b>15%</b>（去年 12%）</li>
+                    <li><b>員工人數</b>：較去年增加 45 人，年底總人數 520 人</li>
+                </ul>
+                <h3>二、各事業群表現</h3>
+                <p>BU1 營收佔比 42%、BU2 佔比 38%、其他事業群佔 20%。BU2 成長率最高，達 18%。</p>
+                <h3>三、展望</h3>
+                <p>2026 年度預計營收目標成長 15%，將持續加大研發與人才投資。</p>
+            `,
+            attachments: [
+                { name: '2025年度財務報表摘要.pdf', size: '3.2 MB', type: 'pdf', source: 'Finance/年報', approvedDate: '2026-03-08' },
+            ],
+            related: [
+                { title: '雲端服務費用管理規範', dept: 'Finance', date: '2026-02-10' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a06': {
+            id: 'a06', title: '系統架構設計文件更新', author: '許家豪', dept: 'BU1',
+            createdDate: '2026-03-08', lastModified: '2026-03-11', views: 29,
+            tags: ['架構', '設計'], validity: { type: 'permanent', label: '永久有效', icon: 'fa-shield-check' },
+            content: `
+                <h3>一、更新範圍</h3>
+                <p>本次更新新增微服務拆分方案與 API Gateway 設計，涵蓋以下模組：</p>
+                <ul>
+                    <li>Auth Service — 統一身分驗證與授權管理</li>
+                    <li>User Service — 使用者資料 CRUD</li>
+                    <li>Notification Service — 推播與通知引擎</li>
+                    <li>API Gateway — 流量控制、路由、限流</li>
+                </ul>
+                <h3>二、技術選型</h3>
+                <p>後端採用 Spring Boot 3.x + Kotlin，API Gateway 使用 Kong，訊息佇列使用 RabbitMQ。</p>
+                <h3>三、行動項目</h3>
+                <div class="info-box"><i class="fa-solid fa-circle-info"></i> 請各開發人員於本週內完成閱讀並提供回饋意見。</div>
+            `,
+            attachments: [
+                { name: '系統架構設計_v2.5.pdf', size: '5.1 MB', type: 'pdf', source: 'BU1/架構', approvedDate: '2026-03-08' },
+            ],
+            related: [
+                { title: 'Code Review 規範 v2.0 發佈', dept: 'BU1', date: '2026-03-13' },
+                { title: 'API 設計規範 RESTful 指南', dept: 'BU1', date: '2026-03-05' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a07': {
+            id: 'a07', title: 'X 專案技術架構圖 V3', author: '張志豪', dept: 'BU2',
+            createdDate: '2026-03-05', lastModified: '2026-03-10', views: 389,
+            tags: ['架構', '專案'], validity: { type: 'until-delete', label: '文件刪除前有效', icon: 'fa-infinity' },
+            content: `
+                <h3>一、架構總覽</h3>
+                <p>X 專案第三版架構圖已更新，全面採用微服務架構，包含以下核心服務：</p>
+                <ul>
+                    <li><b>API Gateway</b> — 統一入口，負責路由、認證、限流</li>
+                    <li><b>Auth Service</b> — JWT Token 管理與 OAuth 2.0 整合</li>
+                    <li><b>User Service</b> — 使用者管理與組織結構查詢</li>
+                    <li><b>Notification Service</b> — Email / Push / 站內信通知</li>
+                    <li><b>File Service</b> — 檔案上傳、儲存、版本管理</li>
+                </ul>
+                <h3>二、部署架構</h3>
+                <p>採用 Kubernetes 部署，搭配 Helm Chart 進行版本管理。生產環境配置 3 節點叢集，預留水平擴展能力。</p>
+                <h3>三、資料庫設計</h3>
+                <p>主要資料庫使用 PostgreSQL 16，快取層使用 Redis 7.x，全文檢索使用 Elasticsearch 8.x。</p>
+            `,
+            attachments: [
+                { name: 'X專案架構圖_V3.pdf', size: '6.8 MB', type: 'pdf', source: 'BU2/專案', approvedDate: '2026-03-05' },
+                { name: 'X專案DB_Schema.xlsx', size: '320 KB', type: 'xls', source: 'BU2/專案', approvedDate: '2026-03-05' },
+            ],
+            related: [
+                { title: 'X 專案第四週進度報告', dept: 'BU2', date: '2026-03-15' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a08': {
+            id: 'a08', title: 'BU2 新人訓練教材', author: '黃淑芬', dept: 'BU2',
+            createdDate: '2026-03-01', lastModified: '2026-03-08', views: 121,
+            tags: ['培訓', 'BU2'], validity: { type: 'until-delete', label: '文件刪除前有效', icon: 'fa-infinity' },
+            content: `
+                <h3>一、訓練概覽</h3>
+                <p>BU2 新人訓練為期兩週，旨在幫助新進同仁快速融入團隊並掌握基本技能。</p>
+                <h3>二、訓練內容</h3>
+                <ol>
+                    <li><b>第 1 週</b>：技術基礎培訓
+                        <ul><li>Git 版本控制與分支策略</li><li>開發環境建置（IDE、Docker、本地資料庫）</li><li>程式碼規範與 Coding Style Guide</li></ul>
+                    </li>
+                    <li><b>第 2 週</b>：專案實務
+                        <ul><li>專案流程介紹（Scrum、Sprint Planning、Daily Standup）</li><li>Jira 使用說明與任務管理</li><li>實作練習 — 完成一個小型 Feature 開發</li></ul>
+                    </li>
+                </ol>
+                <h3>三、考核方式</h3>
+                <p>訓練結束後由 Buddy 與主管共同評核，需完成指定練習作業並通過 Code Review。</p>
+            `,
+            attachments: [
+                { name: 'BU2新人訓練教材_2026.pdf', size: '8.5 MB', type: 'pdf', source: 'BU2/培訓', approvedDate: '2026-03-01' },
+            ],
+            related: [
+                { title: '2026年度新人訓練手冊已更新', dept: 'HR', date: '2026-03-16' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a09': {
+            id: 'a09', title: 'API 設計規範 RESTful 指南', author: '許家豪', dept: 'BU1',
+            createdDate: '2026-02-28', lastModified: '2026-03-05', views: 156,
+            tags: ['API', '規範'], validity: { type: 'permanent', label: '永久有效', icon: 'fa-shield-check' },
+            content: `
+                <h3>一、基本原則</h3>
+                <ul>
+                    <li>使用標準 HTTP 動詞：GET（查詢）、POST（新增）、PUT（更新）、DELETE（刪除）</li>
+                    <li>資源名稱使用複數名詞（如 <code>/api/users</code>、<code>/api/articles</code>）</li>
+                    <li>版本控制使用 URL prefix（如 <code>/api/v1/</code>）</li>
+                    <li>回傳統一格式的 JSON 結構，含 <code>data</code>、<code>message</code>、<code>code</code></li>
+                </ul>
+                <h3>二、命名規範</h3>
+                <p>URL 使用 kebab-case，JSON 欄位使用 camelCase，HTTP Header 使用 PascalCase。</p>
+                <h3>三、錯誤處理</h3>
+                <p>統一使用 HTTP 狀態碼，4xx 為客戶端錯誤、5xx 為伺服器錯誤。錯誤回應需包含 error code 與人類可讀的 message。</p>
+                <h3>四、分頁規範</h3>
+                <p>使用 <code>page</code> 與 <code>size</code> 參數，回傳需包含 <code>totalElements</code>、<code>totalPages</code>、<code>currentPage</code>。</p>
+            `,
+            attachments: [
+                { name: 'RESTful_API設計規範_v1.2.pdf', size: '1.5 MB', type: 'pdf', source: 'BU1/規範', approvedDate: '2026-02-28' },
+            ],
+            related: [
+                { title: 'Code Review 規範 v2.0 發佈', dept: 'BU1', date: '2026-03-13' },
+                { title: '系統架構設計文件更新', dept: 'BU1', date: '2026-03-11' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a10': {
+            id: 'a10', title: '資安政策宣導 — 2026年度', author: '陳建宏', dept: 'BU1',
+            createdDate: '2026-02-25', lastModified: '2026-03-01', views: 245,
+            tags: ['資安', '政策'], validity: { type: 'expiring', label: '有效至 2026/12/31', icon: 'fa-calendar-xmark' },
+            content: `
+                <h3>一、年度資安政策重點</h3>
+                <ol>
+                    <li><b>密碼管理</b>：每 90 天強制更換，長度至少 12 碼，含大小寫、數字及特殊字元</li>
+                    <li><b>資料儲存</b>：禁止使用個人雲端（Google Drive、Dropbox 等）儲存公司資料</li>
+                    <li><b>遠端存取</b>：VPN 連線需啟用二階段驗證（MFA）</li>
+                    <li><b>設備管理</b>：離開座位需鎖定螢幕，筆電需啟用硬碟加密</li>
+                </ol>
+                <h3>二、社交工程防範</h3>
+                <p>近期釣魚郵件攻擊增加，請特別注意：不點擊來路不明連結、不開啟可疑附件、確認寄件者身分。</p>
+                <div class="highlight-box"><i class="fa-solid fa-triangle-exclamation"></i> 若發現可疑郵件，請立即通報 IT 資安團隊。</div>
+                <h3>三、年度資安教育訓練</h3>
+                <p>全體員工須於 2026 年 6 月 30 日前完成線上資安課程（約 2 小時），未完成者將影響年度考核。</p>
+            `,
+            attachments: [
+                { name: '2026資安政策手冊.pdf', size: '2.8 MB', type: 'pdf', source: 'IT/資安', approvedDate: '2026-02-25' },
+            ],
+            related: [
+                { title: '入職流程 SOP 完整指南', dept: 'HR', date: '2026-01-15' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a11': {
+            id: 'a11', title: '會議室預約系統使用說明', author: '楊淑惠', dept: 'Admin',
+            createdDate: '2026-02-20', lastModified: '2026-02-28', views: 165,
+            tags: ['會議室', '系統'], validity: { type: 'until-delete', label: '文件刪除前有效', icon: 'fa-infinity' },
+            content: `
+                <h3>一、系統簡介</h3>
+                <p>會議室預約系統已整合至 EIP 平台，支援線上預約、取消及查詢。</p>
+                <h3>二、操作步驟</h3>
+                <ol>
+                    <li>登入 EIP 系統 → 選擇「會議室預約」功能</li>
+                    <li>選擇日期、時段及會議室</li>
+                    <li>填寫會議主題與參與人數</li>
+                    <li>確認預約，系統自動發送會議通知給所有與會者</li>
+                </ol>
+                <h3>三、注意事項</h3>
+                <ul>
+                    <li>大型會議室（20 人以上）需提前 <b>3 天</b>預約</li>
+                    <li>預約後未使用且未提前取消，連續 3 次將暫停預約權限 1 個月</li>
+                    <li>使用後請完成設備歸還（投影筆、白板筆等）</li>
+                </ul>
+            `,
+            attachments: [
+                { name: '會議室預約系統操作手冊.pdf', size: '1.8 MB', type: 'pdf', source: 'Admin/系統', approvedDate: '2026-02-20' },
+            ],
+            related: [], extended: [], discussions: [],
+        },
+
+        'a12': {
+            id: 'a12', title: '請假制度常見問題 FAQ', author: '李美玲', dept: 'HR',
+            createdDate: '2026-01-10', lastModified: '2026-02-20', views: 876,
+            tags: ['請假', 'FAQ'], validity: { type: 'expiring', label: '有效至 2026/12/31', icon: 'fa-calendar-xmark' },
+            content: `
+                <h3>Q1：特休假天數如何計算？</h3>
+                <p>依據勞動基準法規定，滿 6 個月未滿 1 年者為 3 天，滿 1 年未滿 2 年者為 7 天，依年資遞增。公司採<b>到職日制</b>計算。</p>
+                <h3>Q2：病假需要附診斷證明嗎？</h3>
+                <p>連續請病假 <b>3 天（含）以上</b>者，需於復工後 3 日內補交醫療院所診斷證明書正本。</p>
+                <h3>Q3：事假扣薪標準？</h3>
+                <p>事假依日/時計薪扣除，計算公式為：月薪 ÷ 30 天 × 請假天數。</p>
+                <h3>Q4：特休假可以遞延嗎？</h3>
+                <p>當年度未休完之特休假得遞延至次年度使用，最遲須於<b>次年 6 月 30 日前</b>休畢。</p>
+                <div class="info-box"><i class="fa-solid fa-circle-info"></i> 更多問題歡迎聯繫 HR 部門。</div>
+            `,
+            attachments: [
+                { name: '請假制度規範手冊_2026.pdf', size: '2.1 MB', type: 'pdf', source: 'HR/SOP', approvedDate: '2026-01-08' },
+            ],
+            related: [
+                { title: '員工福利手冊 2026 版', dept: 'HR', date: '2026-01-10' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a13': {
+            id: 'a13', title: '專案管理流程標準化', author: '林志偉', dept: 'BU2',
+            createdDate: '2026-02-10', lastModified: '2026-02-15', views: 198,
+            tags: ['專案', '流程'], validity: { type: 'permanent', label: '永久有效', icon: 'fa-shield-check' },
+            content: `
+                <h3>一、流程概覽</h3>
+                <p>專案管理標準流程包含五大階段，每個階段皆需產出對應文件並經過審核：</p>
+                <ol>
+                    <li><b>啟動</b>：確認專案範圍、目標、利害關係人，產出 Project Charter</li>
+                    <li><b>規劃</b>：制定時程、資源配置、風險評估，產出 Project Plan</li>
+                    <li><b>執行</b>：依計畫進行開發，透過 Daily Standup 追蹤進度</li>
+                    <li><b>監控</b>：定期檢視進度與品質指標，進行風險管理</li>
+                    <li><b>結案</b>：完成驗收、知識轉移、經驗回顧（Retrospective）</li>
+                </ol>
+                <h3>二、工具使用</h3>
+                <p>統一使用 Jira 進行任務管理，Confluence 存放專案文件，Teams 進行溝通。</p>
+            `,
+            attachments: [
+                { name: '專案管理流程_SOP.pdf', size: '1.6 MB', type: 'pdf', source: 'BU2/SOP', approvedDate: '2026-02-10' },
+            ],
+            related: [
+                { title: 'X 專案第四週進度報告', dept: 'BU2', date: '2026-03-15' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a14': {
+            id: 'a14', title: '雲端服務費用管理規範', author: '吳佳蓉', dept: 'Finance',
+            createdDate: '2026-02-05', lastModified: '2026-02-10', views: 132,
+            tags: ['雲端', '費用'], validity: { type: 'until-delete', label: '文件刪除前有效', icon: 'fa-infinity' },
+            content: `
+                <h3>一、適用範圍</h3>
+                <p>本規範適用於所有部門使用之公有雲服務（AWS、Azure、GCP）。</p>
+                <h3>二、預算申請</h3>
+                <ul>
+                    <li>新增雲端服務需事先提出預算申請表</li>
+                    <li>月費超過 <b>NT$50,000</b> 需經部門主管核准</li>
+                    <li>月費超過 <b>NT$200,000</b> 需經 CTO 與財務長共同核准</li>
+                </ul>
+                <h3>三、費用監控</h3>
+                <p>IT 部門每月產出各部門雲端費用報表，異常增加超過 20% 將自動通知部門主管。</p>
+                <div class="info-box"><i class="fa-solid fa-circle-info"></i> 各部門應指定一名雲端費用管理窗口，負責定期檢視使用量。</div>
+            `,
+            attachments: [
+                { name: '雲端服務費用管理規範.pdf', size: '980 KB', type: 'pdf', source: 'Finance/政策', approvedDate: '2026-02-05' },
+            ],
+            related: [
+                { title: '2025年度財務報表摘要', dept: 'Finance', date: '2026-03-12' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a15': {
+            id: 'a15', title: '新人指南 — 快速上手', author: '黃淑芬', dept: 'BU2',
+            createdDate: '2026-01-28', lastModified: '2026-02-01', views: 278,
+            tags: ['新人', '指南'], validity: { type: 'until-delete', label: '文件刪除前有效', icon: 'fa-infinity' },
+            content: `
+                <h3>歡迎加入！</h3>
+                <p>以下是快速上手指南，幫助你在第一週就能順利展開工作。</p>
+                <h3>一、熟悉內部系統</h3>
+                <ul>
+                    <li><b>EIP</b>：企業入口網站，包含簽核、公告、出勤系統</li>
+                    <li><b>KM</b>：知識管理平台，查閱規範文件與 SOP</li>
+                    <li><b>HR 系統</b>：請假、加班、個人資料維護</li>
+                </ul>
+                <h3>二、了解團隊協作工具</h3>
+                <ul>
+                    <li><b>Microsoft Teams</b>：日常溝通與視訊會議</li>
+                    <li><b>Jira</b>：任務追蹤與 Sprint 管理</li>
+                    <li><b>Confluence</b>：技術文件與知識庫</li>
+                </ul>
+                <h3>三、閱讀必讀文件</h3>
+                <p>建議於第一週內完成以下文件閱讀：部門 Wiki、Code Style Guide、專案架構文件。</p>
+            `,
+            attachments: [
+                { name: '新人快速上手指南.pdf', size: '2.0 MB', type: 'pdf', source: 'BU2/培訓', approvedDate: '2026-01-28' },
+            ],
+            related: [
+                { title: '2026年度新人訓練手冊已更新', dept: 'HR', date: '2026-03-16' },
+                { title: 'BU2 新人訓練教材', dept: 'BU2', date: '2026-03-08' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a16': {
+            id: 'a16', title: '績效考核制度說明', author: '李美玲', dept: 'HR',
+            createdDate: '2026-01-20', lastModified: '2026-01-25', views: 143,
+            tags: ['績效', 'HR'], validity: { type: 'expiring', label: '有效至 2026/12/31', icon: 'fa-calendar-xmark' },
+            content: `
+                <h3>一、考核時程</h3>
+                <p>績效考核分為兩階段：</p>
+                <ul>
+                    <li><b>年中考核</b>（7 月）：回顧上半年目標達成情況，進行中期調整</li>
+                    <li><b>年度考核</b>（1 月）：綜合全年表現，作為晉升與調薪依據</li>
+                </ul>
+                <h3>二、評核項目</h3>
+                <ol>
+                    <li><b>工作目標達成率</b>（佔比 50%）：依年初設定之 OKR 評核</li>
+                    <li><b>職能展現</b>（佔比 30%）：專業技能、問題解決能力、學習成長</li>
+                    <li><b>團隊合作</b>（佔比 20%）：跨部門協作、知識分享、文化契合度</li>
+                </ol>
+                <h3>三、等級定義</h3>
+                <p>S（卓越）、A（優秀）、B（良好）、C（需改善）、D（不合格）。B 級以上可獲得績效獎金。</p>
+            `,
+            attachments: [
+                { name: '績效考核制度說明_2026.pdf', size: '1.4 MB', type: 'pdf', source: 'HR/制度', approvedDate: '2026-01-20' },
+            ],
+            related: [
+                { title: '員工福利手冊 2026 版', dept: 'HR', date: '2026-01-10' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a17': {
+            id: 'a17', title: '入職流程 SOP 完整指南', author: '李美玲', dept: 'HR',
+            createdDate: '2025-11-20', lastModified: '2026-01-15', views: 654,
+            tags: ['SOP', '入職'], validity: { type: 'permanent', label: '永久有效', icon: 'fa-shield-check' },
+            content: `
+                <h3>一、入職前準備（報到前 3 天）</h3>
+                <ul>
+                    <li>HR 發送報到通知信，含報到時間、地點、攜帶文件清單</li>
+                    <li>IT 部門完成帳號建立：Email、EIP 系統、VPN</li>
+                    <li>行政部門準備工位、識別證、辦公用品</li>
+                </ul>
+                <h3>二、報到日流程</h3>
+                <ol>
+                    <li><b>09:00</b> — 至大廳報到</li>
+                    <li><b>09:15</b> — 繳交入職文件（身分證影本、學歷證明、緊急聯絡人資料）</li>
+                    <li><b>09:45</b> — 簽署勞動合約與保密協議</li>
+                    <li><b>10:30</b> — 公司簡介與文化導覽</li>
+                    <li><b>11:30</b> — IT 系統設定協助</li>
+                    <li><b>13:30</b> — 部門介紹與 Buddy 交接</li>
+                </ol>
+                <h3>三、試用期管理</h3>
+                <p>試用期為 <b>3 個月</b>，期間進行三次主管面談（第 1、2、3 個月末），最終評核決定是否轉正。</p>
+            `,
+            attachments: [
+                { name: '入職流程SOP_v4.0.pdf', size: '1.8 MB', type: 'pdf', source: 'HR/SOP', approvedDate: '2025-11-18' },
+            ],
+            related: [
+                { title: '2026年度新人訓練手冊已更新', dept: 'HR', date: '2026-03-16' },
+                { title: '請假制度常見問題 FAQ', dept: 'HR', date: '2026-02-20' },
+            ],
+            extended: [], discussions: [],
+        },
+
+        'a18': {
+            id: 'a18', title: '員工福利手冊 2026 版', author: '李美玲', dept: 'HR',
+            createdDate: '2026-01-05', lastModified: '2026-01-10', views: 187,
+            tags: ['福利', 'HR'], validity: { type: 'expiring', label: '有效至 2026/12/31', icon: 'fa-calendar-xmark' },
+            content: `
+                <h3>一、健康福利</h3>
+                <ul>
+                    <li>年度健檢補助 <b>NT$5,000</b>（配合公司特約醫院另有優惠方案）</li>
+                    <li>員工團體保險（壽險、意外險、醫療險）</li>
+                    <li>EAP 員工協助方案（免費心理諮商 6 次/年）</li>
+                </ul>
+                <h3>二、學習成長</h3>
+                <ul>
+                    <li>教育訓練補助每年 <b>NT$20,000</b>（含外部課程、證照考試）</li>
+                    <li>內部讀書會與技術分享會</li>
+                    <li>年度技術研討會參加補助</li>
+                </ul>
+                <h3>三、生活福利</h3>
+                <ul>
+                    <li>社團活動補助</li>
+                    <li>彈性工時制度（核心時段 10:00–16:00）</li>
+                    <li>每月生日慶祝活動</li>
+                    <li>端午、中秋禮品/禮金</li>
+                </ul>
+                <div class="info-box"><i class="fa-solid fa-circle-info"></i> 福利細節以最新版本為準，如有異動將另行公告。</div>
+            `,
+            attachments: [
+                { name: '員工福利手冊_2026.pdf', size: '3.5 MB', type: 'pdf', source: 'HR/福利', approvedDate: '2026-01-05' },
+            ],
+            related: [
+                { title: '績效考核制度說明', dept: 'HR', date: '2026-01-25' },
+                { title: '請假制度常見問題 FAQ', dept: 'HR', date: '2026-02-20' },
+            ],
+            extended: [], discussions: [],
+        },
+    };
     function getArticleId() {
         const params = new URLSearchParams(window.location.search);
         return params.get('id') || 'h01';
