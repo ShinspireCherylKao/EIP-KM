@@ -38,12 +38,11 @@
     overflow: visible;
 }
 
-/* 外層：左主區 + 右側欄 */
-/* 外層：扁平化三欄 Grid，讓同一列的卡片等高 */
+/* 外層：兩欄 Grid，四列 */
 .km-dashboard-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 340px;
-    grid-template-rows: auto auto;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
     gap: var(--spacing-card);
     align-items: stretch;
     /* 留出空間讓 box-shadow 不被裁切，負 margin 補回視覺位置 */
@@ -51,18 +50,15 @@
     margin: -20px;
 }
 
-/* 用 display:contents 打平巢套，讓子卡片直接參與外層 Grid */
-.km-grid-main {
-    display: contents;
-}
-.km-grid-latest { grid-column: 1; grid-row: 1; }
-.km-grid-hot    { grid-column: 2; grid-row: 1; }
-.km-grid-fav    { grid-column: 1 / 3; grid-row: 2; align-self: start; }
-
-/* 右側欄同樣打平 */
-.km-grid-side   { display: contents; }
-.km-grid-side > .km-block:first-child { grid-column: 3; grid-row: 1; }
-.km-grid-side > .km-block:last-child  { grid-column: 3; grid-row: 2; align-self: start; }
+/* 第一列：最新文章 | 我的活躍度 */
+.km-grid-latest  { grid-column: 1; grid-row: 1; }
+.km-grid-activity { grid-column: 2; grid-row: 1; }
+/* 第二列：熱門文章 | 我的收藏（直式） */
+.km-grid-hot     { grid-column: 1; grid-row: 2; }
+.km-grid-fav     { grid-column: 2; grid-row: 2; align-self: start; }
+/* 第三列：個人貢獻 | 文件審核 */
+.km-grid-contrib { grid-column: 1; grid-row: 3; }
+.km-grid-review  { grid-column: 2; grid-row: 3; }
 
 /* ===== 最新文章卡片 — 覆寫為 .card 樣式 ===== */
 .km-dashboard-grid .km-block {
@@ -87,6 +83,8 @@
 }
 .km-dashboard-grid .block-header h3 {
     line-height: 1.1;
+    padding-left: 10px;
+    border-left: 4px solid #1e40af;
 }
 
 /* ===== 總覽卡片 — 查看全部連結 ===== */
@@ -122,29 +120,16 @@
     color: var(--primary-color);
 }
 
-/* RWD — 斷點: 1200 / 960 / 768 */
-@media (max-width: 1200px) {
-    .km-dashboard-grid {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto auto;
-    }
-    .km-grid-latest { grid-column: 1; grid-row: 1; }
-    .km-grid-hot    { grid-column: 2; grid-row: 1; }
-    .km-grid-fav    { grid-column: 1 / 3; grid-row: 2; }
-    .km-grid-side > .km-block:first-child { grid-column: 1; grid-row: 3; }
-    .km-grid-side > .km-block:last-child  { grid-column: 2; grid-row: 3; }
-}
+/* RWD — 斷點: 960 / 768 */
 @media (max-width: 960px) {
     .km-dashboard-grid {
         grid-template-columns: 1fr;
     }
-    .km-grid-latest, .km-grid-hot, .km-grid-fav,
-    .km-grid-side > .km-block:first-child,
-    .km-grid-side > .km-block:last-child {
+    .km-grid-latest, .km-grid-activity, .km-grid-fav,
+    .km-grid-contrib, .km-grid-review, .km-grid-hot {
         grid-column: 1;
         grid-row: auto;
     }
-    .km-grid-side { flex-direction: column; }
 }
 
 /* ===== 區塊面板 — 冷灰質感 ===== */
@@ -305,7 +290,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 10px var(--spacing-compact);
+    padding: 24px var(--spacing-compact);
     cursor: pointer;
     transition: background .15s;
     border-right: 1px solid #F0F1F3;
@@ -461,7 +446,7 @@
 }
 .fav-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
     gap: 12px;
 }
 .fav-card {
@@ -660,9 +645,9 @@
 
 /* ===== RWD 響應式補充 — 斷點: 768 / 480 ===== */
 @media (max-width: 768px) {
-    /* 標題列預留右側空間給按鈕 */
     .km-page-header {
-        padding-right: 148px;
+        padding-right: 0;
+        margin: 0 16px 8px;
     }
 
     .km-page-header h2 {
@@ -670,35 +655,29 @@
         margin-bottom: 0;
     }
 
-    /* 讓按鈕可以脫離 nav 定位到標題列 */
-    .main-content {
-        position: relative;
-    }
-
     #km-nav-container,
     #km-nav-container .km-nav {
         position: static;
     }
 
-    /* 兩個 action 按鈕絕對定位到標題同行右側 */
-    .km-nav-btn.ai-btn {
-        position: absolute;
-        top: 26px;
-        right: 88px;
-        z-index: 5;
+    #km-nav-container .km-nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
     }
 
-    .km-nav-btn.km-nav-btn-add {
-        position: absolute;
-        top: 26px;
-        right: 16px;
-        z-index: 5;
+    #km-nav-container .km-nav-search {
+        grid-column: 1 / -1;
+        order: 0;
     }
 
-    /* 搜尋框不被按鈕遮蓋 */
-    .km-nav-search {
-        z-index: 6;
-        position: relative;
+    #km-nav-container .km-nav-btn.ai-btn,
+    #km-nav-container .km-nav-btn.km-nav-btn-add {
+        position: static;
+        top: auto;
+        right: auto;
+        z-index: auto;
+        width: 100%;
     }
 
     /* 手機版按鈕只顯示短標籤 */
@@ -732,6 +711,34 @@
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
     }
+
+    .km-grid-activity .block-body {
+        overflow: visible;
+    }
+
+    .km-grid-activity .activity-grid {
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: 0;
+    }
+
+    .km-grid-activity .activity-left {
+        border-right: none;
+        border-bottom: 1px solid #F1F5F9;
+        border-radius: 0;
+        padding: 24px 20px;
+    }
+
+    .km-grid-activity .activity-right .activity-stat-row {
+        min-height: 92px;
+        padding: 18px 20px;
+    }
+
+    .km-grid-activity .activity-big-number {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
     .article-modal {
         width: 96vw;
         border-radius: var(--radius);
@@ -752,5 +759,172 @@
     .article-modal .am-meta {
         flex-direction: column;
         align-items: flex-start;
+    }
+}
+
+/* ===== 文章收藏按鈕（知識總覽頁覆寫） ===== */
+
+/* Modal 內收藏按鈕稍大 */
+.am-header .article-fav-btn {
+    font-size: 18px;
+    min-width: 36px;
+    min-height: 36px;
+}
+
+/* fav-card 上的收藏按鈕 */
+.fav-card .article-fav-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 14px;
+    min-width: 28px;
+    min-height: 28px;
+    padding: 4px;
+}
+.fav-card {
+    position: relative;
+}
+
+/* ===== 我的活躍度卡片 ===== */
+.km-grid-activity .block-header {
+    border-bottom: none;
+}
+
+/* 兩欄佈局：左排名 | 右統計 */
+.activity-grid {
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    gap: 0;
+    min-height: 390px;
+}
+
+/* 左欄：排名圓環 */
+.activity-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 100%);
+    border-right: 1px solid #E2E8F0;
+    border-radius: 0 0 0 11px;
+}
+.activity-left .activity-card-label {
+    font-size: 13px;
+    color: #64748B;
+    font-weight: 600;
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+}
+
+/* 右欄：三項統計堆疊 */
+.activity-right {
+    display: flex;
+    flex-direction: column;
+}
+.activity-right .activity-stat-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    border-bottom: 1px solid #F1F5F9;
+    flex: 1;
+    transition: background .15s;
+}
+.activity-right .activity-stat-row:hover {
+    background: #FAFBFC;
+}
+.activity-right .activity-stat-row:last-child {
+    border-bottom: none;
+}
+.activity-stat-row .activity-card-label {
+    font-size: 14px;
+    color: #64748B;
+    font-weight: 500;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.activity-stat-row .activity-card-label i {
+    font-size: 13px;
+    color: #94A3B8;
+    width: 16px;
+    text-align: center;
+}
+
+/* 排名圓環 */
+.activity-rank-ring {
+    position: relative;
+    width: 160px;
+    height: 160px;
+}
+.activity-rank-ring .rank-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.2));
+}
+.rank-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.rank-number {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1E40AF;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+.rank-unit {
+    font-size: 14px;
+    color: #64748B;
+    font-weight: 600;
+    margin-top: 2px;
+}
+.rank-total {
+    font-size: 11px;
+    color: #94A3B8;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid #E2E8F0;
+}
+
+/* 大數字統計 */
+.activity-big-number {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+.activity-big-number .big-num {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1E40AF;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+.activity-big-number .big-unit {
+    font-size: 13px;
+    color: #94A3B8;
+    font-weight: 500;
+}
+
+/* 活躍度 RWD */
+@media (max-width: 480px) {
+    .activity-left {
+        padding: 20px 16px;
+    }
+    .activity-rank-ring {
+        width: 160px;
+        height: 160px;
+    }
+    .rank-number { font-size: 36px; }
+    .activity-big-number .big-num { font-size: 28px; }
+    .activity-right .activity-stat-row {
+        padding: 16px 20px;
     }
 }

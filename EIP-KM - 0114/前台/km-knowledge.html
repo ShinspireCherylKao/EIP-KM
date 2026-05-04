@@ -34,65 +34,70 @@
         <!-- KM 知識管理內容 -->
         <div class="km-container">
 
-            <!-- 三欄 Grid -->
+            <!-- 兩欄 Grid：三列 -->
             <div class="km-dashboard-grid">
-                <!-- 左主區：最新 + 熱門 + 收藏 -->
-                <div class="km-grid-main">
-                    <!-- 左欄：最新文章 -->
-                    <div class="km-block km-grid-latest">
-                        <div class="block-header">
-                            <h3>最新文章</h3>
-                            <a class="more-link" href="km-latest.html">查看全部 <i class="fa-solid fa-angle-right"></i></a>
-                        </div>
-                        <div class="block-body" id="latestArticlesBody"></div>
+                <!-- 第一列：最新文章 | 我的活躍度 -->
+                <div class="km-block km-grid-latest">
+                    <div class="block-header">
+                        <h3>最新文章</h3>
+                        <a class="more-link" href="km-latest.html">查看全部 <i class="fa-solid fa-angle-right"></i></a>
                     </div>
+                    <div class="block-body" id="latestArticlesBody"></div>
+                </div>
 
-                    <!-- 中欄：熱門文章 -->
-                    <div class="km-block km-grid-hot">
-                        <div class="block-header">
-                            <h3>熱門文章</h3>
-                            <a class="more-link" href="km-hot.html">查看全部 <i class="fa-solid fa-angle-right"></i></a>
-                        </div>
-                        <div class="block-body" id="hotArticlesBody"></div>
+                <div class="km-block km-grid-activity">
+                    <div class="block-header">
+                        <h3>我的活躍度</h3>
+                        <a class="more-link" href="km-manage.html#activity">個人專區 <i class="fa-solid fa-angle-right"></i></a>
                     </div>
-
-                    <!-- 左兩欄底部：我的收藏 -->
-                    <div class="km-block km-grid-fav">
-                        <div class="block-header">
-                            <h3>我的收藏</h3>
-                            <a class="more-link" href="km-favorites.html">查看全部 <i class="fa-solid fa-angle-right"></i></a>
-                        </div>
-                        <div class="block-body fav-body" id="favArticlesBody"></div>
+                    <div class="block-body">
+                        <div class="activity-grid" id="activityGrid"></div>
                     </div>
                 </div>
 
-                <!-- 右欄：個人貢獻 + 文件審核 -->
-                <div class="km-grid-side">
-                    <div class="km-block">
-                        <div class="block-header">
-                            <h3>個人貢獻</h3>
-                            <a class="more-link" href="km-manage.html">管理文章 <i class="fa-solid fa-angle-right"></i></a>
-                        </div>
-                        <div class="block-body">
-                            <div class="contrib-stats" id="contribStats"></div>
-                            <div class="contrib-list" id="contribList"></div>
-                        </div>
+                <!-- 第二列：熱門文章 | 我的收藏（直式） -->
+                <div class="km-block km-grid-hot">
+                    <div class="block-header">
+                        <h3>熱門文章</h3>
+                        <a class="more-link" href="km-hot.html">查看全部 <i class="fa-solid fa-angle-right"></i></a>
                     </div>
-                    <div class="km-block">
-                        <div class="block-header">
-                            <h3>文件審核</h3>
-                            <a class="more-link" href="km-manage.html#my-submit">查看全部 <i class="fa-solid fa-angle-right"></i></a>
-                        </div>
-                        <div class="review-tabs">
-                            <button class="review-tab active" onclick="switchReviewTab('submitted')" data-tab="submitted">
-                                我送審的 <span class="tab-count" id="submittedCount">0</span>
-                            </button>
-                            <button class="review-tab" onclick="switchReviewTab('pending')" data-tab="pending">
-                                等我審核 <span class="tab-count" id="pendingCount">0</span>
-                            </button>
-                        </div>
-                        <div class="block-body" id="reviewBody"></div>
+                    <div class="block-body" id="hotArticlesBody"></div>
+                </div>
+
+                <div class="km-block km-grid-fav">
+                    <div class="block-header">
+                        <h3>我的收藏</h3>
+                        <a class="more-link" href="km-favorites.html">查看全部 <i class="fa-solid fa-angle-right"></i></a>
                     </div>
+                    <div class="block-body fav-body" id="favArticlesBody"></div>
+                </div>
+
+                <!-- 第三列：個人貢獻 | 文件審核 -->
+                <div class="km-block km-grid-contrib">
+                    <div class="block-header">
+                        <h3>個人貢獻</h3>
+                        <a class="more-link" href="km-manage.html">管理文章 <i class="fa-solid fa-angle-right"></i></a>
+                    </div>
+                    <div class="block-body">
+                        <div class="contrib-stats" id="contribStats"></div>
+                        <div class="contrib-list" id="contribList"></div>
+                    </div>
+                </div>
+
+                <div class="km-block km-grid-review">
+                    <div class="block-header">
+                        <h3>文件審核</h3>
+                        <a class="more-link" href="km-manage.html#my-submit">查看全部 <i class="fa-solid fa-angle-right"></i></a>
+                    </div>
+                    <div class="review-tabs">
+                        <button class="review-tab active" onclick="switchReviewTab('submitted')" data-tab="submitted">
+                            我送審的 <span class="tab-count" id="submittedCount">0</span>
+                        </button>
+                        <button class="review-tab" onclick="switchReviewTab('pending')" data-tab="pending">
+                            等我審核 <span class="tab-count" id="pendingCount">0</span>
+                        </button>
+                    </div>
+                    <div class="block-body" id="reviewBody"></div>
                 </div>
             </div>
 
@@ -104,6 +109,7 @@
         <div class="article-modal">
             <div class="am-header">
                 <h3 id="amTitle">—</h3>
+                <span id="amFavBtn"></span>
                 <button class="btn ghost" onclick="closeArticleModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="am-meta" id="amMeta"></div>
@@ -138,7 +144,7 @@
           content:'<p>X 專案本週進度摘要：</p><p>• 前端模組開發完成 85%<br>• API 整合測試進行中<br>• 預計下週完成 UAT 環境部署</p><p>風險項目：第三方 API 回應速度偶有延遲，已與廠商溝通改善中。</p>' },
         { id:'a03', title:'差旅報銷規範修訂公告', author:'吳佳蓉', dept:'Finance', date:'2026-03-14', tags:['差旅','報銷','公告'], views: 102,
           content:'<p>自 2026年4月1日起，差旅報銷規範將進行以下調整：</p><p>1. 國內出差住宿費上限調整為每晚 NT$3,500<br>2. 交通費須於 3 個工作天內提交核銷<br>3. 新增線上簽核流程，無需紙本表單</p><p>詳細內容請參閱附件。</p>' },
-        { id:'a04', title:'Code Review 規範 v2.0 發佈', author:'蔡明達', dept:'BU1', date:'2026-03-13', tags:['規範','CR'], views: 76,
+        { id:'a04', title:'Code Review 規範 v2.0 發佈 — 全部門適用新版審查流程(更新2558條標準及審核機制說明)', author:'蔡明達', dept:'BU1', date:'2026-03-13', tags:['規範','CR'], views: 76,
           content:'<p>Code Review 規範已更新至 v2.0，主要修訂：</p><p>• PR 必須至少 2 人 Approve 才可合併<br>• 新增安全性檢查清單<br>• CI pipeline 需全部通過<br>• 增加效能相關的 Review 項目</p>' },
         { id:'a05', title:'2025年度財務報表摘要', author:'吳佳蓉', dept:'Finance', date:'2026-03-12', tags:['財報','年度'], views: 45,
           content:'<p>2025年度財務結算已完成，主要數據摘要如下：</p><p>• 營收較去年成長 12%<br>• 營業利益率維持 18%<br>• 研發投入佔營收比例提升至 15%</p><p>詳細報表已上傳至財務部門資料夾。</p>' },
@@ -210,6 +216,15 @@
     let _contribView = 'published';
 
     // ===== 初始化 =====
+    // ===== 我的活躍度假資料 =====
+    const _myActivity = {
+        rank: 2630,
+        totalUsers: 32819,
+        personalReads: 15,
+        totalArticleReads: 1200,
+        publishedCount: 5
+    };
+
     (function init() {
         renderLatestArticles();
         renderHotArticles();
@@ -217,6 +232,7 @@
         renderContributions();
         updateReviewCounts();
         renderReview();
+        renderActivity();
     })();
 
     // ===== 最新文章 =====
@@ -226,13 +242,14 @@
         host.innerHTML = _latestArticles.slice(0, 5).map(a => `
             <div class="article-item" onclick="window.location.href='km-article.html?id=${a.id}'">
                 <div class="article-info">
-                    <h4 class="article-title">${escHtml(truncateTitle(a.title))}</h4>
+                    <h4 class="article-title">${escHtml(a.title)}</h4>
                     <div class="article-meta">
                         <span><i class="fa-solid fa-user"></i> ${escHtml(a.author)}</span>
                         <span><i class="fa-solid fa-building"></i> ${escHtml(a.dept)}</span>
                     </div>
                 </div>
                 <div class="article-side-info">${a.date}</div>
+                ${articleFavBtnHtml(a.id, a.title)}
             </div>
         `).join('');
     }
@@ -247,13 +264,14 @@
             <div class="article-item" onclick="window.location.href='km-article.html?id=${a.id}'">
                 <div class="rank-badge ${rankClass}">${i+1}</div>
                 <div class="article-info">
-                    <h4 class="article-title">${escHtml(truncateTitle(a.title))}</h4>
+                    <h4 class="article-title">${escHtml(a.title)}</h4>
                     <div class="article-meta">
                         <span><i class="fa-solid fa-user"></i> ${escHtml(a.author)}</span>
                         <span><i class="fa-solid fa-building"></i> ${escHtml(a.dept)}</span>
                     </div>
                 </div>
                 <div class="article-side-info"><i class="fa-solid fa-eye"></i> ${a.views.toLocaleString()}</div>
+                ${articleFavBtnHtml(a.id, a.title)}
             </div>`;
         }).join('');
     }
@@ -262,12 +280,13 @@
     function renderFavArticles() {
         const host = document.getElementById('favArticlesBody');
         if (!_favArticles.length) { host.innerHTML = '<div class="empty-state"><i class="fa-solid fa-bookmark"></i>尚無收藏文章</div>'; return; }
-        const maxCount = window.innerWidth <= 768 ? 3 : 9;
-        host.innerHTML = '<div class="fav-grid">' + _favArticles.slice(0, 9).map(a => `
+        const maxCount = window.innerWidth <= 768 ? 3 : 5;
+        host.innerHTML = '<div class="fav-grid">' + _favArticles.slice(0, 5).map(a => `
             <div class="fav-card" onclick="window.location.href='km-article.html?id=${a.id}'">
+                ${articleFavBtnHtml(a.id, a.title)}
                 <div class="fav-card-title">
                     <i class="fa-solid fa-star fav-star"></i>
-                    ${escHtml(truncateTitle(a.title))}
+                    ${escHtml(a.title)}
                 </div>
                 <div class="fav-card-meta">
                     <span><i class="fa-solid fa-user"></i> ${escHtml(a.author)}</span>
@@ -317,7 +336,7 @@
                 <div class="contrib-article">
                     <span class="contrib-status published">已發表</span>
                     <div class="ca-info">
-                        <span class="ca-title">${escHtml(truncateTitle(a.title))}</span>
+                        <span class="ca-title">${escHtml(a.title)}</span>
                         <div class="ca-meta">
                             <span class="ca-date"><i class="fa-solid fa-eye"></i> ${a.views}</span>
                             <span class="ca-date">${a.date}</span>
@@ -330,7 +349,7 @@
                 <div class="contrib-article">
                     <span class="contrib-status draft">草稿</span>
                     <div class="ca-info">
-                        <span class="ca-title">${escHtml(truncateTitle(a.title))}</span>
+                        <span class="ca-title">${escHtml(a.title)}</span>
                         <div class="ca-meta">
                             <span class="ca-date">編輯於 ${a.lastEdit}</span>
                         </div>
@@ -342,7 +361,7 @@
                 <div class="contrib-article">
                     <span class="contrib-status expired">失效</span>
                     <div class="ca-info">
-                        <span class="ca-title">${escHtml(truncateTitle(a.title))}</span>
+                        <span class="ca-title">${escHtml(a.title)}</span>
                         <div class="ca-meta">
                             <span class="ca-date">過期 ${a.expiredDate}</span>
                         </div>
@@ -374,7 +393,7 @@
                 <div class="article-item">
                     <span class="status-badge ${d.status}"><i class="fa-solid ${getStatusIcon(d.status)}"></i> ${d.statusText}</span>
                     <div class="article-info">
-                        <h4 class="article-title">${escHtml(truncateTitle(d.title))}</h4>
+                        <h4 class="article-title">${escHtml(d.title)}</h4>
                     </div>
                     <div class="article-meta">
                         <span><i class="fa-solid fa-user-check"></i> 審核人：${escHtml(d.reviewer)}</span>
@@ -391,7 +410,7 @@
                 <div class="article-item">
                     <span class="status-badge ${d.status}"><i class="fa-solid ${getStatusIcon(d.status)}"></i> ${d.statusText}</span>
                     <div class="article-info">
-                        <h4 class="article-title">${escHtml(truncateTitle(d.title))}</h4>
+                        <h4 class="article-title">${escHtml(d.title)}</h4>
                     </div>
                     <div class="article-meta">
                         <span><i class="fa-solid fa-user"></i> 送審人：${escHtml(d.submitter)}</span>
@@ -426,6 +445,7 @@
         if (!article) return;
 
         document.getElementById('amTitle').textContent = article.title;
+        document.getElementById('amFavBtn').innerHTML = articleFavBtnHtml(article.id, article.title);
         document.getElementById('amMeta').innerHTML = `
             <span><i class="fa-solid fa-user"></i> ${escHtml(article.author)}</span>
             <span><i class="fa-solid fa-building"></i> ${escHtml(article.dept)}</span>
@@ -446,6 +466,67 @@
         if (e.target === this) closeArticleModal();
     });
 
+    // ===== 我的活躍度 =====
+    function renderActivity() {
+        const d = _myActivity;
+        const pct = Math.round((1 - d.rank / d.totalUsers) * 100);
+        // SVG 圓環參數
+        const r = 60, cx = 75, cy = 75;
+        const C = 2 * Math.PI * r; // 周長
+        const offset = C * (1 - pct / 100);
+
+        document.getElementById('activityGrid').innerHTML = `
+            <div class="activity-left">
+                <div class="activity-card-label">整體活躍度排名</div>
+                <div class="activity-rank-ring">
+                    <svg viewBox="0 0 150 150" class="rank-svg">
+                        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#E5E7EB" stroke-width="10" />
+                        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none"
+                            stroke="url(#rankGrad)" stroke-width="10"
+                            stroke-linecap="round"
+                            stroke-dasharray="${C}"
+                            stroke-dashoffset="${offset}"
+                            transform="rotate(-90 ${cx} ${cy})" />
+                        <defs>
+                            <linearGradient id="rankGrad" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#6366F1" />
+                                <stop offset="100%" stop-color="#1E3A8A" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="rank-center">
+                        <span class="rank-number">${d.rank.toLocaleString()}</span>
+                        <span class="rank-unit">名</span>
+                        <div class="rank-total">${d.totalUsers.toLocaleString()} 全體</div>
+                    </div>
+                </div>
+            </div>
+            <div class="activity-right">
+                <div class="activity-stat-row">
+                    <div class="activity-card-label">個人閱讀量</div>
+                    <div class="activity-big-number">
+                        <span class="big-num">${d.personalReads}</span>
+                        <span class="big-unit">篇/本月</span>
+                    </div>
+                </div>
+                <div class="activity-stat-row">
+                    <div class="activity-card-label">發表文章數</div>
+                    <div class="activity-big-number">
+                        <span class="big-num">${d.publishedCount}</span>
+                        <span class="big-unit">篇</span>
+                    </div>
+                </div>
+                <div class="activity-stat-row">
+                    <div class="activity-card-label">文章總閱讀數</div>
+                    <div class="activity-big-number">
+                        <span class="big-num">${d.totalArticleReads.toLocaleString()}</span>
+                        <span class="big-unit">篇</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     // ===== 工具函式 =====
     function escHtml(str) {
         const el = document.createElement('span');
@@ -455,7 +536,7 @@
 
     /** 標題截斷：超過 max 字以「…」截斷 */
     function truncateTitle(str, max) {
-        max = max || 25;
+        max = max || 23;
         return str.length > max ? str.substring(0, max) + '…' : str;
     }
     </script>

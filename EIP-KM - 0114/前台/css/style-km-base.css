@@ -466,6 +466,43 @@
     font-weight: 900;
 }
 
+/* ===== 文章收藏按鈕（通用） ===== */
+.article-fav-btn {
+    background: none;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    color: #C0C5CE;
+    font-size: 16px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: color .2s, background .15s;
+    min-width: 32px;
+    min-height: 32px;
+}
+.article-fav-btn:hover {
+    color: #F59E0B;
+    background: #FEF9EE;
+}
+.article-fav-btn.active {
+    color: #F59E0B;
+}
+.article-fav-btn.active:hover {
+    color: #D97706;
+    background: #FEF3C7;
+}
+
+/* 文章內頁收藏按鈕 */
+.article-detail-header .article-fav-btn {
+    font-size: 20px;
+    margin-left: auto;
+    min-width: 40px;
+    min-height: 40px;
+}
+
 /* 更多選單容器 */
 .more-menu-wrapper {
     position: relative;

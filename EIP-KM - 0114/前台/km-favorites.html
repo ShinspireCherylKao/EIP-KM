@@ -44,11 +44,11 @@
 
         /* 操作列 */
         .action-bar {
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex; align-items: center;
             gap: 12px; margin: 20px 0 16px 14px; flex-wrap: wrap;
         }
         .action-bar .search-box {
-            position: relative; flex: 1; max-width: 360px;
+            position: relative; flex: 1; max-width: 420px;
         }
         .action-bar .search-box i {
             position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
@@ -61,125 +61,166 @@
             transition: border-color .2s; box-sizing: border-box;
         }
         .action-bar .search-box input:focus { outline: none; border-color: #4F46E5; }
-        .action-bar .view-toggle {
-            display: flex; gap: 4px;
-        }
-        .action-bar .view-toggle button {
-            width: 36px; height: 36px; border-radius: 8px;
-            border: 1px solid #E5E8ED; background: #fff;
-            color: #9CA3AF; cursor: pointer; transition: all .15s;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .action-bar .view-toggle button:hover { background: #F3F4F6; }
-        .action-bar .view-toggle button.active { background: #4F46E5; color: #fff; border-color: #4F46E5; }
-
         /* 結果統計 */
         .result-count { font-size: 13px; color: #9CA3AF; margin: 0 0 12px 14px; }
         .result-count strong { color: #111827; }
 
-        /* 收藏卡片 Grid 視圖 */
-        .fav-grid-view {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
-            margin-left: 14px;
-        }
-        .fav-card {
+        /* 收藏列表卡片 */
+        .favorite-list-card {
             background: #FFFFFF;
-            border: 1px solid #E5E8ED;
-            border-radius: 12px;
-            padding: 18px 20px;
-            cursor: pointer;
-            transition: all .2s;
+            background-clip: border-box;
+            border: 1px solid rgba(0, 0, 0, .125);
+            border-radius: .25rem;
+            box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
+            overflow: hidden;
+            margin-left: 14px;
+            min-width: 0;
+            word-wrap: break-word;
+        }
+        .favorite-article-item {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px calc(var(--spacing-card) + 16px);
+            cursor: pointer;
+            min-height: var(--touch-target-min);
+            transition: background .15s;
             position: relative;
         }
-        .fav-card:hover {
-            background: #F9FAFB;
-            border-color: #D1D5DB;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,.06);
+        .favorite-article-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            right: 16px;
+            height: 1px;
+            background: #E5E7EB;
         }
-        .fav-card .fav-card-title {
-            font-size: 14px; font-weight: 600; color: #111827;
-            line-height: 1.4; display: flex; align-items: flex-start; gap: 8px;
-        }
-        .fav-card .fav-card-title .fav-star {
-            color: #F59E0B; font-size: 13px; flex-shrink: 0; margin-top: 2px;
-        }
-        .fav-card:hover .fav-card-title { color: #4F46E5; }
-        .fav-card .fav-card-meta {
-            font-size: 12px; color: #9CA3AF;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .fav-card .fav-card-meta span { display: flex; align-items: center; gap: 3px; }
-        .fav-card .fav-card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
-        .fav-card .fav-card-tags .tag {
-            font-size: 11px; padding: 2px 8px; border-radius: 6px;
-            border: 1px solid #E5E8ED; color: #6B7280; background: #F9FAFB;
-        }
-        .fav-card .fav-card-actions {
-            position: absolute; top: 12px; right: 12px;
-            display: flex; gap: 4px; opacity: 0; transition: opacity .15s;
-        }
-        .fav-card:hover .fav-card-actions { opacity: 1; }
-        .fav-card .fav-card-actions button {
-            width: 28px; height: 28px; border-radius: 6px;
-            border: 1px solid #E5E8ED; background: #fff;
-            color: #9CA3AF; cursor: pointer; font-size: 12px;
+        .favorite-article-item:first-child { padding-top: 36px; }
+        .favorite-article-item:last-child { padding-bottom: 36px; }
+        .favorite-article-item:last-child::after { display: none; }
+        .favorite-article-item:hover { background: #F3F4F6; }
+
+        .favorite-article-item .article-thumb {
+            width: 124px; height: 88px;
+            border-radius: 0;
+            background: linear-gradient(135deg, #FEF3C7 0%, #FFF7ED 100%);
+            border: 1px solid #FDE68A;
+            flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
+            color: #F59E0B;
+        }
+        .favorite-article-item .article-thumb .thumb-placeholder {
+            font-size: 28px;
+        }
+
+        .favorite-article-item .article-info { flex: 1; min-width: 0; }
+        .favorite-article-item .article-title {
+            font-size: var(--font-card-title);
+            font-weight: 600;
+            color: #1E293B;
+            margin-bottom: 6px;
+            line-height: var(--line-height-tight);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            letter-spacing: -0.01em;
+        }
+        .favorite-article-item:hover .article-title { color: var(--primary-color); }
+
+        .favorite-article-item .article-meta {
+            display: flex; align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-size: var(--font-body-small);
+            color: #7F7F7F;
+            margin-top: 6px;
+        }
+        .favorite-article-item .article-meta span {
+            display: flex; align-items: center; gap: 3px;
+        }
+        .favorite-article-item .article-meta i {
+            color: var(--text-muted); font-size: 12px; width: 14px; text-align: center;
+        }
+
+        .favorite-article-item .article-excerpt {
+            font-size: var(--font-body-small);
+            color: #7F7F7F;
+            margin-top: 6px;
+            line-height: 1.5;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .favorite-article-item .tag-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .favorite-article-item .tag-chip {
+            display: inline-flex;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 1px 8px;
+            border-radius: 3px;
+            white-space: nowrap;
+            background: #4B5563;
+            color: #fff;
+            border: none;
+        }
+        .favorite-article-item .article-side {
+            flex-shrink: 0;
+            min-width: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+            padding-top: 2px;
+        }
+        .favorite-article-item .article-date {
+            font-size: var(--font-body-small);
+            color: #7F7F7F;
+            white-space: nowrap;
+            text-align: right;
+            line-height: 1.45;
+        }
+        .favorite-article-item .fav-remove {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: #fff;
+            color: #9CA3AF;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all .15s;
         }
-        .fav-card .fav-card-actions button:hover { color: #EF4444; border-color: #FECACA; background: #FEF2F2; }
+        .favorite-article-item .fav-remove:hover { color: #EF4444; border-color: #FECACA; background: #FEF2F2; }
 
-        /* 收藏列表視圖 */
-        .fav-list-view { display: none; margin-left: 14px; }
-        .fav-list-card {
-            background: #FFFFFF;
-            border: 1px solid #E5E8ED;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,.04);
-            overflow: hidden;
+        .read-state {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 999px;
         }
-        .fav-list-item {
-            display: flex; align-items: center; gap: 14px;
-            padding: 14px 20px; border-bottom: 1px solid #F0F1F3;
-            cursor: pointer; transition: background .15s;
+        .read-state.is-read {
+            background: #ECFDF5;
+            color: #047857;
+            border: 1px solid #A7F3D0;
         }
-        .fav-list-item:last-child { border-bottom: none; }
-        .fav-list-item:hover { background: #F3F4F6; }
-        .fav-list-item .fav-icon {
-            width: 36px; height: 36px; border-radius: 8px;
-            background: #FEF3C7; color: #F59E0B;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; flex-shrink: 0;
+        .read-state.is-unread {
+            background: #FEF2F2;
+            color: #B91C1C;
+            border: 1px solid #FECACA;
         }
-        .fav-list-item .fav-info { flex: 1; min-width: 0; }
-        .fav-list-item .fav-title {
-            font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 3px;
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-        .fav-list-item:hover .fav-title { color: #4F46E5; }
-        .fav-list-item .fav-meta {
-            font-size: 12px; color: #9CA3AF;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .fav-list-item .fav-meta span { display: flex; align-items: center; gap: 3px; }
-        .fav-list-item .fav-tags { display: flex; gap: 4px; flex-wrap: wrap; }
-        .fav-list-item .fav-tags .tag {
-            font-size: 11px; padding: 2px 8px; border-radius: 6px;
-            border: 1px solid #E5E8ED; color: #6B7280; background: #F9FAFB;
-        }
-        .fav-list-item .fav-remove {
-            width: 32px; height: 32px; border-radius: 8px;
-            border: 1px solid transparent; background: none;
-            color: #D1D5DB; cursor: pointer; font-size: 13px;
-            display: flex; align-items: center; justify-content: center;
-            transition: all .15s; flex-shrink: 0;
-        }
-        .fav-list-item .fav-remove:hover { color: #EF4444; border-color: #FECACA; background: #FEF2F2; }
 
         /* 空狀態 */
         .empty-state {
@@ -187,6 +228,29 @@
         }
         .empty-state i { font-size: 32px; display: block; margin-bottom: 12px; }
         .empty-state p { font-size: 14px; margin: 0; }
+
+        @media (max-width: 768px) {
+            .favorite-article-item {
+                flex-wrap: wrap;
+                padding: 16px 20px;
+            }
+            .favorite-article-item:first-child { padding-top: 24px; }
+            .favorite-article-item:last-child { padding-bottom: 24px; }
+            .favorite-article-item .article-thumb {
+                width: 100%;
+                height: 120px;
+            }
+            .favorite-article-item .article-side {
+                width: 100%;
+                min-width: 0;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .favorite-article-item .article-date {
+                text-align: left;
+            }
+        }
     </style>
 </head>
 <body>
@@ -200,9 +264,18 @@
     <div class="main-content">
         <div class="km-container">
             <!-- 返回 -->
-            <div class="back-link-bar">
+            <div class="back-link-bar" id="backLinkBar">
                 <a href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> 返回知識總覽</a>
             </div>
+            <script>
+            (function(){
+                var from = new URLSearchParams(location.search).get('from');
+                if (from === 'manage') {
+                    document.getElementById('backLinkBar').innerHTML =
+                        '<a href="km-manage.html"><i class="fa-solid fa-arrow-left"></i> 返回個人專區</a>';
+                }
+            })();
+            </script>
             <div class="page-title-bar">
                 <div>
                     <h2>我的收藏</h2>
@@ -215,22 +288,13 @@
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" placeholder="搜尋收藏文章…" id="searchInput" oninput="searchFavorites()">
                 </div>
-                <div class="view-toggle">
-                    <button class="active" id="btnGrid" onclick="switchView('grid')" title="卡片視圖"><i class="fa-solid fa-grid-2"></i></button>
-                    <button id="btnList" onclick="switchView('list')" title="列表視圖"><i class="fa-solid fa-list"></i></button>
-                </div>
             </div>
 
             <!-- 結果統計 -->
             <div class="result-count" id="resultCount"></div>
 
-            <!-- Grid 視圖 -->
-            <div class="fav-grid-view" id="favGridView"></div>
-
-            <!-- List 視圖 -->
-            <div class="fav-list-view" id="favListView">
-                <div class="fav-list-card" id="favListCard"></div>
-            </div>
+            <!-- 收藏列表 -->
+            <div class="favorite-list-card" id="favoriteListCard"></div>
         </div>
     </div>
 
@@ -264,33 +328,32 @@
        ============================================================ */
 
     const _allFavorites = [
-        { id:'f01', title:'差旅報銷規範修訂公告', author:'吳佳蓉', dept:'Finance', savedDate:'2026-03-14', tags:['差旅','報銷'],
+                { id:'f01', title:'差旅報銷規範修訂公告', author:'吳佳蓉', dept:'Finance', savedDate:'2026-03-14', isRead:false, tags:['差旅','報銷'],
           content:'<p>自 2026年4月1日起，差旅報銷規範將進行以下調整：</p><p>1. 國內出差住宿費上限調整為每晚 NT$3,500<br>2. 交通費須於 3 個工作天內提交核銷</p>' },
-        { id:'f02', title:'Code Review 規範 v2.0', author:'蔡明達', dept:'BU1', savedDate:'2026-03-13', tags:['規範','CR'],
+                { id:'f02', title:'Code Review 規範 v2.0', author:'蔡明達', dept:'BU1', savedDate:'2026-03-13', isRead:true, tags:['規範','CR'],
           content:'<p>Code Review 規範主要修訂：PR 必須至少 2 人 Approve 才可合併，新增安全性檢查清單。</p>' },
-        { id:'f03', title:'請假制度常見問題 FAQ', author:'李美玲', dept:'HR', savedDate:'2026-03-10', tags:['請假','FAQ'],
+                { id:'f03', title:'請假制度常見問題 FAQ', author:'李美玲', dept:'HR', savedDate:'2026-03-10', isRead:true, tags:['請假','FAQ'],
           content:'<p>Q: 特休假可以保留到隔年嗎？<br>A: 依勞基法規定，特休假應於當年度休完。</p>' },
-        { id:'f04', title:'系統架構設計文件', author:'許家豪', dept:'BU1', savedDate:'2026-03-08', tags:['架構','設計'],
+                { id:'f04', title:'系統架構設計文件', author:'許家豪', dept:'BU1', savedDate:'2026-03-08', isRead:false, tags:['架構','設計'],
           content:'<p>系統架構設計文件已更新，新增微服務拆分方案與 API Gateway 設計。</p>' },
-        { id:'f05', title:'2025年度財務報表摘要', author:'吳佳蓉', dept:'Finance', savedDate:'2026-03-05', tags:['財報','年度'],
+                { id:'f05', title:'2025年度財務報表摘要', author:'吳佳蓉', dept:'Finance', savedDate:'2026-03-05', isRead:true, tags:['財報','年度'],
           content:'<p>2025年度主要數據：營收較去年成長 12%，營業利益率維持 18%。</p>' },
-        { id:'f06', title:'入職流程 SOP 完整指南', author:'李美玲', dept:'HR', savedDate:'2026-02-28', tags:['SOP','入職'],
+                { id:'f06', title:'入職流程 SOP 完整指南', author:'李美玲', dept:'HR', savedDate:'2026-02-28', isRead:false, tags:['SOP','入職'],
           content:'<p>新進人員入職流程：報到日攜帶身分證、畢業證書、存摺影本，IT 部門領取筆電及帳號。</p>' },
-        { id:'f07', title:'X 專案技術架構圖 V3', author:'張志豪', dept:'BU2', savedDate:'2026-02-25', tags:['架構','專案'],
+                { id:'f07', title:'X 專案技術架構圖 V3', author:'張志豪', dept:'BU2', savedDate:'2026-02-25', isRead:true, tags:['架構','專案'],
           content:'<p>X 專案第三版架構圖已更新，採用微服務架構。</p>' },
-        { id:'f08', title:'API 設計規範 RESTful 指南', author:'許家豪', dept:'BU1', savedDate:'2026-02-20', tags:['API','規範'],
+                { id:'f08', title:'API 設計規範 RESTful 指南', author:'許家豪', dept:'BU1', savedDate:'2026-02-20', isRead:false, tags:['API','規範'],
           content:'<p>RESTful API 設計原則：使用標準 HTTP 動詞，資源名稱使用複數名詞。</p>' },
-        { id:'f09', title:'資安政策宣導 — 2026年度', author:'陳建宏', dept:'BU1', savedDate:'2026-02-15', tags:['資安','政策'],
+                { id:'f09', title:'資安政策宣導 — 2026年度', author:'陳建宏', dept:'BU1', savedDate:'2026-02-15', isRead:true, tags:['資安','政策'],
           content:'<p>2026年度資安政策重點：密碼每 90 天更換一次，禁止使用個人雲端儲存公司資料。</p>' },
-        { id:'f10', title:'員工福利手冊 2026 版', author:'李美玲', dept:'HR', savedDate:'2026-02-10', tags:['福利','HR'],
+                { id:'f10', title:'員工福利手冊 2026 版', author:'李美玲', dept:'HR', savedDate:'2026-02-10', isRead:false, tags:['福利','HR'],
           content:'<p>2026年度員工福利包含年度健檢補助、教育訓練補助、社團活動補助、彈性工時制度。</p>' },
     ];
 
-    let _currentView = 'grid';
-    let _filtered = [..._allFavorites];
+        let _filtered = [];
 
     (function init() {
-        renderAll();
+                searchFavorites();
     })();
 
     function searchFavorites() {
@@ -301,71 +364,56 @@
             a.author.toLowerCase().includes(keyword) ||
             a.dept.toLowerCase().includes(keyword) ||
             (a.tags || []).some(t => t.toLowerCase().includes(keyword))
-        );
-        renderAll();
-    }
-
-    function switchView(view) {
-        _currentView = view;
-        document.getElementById('btnGrid').classList.toggle('active', view === 'grid');
-        document.getElementById('btnList').classList.toggle('active', view === 'list');
-        document.getElementById('favGridView').style.display = view === 'grid' ? 'grid' : 'none';
-        document.getElementById('favListView').style.display = view === 'list' ? 'block' : 'none';
-    }
-
-    function renderAll() {
-        document.getElementById('resultCount').innerHTML =
-            `共 <strong>${_filtered.length}</strong> 篇收藏`;
-        renderGrid();
+        ).sort((a, b) => new Date(b.savedDate) - new Date(a.savedDate));
         renderList();
     }
 
-    function renderGrid() {
-        const host = document.getElementById('favGridView');
-        if (!_filtered.length) {
-            host.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-bookmark"></i><p>沒有符合條件的收藏文章</p></div>';
-            return;
-        }
-        host.innerHTML = _filtered.map(a => `
-            <div class="fav-card" onclick="openArticle('${a.id}')">
-                <div class="fav-card-actions">
-                    <button onclick="event.stopPropagation(); removeFav('${a.id}')" title="取消收藏"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="fav-card-title">
-                    <i class="fa-solid fa-star fav-star"></i>
-                    ${escHtml(a.title)}
-                </div>
-                <div class="fav-card-meta">
-                    <span><i class="fa-solid fa-user"></i> ${escHtml(a.author)}</span>
-                    <span><i class="fa-solid fa-building"></i> ${escHtml(a.dept)}</span>
-                    <span><i class="fa-regular fa-calendar"></i> ${a.savedDate}</span>
-                </div>
-                <div class="fav-card-tags">${(a.tags || []).map(t => '<span class="tag">' + escHtml(t) + '</span>').join('')}</div>
-            </div>
-        `).join('');
+    function stripHtml(html) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html || '';
+        return tmp.textContent || tmp.innerText || '';
+    }
+
+    function getReadState(article) {
+        return article.isRead
+            ? { className: 'is-read', icon: 'fa-circle-check', label: '已閱讀' }
+            : { className: 'is-unread', icon: 'fa-clock', label: '未閱讀' };
     }
 
     function renderList() {
-        const host = document.getElementById('favListCard');
+        document.getElementById('resultCount').innerHTML =
+            `共 <strong>${_filtered.length}</strong> 篇收藏，依收藏時間新到舊排序`;
+
+        const host = document.getElementById('favoriteListCard');
         if (!_filtered.length) {
             host.innerHTML = '<div class="empty-state"><i class="fa-solid fa-bookmark"></i><p>沒有符合條件的收藏文章</p></div>';
             return;
         }
-        host.innerHTML = _filtered.map(a => `
-            <div class="fav-list-item" onclick="openArticle('${a.id}')">
-                <div class="fav-icon"><i class="fa-solid fa-star"></i></div>
-                <div class="fav-info">
-                    <div class="fav-title">${escHtml(a.title)}</div>
-                    <div class="fav-meta">
+        host.innerHTML = _filtered.map(a => {
+            const excerpt = stripHtml(a.content);
+            const summary = excerpt.length > 90 ? excerpt.substring(0, 90) + '…' : excerpt;
+            const readState = getReadState(a);
+            return `
+            <div class="favorite-article-item" onclick="openArticle('${a.id}')">
+                <div class="article-thumb">
+                    <span class="thumb-placeholder"><i class="fa-solid fa-bookmark"></i></span>
+                </div>
+                <div class="article-info">
+                    <h4 class="article-title">${escHtml(a.title)}</h4>
+                    <div class="article-meta">
+                        <span class="read-state ${readState.className}"><i class="fa-solid ${readState.icon}"></i> ${readState.label}</span>
                         <span><i class="fa-solid fa-user"></i> ${escHtml(a.author)}</span>
                         <span><i class="fa-solid fa-building"></i> ${escHtml(a.dept)}</span>
-                        <span><i class="fa-regular fa-calendar"></i> 收藏於 ${a.savedDate}</span>
                     </div>
+                    <div class="article-excerpt">${escHtml(summary)}</div>
+                    <div class="tag-row">${(a.tags || []).map(t => '<span class="tag-chip">' + escHtml(t) + '</span>').join('')}</div>
                 </div>
-                <div class="fav-tags">${(a.tags || []).map(t => '<span class="tag">' + escHtml(t) + '</span>').join('')}</div>
-                <button class="fav-remove" onclick="event.stopPropagation(); removeFav('${a.id}')" title="取消收藏"><i class="fa-solid fa-bookmark"></i></button>
-            </div>
-        `).join('');
+                <div class="article-side">
+                    <div class="article-date">收藏於<br>${a.savedDate}</div>
+                    <button class="fav-remove" onclick="event.stopPropagation(); removeFav('${a.id}')" title="取消收藏"><i class="fa-solid fa-bookmark-slash"></i></button>
+                </div>
+            </div>`;
+        }).join('');
     }
 
     function removeFav(id) {
@@ -391,8 +439,14 @@
     function openArticle(id) {
         const article = _allFavorites.find(a => a.id === id);
         if (!article) return;
+        if (!article.isRead) {
+            article.isRead = true;
+            renderList();
+        }
+        const readState = getReadState(article);
         document.getElementById('amTitle').textContent = article.title;
         document.getElementById('amMeta').innerHTML = `
+            <span class="read-state ${readState.className}"><i class="fa-solid ${readState.icon}"></i> ${readState.label}</span>
             <span><i class="fa-solid fa-user"></i> ${escHtml(article.author)}</span>
             <span><i class="fa-solid fa-building"></i> ${escHtml(article.dept)}</span>
             <span><i class="fa-regular fa-calendar"></i> 收藏於 ${article.savedDate}</span>
@@ -404,7 +458,7 @@
     function closeArticleModal() { document.getElementById('articleModal').classList.remove('show'); }
     document.getElementById('articleModal').addEventListener('click', function (e) { if (e.target === this) closeArticleModal(); });
 
-    function escHtml(str) { const el = document.createElement('span'); el.textContent = str; return el.innerHTML; }
+    function escHtml(str) { const el = document.createElement('span'); el.textContent = str == null ? '' : String(str); return el.innerHTML; }
     </script>
     <script src="js/search.js"></script>
 </body>

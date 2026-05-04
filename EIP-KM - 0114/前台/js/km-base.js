@@ -591,6 +591,70 @@ function openUploadModal() {
     }
 }
 
+// ==================== 文章收藏功能 ====================
+
+/**
+ * 取得文章收藏清單（從 localStorage）
+ */
+function getArticleFavorites() {
+    const data = localStorage.getItem('kmArticleFavorites');
+    return data ? JSON.parse(data) : [];
+}
+
+/**
+ * 儲存文章收藏清單（到 localStorage）
+ */
+function saveArticleFavorites(favorites) {
+    localStorage.setItem('kmArticleFavorites', JSON.stringify(favorites));
+}
+
+/**
+ * 檢查文章是否已收藏
+ */
+function isArticleFavorited(articleId) {
+    const favorites = getArticleFavorites();
+    return favorites.includes(articleId);
+}
+
+/**
+ * 切換文章收藏狀態
+ */
+function toggleArticleFavorite(articleId, title, event) {
+    if (event) { event.stopPropagation(); event.preventDefault(); }
+    const favorites = getArticleFavorites();
+    const index = favorites.indexOf(articleId);
+
+    if (index === -1) {
+        favorites.push(articleId);
+        saveArticleFavorites(favorites);
+        showToast('⭐ 已將「' + title + '」加入收藏');
+    } else {
+        favorites.splice(index, 1);
+        saveArticleFavorites(favorites);
+        showToast('已將「' + title + '」移出收藏');
+    }
+
+    // 更新頁面上所有該文章的收藏按鈕狀態
+    document.querySelectorAll('.article-fav-btn[data-article-id="' + articleId + '"]').forEach(function(btn) {
+        const isFav = isArticleFavorited(articleId);
+        btn.classList.toggle('active', isFav);
+        const icon = btn.querySelector('i');
+        if (icon) {
+            icon.className = isFav ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark';
+        }
+    });
+}
+
+/**
+ * 產生文章收藏按鈕 HTML
+ */
+function articleFavBtnHtml(articleId, title) {
+    const isFav = isArticleFavorited(articleId);
+    const iconClass = isFav ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark';
+    const activeClass = isFav ? ' active' : '';
+    return '<button class="article-fav-btn' + activeClass + '" data-article-id="' + articleId + '" title="' + (isFav ? '取消收藏' : '加入收藏') + '" onclick="toggleArticleFavorite(\'' + articleId + '\', \'' + title.replace(/'/g, "\\'") + '\', event)"><i class="' + iconClass + '"></i></button>';
+}
+
 /**
  * HTML 跳脫
  */

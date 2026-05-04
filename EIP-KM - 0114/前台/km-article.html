@@ -269,6 +269,7 @@
                 <!-- 標題區 -->
                 <div class="article-detail-header">
                     <h2 id="articleTitle">—</h2>
+                    <span id="articleFavBtn"></span>
                 </div>
 
                 <!-- Meta 資訊列 -->
@@ -1661,6 +1662,7 @@
     function renderArticle(a) {
         document.title = a.title + ' - KM 知識管理';
         document.getElementById('articleTitle').textContent = a.title;
+        document.getElementById('articleFavBtn').innerHTML = articleFavBtnHtml(a.id, a.title);
 
         // Meta
         const validityHtml = renderValidity(a.validity);
