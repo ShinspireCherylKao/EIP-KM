@@ -688,8 +688,59 @@
           content:'<p>2026年度員工福利包含年度健檢補助、教育訓練補助、社團活動補助、彈性工時制度。</p>' },
     ];
 
+        const _favoriteCatalog = _allFavorites.reduce((map, article) => {
+            map[article.id] = article;
+            return map;
+        }, {});
+        const _favoriteReadState = _allFavorites.reduce((map, article) => {
+            map[article.id] = article.isRead;
+            return map;
+        }, {});
         let _filtered = [];
         let _currentReadFilter = 'all';
+
+    function getStoredFavoriteIds() {
+        const raw = localStorage.getItem('kmArticleFavorites');
+        if (raw === null) return null;
+        try {
+            const parsed = JSON.parse(raw);
+            if (!Array.isArray(parsed)) return [];
+            return Array.from(new Set(parsed.filter(id => typeof id === 'string' && id)));
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function getFavoriteIds() {
+        const storedIds = getStoredFavoriteIds();
+        return storedIds === null ? _allFavorites.map(article => article.id) : storedIds;
+    }
+
+    function getFavoriteItem(id) {
+        const article = _favoriteCatalog[id];
+        if (article) {
+            return {
+                ...article,
+                isRead: Object.prototype.hasOwnProperty.call(_favoriteReadState, id)
+                    ? _favoriteReadState[id]
+                    : article.isRead
+            };
+        }
+        return {
+            id: id,
+            title: '已收藏文章',
+            author: '系統同步',
+            dept: 'KM',
+            savedDate: '—',
+            isRead: !!_favoriteReadState[id],
+            tags: ['收藏'],
+            content: '<p>此收藏項目暫無預覽內容，請從原文章入口查看詳細內容。</p>'
+        };
+    }
+
+    function getFavoriteArticles() {
+        return getFavoriteIds().map(getFavoriteItem);
+    }
 
     (function init() {
                 updateFavoriteCountBadges();
@@ -698,13 +749,17 @@
 
     function searchFavorites() {
         const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-        const keywordMatched = _allFavorites.filter(a =>
+        const keywordMatched = getFavoriteArticles().filter(a =>
             !keyword ||
             a.title.toLowerCase().includes(keyword) ||
             a.author.toLowerCase().includes(keyword) ||
             a.dept.toLowerCase().includes(keyword) ||
             (a.tags || []).some(t => t.toLowerCase().includes(keyword))
-        ).sort((a, b) => new Date(b.savedDate) - new Date(a.savedDate));
+        ).sort((a, b) => {
+            const timeA = Date.parse(a.savedDate) || 0;
+            const timeB = Date.parse(b.savedDate) || 0;
+            return timeB - timeA;
+        });
 
         updateReadFilterTabs(keywordMatched);
 
@@ -736,7 +791,7 @@
     }
 
     function updateFavoriteCountBadges() {
-        const count = _allFavorites.length;
+        const count = getFavoriteIds().length;
         ['badgeFavoriteDesktop', 'badgeFavoriteMobile'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.textContent = count;
@@ -789,10 +844,10 @@
     }
 
     function removeFav(id) {
-        const idx = _allFavorites.findIndex(a => a.id === id);
-        if (idx === -1) return;
-        const title = _allFavorites[idx].title;
-        _allFavorites.splice(idx, 1);
+        const favoriteIds = getFavoriteIds();
+        if (favoriteIds.indexOf(id) === -1) return;
+        const title = getFavoriteItem(id).title;
+        saveArticleFavorites(favoriteIds.filter(favoriteId => favoriteId !== id));
         updateFavoriteCountBadges();
         searchFavorites();
         showToast('已取消收藏「' + title + '」');
@@ -810,11 +865,12 @@
 
     // ===== 文章 Modal =====
     function openArticle(id) {
-        const article = _allFavorites.find(a => a.id === id);
-        if (!article) return;
+        if (getFavoriteIds().indexOf(id) === -1) return;
+        let article = getFavoriteItem(id);
         if (!article.isRead) {
-            article.isRead = true;
-            renderList();
+            _favoriteReadState[id] = true;
+            searchFavorites();
+            article = getFavoriteItem(id);
         }
         const readState = getReadState(article);
         document.getElementById('amTitle').textContent = article.title;

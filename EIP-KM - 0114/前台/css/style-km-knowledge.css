@@ -50,9 +50,9 @@
     margin: -20px;
 }
 
-/* 第一列：最新文章 | 我的活躍度 */
-.km-grid-latest  { grid-column: 1; grid-row: 1; }
-.km-grid-activity { grid-column: 2; grid-row: 1; }
+/* 第一列：我的活躍度 | 最新文章 */
+.km-grid-latest  { grid-column: 2; grid-row: 1; }
+.km-grid-activity { grid-column: 1; grid-row: 1; }
 /* 第二列：熱門文章 | 我的收藏（直式） */
 .km-grid-hot     { grid-column: 1; grid-row: 2; }
 .km-grid-fav     { grid-column: 2; grid-row: 2; align-self: start; }
@@ -129,6 +129,9 @@
     .km-grid-contrib, .km-grid-review, .km-grid-hot {
         grid-column: 1;
         grid-row: auto;
+    }
+    .km-grid-activity {
+        order: -1;
     }
 }
 

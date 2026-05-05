@@ -1166,12 +1166,24 @@
         }
     }
 
+    function getFavoriteCountForDisplay() {
+        var raw = localStorage.getItem('kmArticleFavorites');
+        if (raw === null) return 10;
+        try {
+            var favorites = JSON.parse(raw);
+            if (!Array.isArray(favorites)) return 0;
+            return Array.from(new Set(favorites.filter(function(id) { return typeof id === 'string' && id; }))).length;
+        } catch (error) {
+            return 0;
+        }
+    }
+
     function renderMobileModeSwitch() {
         var container = document.getElementById('mobileModeSwitch');
         if (!container) return;
         var items = [
             { type:'mode', key:'activity', label:'我的活躍度', icon:'fa-bolt' },
-            { type:'link', label:'我的收藏', icon:'fa-star', href:'km-favorites.html?from=manage', badge:getArticleFavorites().length },
+            { type:'link', label:'我的收藏', icon:'fa-star', href:'km-favorites.html?from=manage', badge:getFavoriteCountForDisplay() },
             { type:'mode', key:'contribution', label:'個人貢獻', icon:'fa-file-lines' },
             { type:'mode', key:'review', label:'文件審核', icon:'fa-clipboard-check' }
         ];
@@ -1339,7 +1351,7 @@
         });
     }
     function updateSidebarBadges() {
-        setBadge('badgeFavorite',  getArticleFavorites().length);
+        setBadge('badgeFavorite',  getFavoriteCountForDisplay());
         setBadge('badgePublished', _myArticles.published.length);
         setBadge('badgeDraft',     _myArticles.draft.length);
         setBadge('badgeExpired',   _myArticles.expired.length);
