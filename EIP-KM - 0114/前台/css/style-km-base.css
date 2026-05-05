@@ -33,6 +33,212 @@
     overflow-x: auto;
 }
 
+.km-overview-content {
+    overflow: visible;
+}
+
+/* KM 子頁沿用知識總覽的卡片與操作語彙 */
+.km-overview-card {
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+    box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
+    overflow: hidden;
+    min-width: 0;
+    word-wrap: break-word;
+}
+
+.km-overview-card:hover {
+    box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
+}
+
+.km-overview-outline-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 2px solid #3B82F6;
+    border-radius: var(--radius-sm);
+    background: var(--white-color);
+    color: #3B82F6;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .15s;
+}
+
+.km-overview-outline-btn:hover {
+    background: #EFF6FF;
+    border-color: #2563EB;
+    color: #2563EB;
+}
+
+.km-overview-icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid #E5E8ED;
+    background: #fff;
+    color: #9CA3AF;
+    cursor: pointer;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+}
+
+.km-overview-icon-btn:hover {
+    background: #F3F4F6;
+    color: #4F46E5;
+    border-color: #C7D2FE;
+}
+
+.km-overview-icon-btn.danger:hover {
+    color: #EF4444;
+    border-color: #FECACA;
+    background: #FEF2F2;
+}
+
+.km-overview-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    min-height: 44px;
+    padding: 0 32px 0 14px;
+    border: 1px solid #E5E8ED;
+    border-radius: 8px;
+    font-size: 13px;
+    background: #F9FAFB url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+}
+
+.km-overview-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: #fff;
+}
+
+.km-overview-tab-bar {
+    display: flex;
+    border-bottom: 2px solid #F0F1F3;
+    margin: 20px 0 16px;
+    gap: 0;
+    flex-wrap: wrap;
+}
+
+.km-overview-tab {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: #9CA3AF;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.km-overview-tab:hover {
+    color: #6B7280;
+}
+
+.km-overview-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.km-overview-tab .tab-count {
+    font-size: 11px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: #F3F4F6;
+    color: #9CA3AF;
+    font-weight: 700;
+}
+
+.km-overview-tab.active .tab-count {
+    background: #DBEAFE;
+    color: var(--primary-color);
+}
+
+.km-overview-tile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 56px;
+    min-width: 148px;
+    padding: 12px 14px;
+    border: 1px solid #E5E8ED;
+    border-radius: 12px;
+    background: #fff;
+    color: #4B5563;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .15s;
+    text-align: left;
+    text-decoration: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 1px 2px rgba(0,0,0,.02);
+}
+
+.km-overview-tile:hover {
+    border-color: #CBD5E1;
+    color: #111827;
+    background: #F8FAFC;
+    box-shadow: 0 4px 12px rgba(0,0,0,.06);
+}
+
+.km-overview-tile.active {
+    color: #4338CA;
+    border-color: #C7D2FE;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(59,130,246,.08);
+}
+
+.km-overview-tile-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.km-overview-tile-main i {
+    color: #9CA3AF;
+    font-size: 14px;
+    transition: color .15s;
+}
+
+.km-overview-tile.active .km-overview-tile-main i {
+    color: #4F46E5;
+}
+
+.km-overview-tile-badge {
+    flex-shrink: 0;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #F3F4F6;
+    color: #6B7280;
+    font-weight: 700;
+}
+
+.km-overview-tile.active .km-overview-tile-badge {
+    background: #DBEAFE;
+    color: var(--primary-color);
+}
+
 /* KM 搜尋列 */
 .km-search-bar {
     display: flex;
@@ -388,38 +594,111 @@
 }
 
 /* KM 知識庫搜尋框 */
-.km-nav-search {
+.km-nav-search,
+.km-page-search {
     position: relative;
     display: flex;
     align-items: center;
 }
-.km-nav-search i {
+.km-page-search {
+    width: 220px;
+    max-width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}
+.km-nav-search i,
+.km-page-search i {
     position: absolute;
     left: 12px;
     color: #9CA3AF;
     font-size: 14px;
     pointer-events: none;
 }
-.km-nav-search input {
+.km-nav-search input,
+.km-page-search input {
     padding: 8px 14px 8px 34px;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     font-size: 14px;
-    width: 220px;
+    min-height: 44px;
     background: #F9FAFB;
     color: var(--text-primary);
-    transition: border-color .2s, width .25s, background .2s;
     box-sizing: border-box;
 }
-.km-nav-search input:focus {
+.km-nav-search input {
+    width: 220px;
+    transition: border-color .2s, width .25s, background .2s;
+}
+.km-page-search input {
+    width: 100%;
+    min-width: 0;
+    transition: border-color .2s, background .2s;
+}
+.km-nav-search input:focus,
+.km-page-search input:focus {
     outline: none;
     border-color: var(--primary-color);
     background: #fff;
+}
+.km-nav-search input:focus {
     width: 280px;
 }
 @media (max-width: 960px) {
     .km-nav-search input { width: 160px; }
     .km-nav-search input:focus { width: 200px; }
+
+    .km-overview-tab-bar.is-compact {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 12px;
+        padding: 4px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        scroll-snap-type: x proximity;
+        border-bottom: none;
+        border: 1px solid #E5EAF3;
+        border-radius: 999px;
+        background: #F8FAFC;
+    }
+
+    .km-overview-tab-bar.is-compact::-webkit-scrollbar {
+        display: none;
+    }
+
+    .km-overview-tab-bar.is-compact .km-overview-tab {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        gap: 6px;
+        margin-bottom: 0;
+        min-height: 36px;
+        padding: 0 14px;
+        border-bottom: none;
+        border-radius: 999px;
+        color: #6B7280;
+        scroll-snap-align: start;
+    }
+
+    .km-overview-tab-bar.is-compact .km-overview-tab.active {
+        background: #fff;
+        color: var(--primary-color);
+        box-shadow: 0 1px 2px rgba(15,23,42,.08);
+    }
+}
+
+@media (max-width: 768px) {
+    .km-overview-outline-btn,
+    .km-overview-select {
+        width: 100%;
+    }
 }
 
 /* 新增知識庫文章按鈕 */
@@ -483,6 +762,19 @@
     min-width: 32px;
     min-height: 32px;
 }
+.article-fav-btn i {
+    line-height: 1;
+}
+.article-fav-btn.has-label {
+    gap: 6px;
+    padding: 7px 10px;
+}
+.article-fav-btn .article-fav-label {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+}
 .article-fav-btn:hover {
     color: #F59E0B;
     background: #FEF9EE;
@@ -497,10 +789,17 @@
 
 /* 文章內頁收藏按鈕 */
 .article-detail-header .article-fav-btn {
-    font-size: 20px;
+    font-size: 16px;
     margin-left: auto;
     min-width: 40px;
     min-height: 40px;
+}
+.article-detail-header .article-fav-btn.has-label {
+    min-width: auto;
+    padding: 8px 12px;
+}
+.article-detail-header .article-fav-btn i {
+    font-size: 18px;
 }
 
 /* 更多選單容器 */

@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSidebar();
     
     // 初始化首頁
-    initHome();
+    if (typeof initHome === 'function') initHome();
     
     // 初始化 KM 系統（僅在 KM 頁面有效）
     if (typeof initKM === 'function') initKM();

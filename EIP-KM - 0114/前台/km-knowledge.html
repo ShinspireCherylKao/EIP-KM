@@ -130,9 +130,9 @@
     <script src="js/km-base.js"></script>
 
     <script>
-    /* ============================================================
-       KM 知識總覽 — 四大區塊（假資料）
-       ============================================================ */
+     /* ============================================================
+         KM 知識總覽 — 六大區塊（假資料）
+         ============================================================ */
 
     // ===== 假資料 =====
 
@@ -182,6 +182,8 @@
             { title: '2025年度財務報表摘要', date: '2026-03-12', views: 45 },
             { title: 'BU2 部門週報 — W10', date: '2026-03-08', views: 22 },
             { title: '系統維護公告 — 3月排程', date: '2026-03-01', views: 67 },
+            { title: '2026年度新人訓練手冊已更新', date: '2026-03-16', views: 58 },
+            { title: 'BU2 部門週報 — W09', date: '2026-03-01', views: 18 },
         ],
         draft: [
             { title: 'Q1 專案回顧簡報（草稿）', date: '2026-03-16', lastEdit: '2026-03-16' },
@@ -218,14 +220,25 @@
     // ===== 初始化 =====
     // ===== 我的活躍度假資料 =====
     const _myActivity = {
-        rank: 2630,
         totalUsers: 32819,
         personalReads: 15,
         totalArticleReads: 1200,
-        publishedCount: 5
+        publishedCount: _myContributions.published.length
     };
 
+    function seedKnowledgeFavorites() {
+        const seedKey = 'kmKnowledgeFavoritesSeeded';
+        if (localStorage.getItem(seedKey) === '1') return;
+
+        const seededIds = _favArticles.map(a => a.id);
+        const favorites = getArticleFavorites();
+        const mergedFavorites = Array.from(new Set(favorites.concat(seededIds)));
+        saveArticleFavorites(mergedFavorites);
+        localStorage.setItem(seedKey, '1');
+    }
+
     (function init() {
+        seedKnowledgeFavorites();
         renderLatestArticles();
         renderHotArticles();
         renderFavArticles();
@@ -279,21 +292,20 @@
     // ===== 我的收藏（水平卡片）=====
     function renderFavArticles() {
         const host = document.getElementById('favArticlesBody');
-        if (!_favArticles.length) { host.innerHTML = '<div class="empty-state"><i class="fa-solid fa-bookmark"></i>尚無收藏文章</div>'; return; }
+        if (!_favArticles.length) { host.innerHTML = '<div class="empty-state"><i class="fa-solid fa-star"></i>尚無收藏文章</div>'; return; }
         const maxCount = window.innerWidth <= 768 ? 3 : 5;
-        host.innerHTML = '<div class="fav-grid">' + _favArticles.slice(0, 5).map(a => `
-            <div class="fav-card" onclick="window.location.href='km-article.html?id=${a.id}'">
+        host.innerHTML = _favArticles.slice(0, maxCount).map(a => `
+            <div class="article-item fav-list-item" onclick="window.location.href='km-article.html?id=${a.id}'">
+                <div class="article-info">
+                    <h4 class="article-title">${escHtml(a.title)}</h4>
+                    <div class="article-meta">
+                        <span><i class="fa-solid fa-user"></i> ${escHtml(a.author)}</span>
+                        <span><i class="fa-solid fa-building"></i> ${escHtml(a.dept)}</span>
+                    </div>
+                </div>
                 ${articleFavBtnHtml(a.id, a.title)}
-                <div class="fav-card-title">
-                    <i class="fa-solid fa-star fav-star"></i>
-                    ${escHtml(a.title)}
-                </div>
-                <div class="fav-card-meta">
-                    <span><i class="fa-solid fa-user"></i> ${escHtml(a.author)}</span>
-                    <span><i class="fa-solid fa-building"></i> ${escHtml(a.dept)}</span>
-                </div>
             </div>
-        `).join('') + '</div>';
+        `).join('');
     }
 
     // ===== 個人貢獻 =====
@@ -445,7 +457,7 @@
         if (!article) return;
 
         document.getElementById('amTitle').textContent = article.title;
-        document.getElementById('amFavBtn').innerHTML = articleFavBtnHtml(article.id, article.title);
+        document.getElementById('amFavBtn').innerHTML = articleFavBtnHtml(article.id, article.title, true);
         document.getElementById('amMeta').innerHTML = `
             <span><i class="fa-solid fa-user"></i> ${escHtml(article.author)}</span>
             <span><i class="fa-solid fa-building"></i> ${escHtml(article.dept)}</span>
@@ -469,11 +481,15 @@
     // ===== 我的活躍度 =====
     function renderActivity() {
         const d = _myActivity;
-        const pct = Math.round((1 - d.rank / d.totalUsers) * 100);
+        const activity = getKmActivitySummary({
+            totalUsers: d.totalUsers,
+            personalReads: d.personalReads,
+            publishedCount: d.publishedCount
+        });
         // SVG 圓環參數
         const r = 60, cx = 75, cy = 75;
         const C = 2 * Math.PI * r; // 周長
-        const offset = C * (1 - pct / 100);
+        const offset = C * (1 - activity.ringPercent / 100);
 
         document.getElementById('activityGrid').innerHTML = `
             <div class="activity-left">
@@ -495,9 +511,9 @@
                         </defs>
                     </svg>
                     <div class="rank-center">
-                        <span class="rank-number">${d.rank.toLocaleString()}</span>
+                        <span class="rank-number">${activity.rank.toLocaleString()}</span>
                         <span class="rank-unit">名</span>
-                        <div class="rank-total">${d.totalUsers.toLocaleString()} 全體</div>
+                        <div class="rank-total">${activity.totalUsers.toLocaleString()} 全體</div>
                     </div>
                 </div>
             </div>
@@ -512,7 +528,7 @@
                 <div class="activity-stat-row">
                     <div class="activity-card-label">發表文章數</div>
                     <div class="activity-big-number">
-                        <span class="big-num">${d.publishedCount}</span>
+                        <span class="big-num">${activity.publishedCount}</span>
                         <span class="big-unit">篇</span>
                     </div>
                 </div>

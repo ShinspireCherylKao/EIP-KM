@@ -1662,7 +1662,7 @@
     function renderArticle(a) {
         document.title = a.title + ' - KM 知識管理';
         document.getElementById('articleTitle').textContent = a.title;
-        document.getElementById('articleFavBtn').innerHTML = articleFavBtnHtml(a.id, a.title);
+        document.getElementById('articleFavBtn').innerHTML = articleFavBtnHtml(a.id, a.title, true);
 
         // Meta
         const validityHtml = renderValidity(a.validity);

@@ -16,72 +16,237 @@
         /* ===== 我的收藏頁專用 ===== */
 
         .page-title-bar {
-            padding: 4px 0 0;
-            margin-left: 14px;
+            padding: 0;
+            margin-left: 0;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
             gap: 16px;
             flex-wrap: wrap;
         }
         .page-title-bar h2 {
-            font-size: var(--font-page-title); font-weight: 700; color: #111827; margin: 0;
-            display: flex; align-items: center; gap: 10px;
+            font-size: var(--font-page-title);
+            font-weight: 700;
+            color: #1E293B;
+            margin: 0;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .page-title-bar h2 i { color: #F59E0B; }
-        .page-title-bar .page-desc { color: #9CA3AF; font-size: 13px; margin: 4px 0 0; }
+        .page-title-bar h2 i { color: #F59E0B; font-size: .9em; }
+        .page-title-bar .page-desc {
+            color: var(--text-muted);
+            font-size: var(--font-label);
+            line-height: 1.6;
+            margin: 0;
+        }
         .back-link-bar {
             margin-bottom: var(--spacing-element);
         }
         .back-link-bar a {
-            display: inline-flex; align-items: center; gap: 8px;
-            font-size: 15px; color: var(--text-secondary); text-decoration: none;
-            padding: 8px 14px; border-radius: var(--radius-sm);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: var(--font-body);
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
             min-height: var(--touch-target-min);
             transition: all .15s;
         }
         .back-link-bar a:hover { background: var(--hover-bg); color: var(--primary-color); }
 
-        /* 操作列 */
-        .action-bar {
-            display: flex; align-items: center;
-            gap: 12px; margin: 20px 0 16px 14px; flex-wrap: wrap;
+        .favorites-layout {
+            grid-template-columns: 272px minmax(0, 1fr);
+            gap: 20px;
+            align-items: start;
+            margin-top: 22px;
         }
-        .action-bar .search-box {
-            position: relative; flex: 1; max-width: 420px;
+
+        .personal-sidebar {
+            position: sticky;
+            top: 88px;
+            border: 1px solid rgba(0, 0, 0, .125);
+            border-radius: .25rem;
+            background: #fff;
+            box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
         }
-        .action-bar .search-box i {
-            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-            color: #9CA3AF; font-size: 13px;
+        .personal-sidebar .panel-header {
+            padding: 18px 20px 14px;
+            background: #fff;
         }
-        .action-bar .search-box input {
-            width: 100%; padding: 8px 12px 8px 34px;
-            border: 1px solid #E5E8ED; border-radius: 8px;
-            font-size: 13px; background: #fff; color: #374151;
-            transition: border-color .2s; box-sizing: border-box;
+        .personal-sidebar .panel-header strong {
+            font-size: var(--font-section-title);
+            font-weight: 700;
         }
-        .action-bar .search-box input:focus { outline: none; border-color: #4F46E5; }
+        .personal-sidebar .panel-body {
+            padding: 14px;
+        }
+        .sidebar-section {
+            padding-top: 10px;
+        }
+        .sidebar-section.is-shortcut-group {
+            padding-top: 0;
+        }
+        .sidebar-section + .sidebar-section {
+            margin-top: 8px;
+            border-top: 1px solid #EEF2F7;
+        }
+        .sidebar-section-title {
+            padding: 0 10px 8px;
+            font-size: var(--font-caption);
+            font-weight: 700;
+            letter-spacing: .08em;
+            color: #94A3B8;
+        }
+        .sidebar-nav-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin: 2px 0;
+            padding: 12px 14px 12px 18px;
+            border: none;
+            border-radius: 10px;
+            color: #334155;
+            text-decoration: none;
+            font-size: var(--font-body-small);
+            font-weight: 600;
+            transition: background .18s ease, color .18s ease;
+        }
+        .sidebar-nav-item:hover {
+            background: #F8FAFC;
+            color: #0F172A;
+        }
+        .sidebar-nav-item.active {
+            background: #EAF2FF;
+            color: #2563EB;
+            box-shadow: none;
+        }
+        .sidebar-nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            bottom: 6px;
+            width: 3px;
+            border-radius: 999px;
+            background: #3B82F6;
+        }
+        .sidebar-nav-item .nav-badge {
+            flex-shrink: 0;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #F1F5F9;
+            color: #64748B;
+            font-size: var(--font-caption);
+            font-weight: 700;
+        }
+        .sidebar-nav-item.active .nav-badge {
+            background: #DCEAFF;
+            color: #2563EB;
+        }
+
+        .mobile-mode-switch {
+            display: none;
+            gap: 10px;
+            margin: 0 0 18px;
+        }
+        .mobile-mode-switch::-webkit-scrollbar {
+            display: none;
+        }
+        .mobile-mode-btn {
+            flex: 0 0 auto;
+        }
+        .mobile-mode-main {
+            min-width: 0;
+        }
+
+        .favorite-right-panel {
+            min-width: 0;
+        }
+
+        .favorites-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 0 0 18px;
+            flex-wrap: wrap;
+            padding: 14px 16px;
+            border: 1px solid rgba(0, 0, 0, .125);
+            border-radius: .25rem;
+            background: #fff;
+            box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
+        }
+        .favorites-toolbar .km-page-search {
+            width: 100%;
+            max-width: 360px;
+            min-width: 0;
+            flex: 1 1 320px;
+        }
+
+        .favorite-main-card {
+            margin-left: 0;
+        }
+
+        .favorite-filter-tabs {
+            margin: 0;
+            padding: 4px 20px 0;
+        }
+        .favorite-filter-tabs .search-category-tab {
+            min-height: var(--touch-target-min);
+            font-weight: 600;
+            padding: 10px 20px;
+            border: none;
+            border-bottom: 2px solid transparent;
+            border-radius: 0;
+            background: none;
+            color: #9CA3AF;
+            margin-bottom: -2px;
+        }
+        .favorite-filter-tabs .search-category-tab:hover {
+            border-color: transparent;
+            background: none;
+            color: #6B7280;
+        }
+        .favorite-filter-tabs .search-category-tab.active {
+            background: none;
+            color: var(--primary-color);
+            border-color: transparent;
+            border-bottom-color: var(--primary-color);
+        }
+        .favorite-filter-tabs .search-category-tab .tab-count {
+            background: #F3F4F6;
+            color: #9CA3AF;
+        }
+        .favorite-filter-tabs .search-category-tab.active .tab-count {
+            background: #DBEAFE;
+            color: var(--primary-color);
+        }
+
         /* 結果統計 */
-        .result-count { font-size: 13px; color: #9CA3AF; margin: 0 0 12px 14px; }
+        .result-count {
+            font-size: var(--font-body-small);
+            color: #9CA3AF;
+            margin: 0;
+            padding: 0 24px 14px;
+        }
         .result-count strong { color: #111827; }
 
         /* 收藏列表卡片 */
         .favorite-list-card {
-            background: #FFFFFF;
-            background-clip: border-box;
-            border: 1px solid rgba(0, 0, 0, .125);
-            border-radius: .25rem;
-            box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
-            overflow: hidden;
-            margin-left: 14px;
-            min-width: 0;
-            word-wrap: break-word;
+            margin-left: 0;
         }
         .favorite-article-item {
             display: flex;
             align-items: flex-start;
             gap: 14px;
-            padding: 16px calc(var(--spacing-card) + 16px);
+            padding: 16px 24px;
             cursor: pointer;
             min-height: var(--touch-target-min);
             transition: background .15s;
@@ -91,28 +256,15 @@
             content: '';
             position: absolute;
             bottom: 0;
-            left: 16px;
-            right: 16px;
+            left: 24px;
+            right: 24px;
             height: 1px;
             background: #E5E7EB;
         }
-        .favorite-article-item:first-child { padding-top: 36px; }
-        .favorite-article-item:last-child { padding-bottom: 36px; }
+        .favorite-article-item:first-child { padding-top: 28px; }
+        .favorite-article-item:last-child { padding-bottom: 28px; }
         .favorite-article-item:last-child::after { display: none; }
         .favorite-article-item:hover { background: #F3F4F6; }
-
-        .favorite-article-item .article-thumb {
-            width: 124px; height: 88px;
-            border-radius: 0;
-            background: linear-gradient(135deg, #FEF3C7 0%, #FFF7ED 100%);
-            border: 1px solid #FDE68A;
-            flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            color: #F59E0B;
-        }
-        .favorite-article-item .article-thumb .thumb-placeholder {
-            font-size: 28px;
-        }
 
         .favorite-article-item .article-info { flex: 1; min-width: 0; }
         .favorite-article-item .article-title {
@@ -161,7 +313,7 @@
         .favorite-article-item .tag-chip {
             display: inline-flex;
             align-items: center;
-            font-size: 11px;
+            font-size: var(--font-label);
             font-weight: 500;
             padding: 1px 8px;
             border-radius: 3px;
@@ -187,26 +339,33 @@
             line-height: 1.45;
         }
         .favorite-article-item .fav-remove {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border-color);
-            background: #fff;
-            color: #9CA3AF;
+            min-width: auto;
+            min-height: 32px;
+            padding: 7px 10px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: #F59E0B;
             cursor: pointer;
-            font-size: 13px;
-            display: flex;
+            font-size: var(--font-label);
+            font-weight: 600;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 6px;
             transition: all .15s;
         }
-        .favorite-article-item .fav-remove:hover { color: #EF4444; border-color: #FECACA; background: #FEF2F2; }
+        .favorite-article-item .fav-remove i {
+            font-size: 14px;
+            line-height: 1;
+        }
+        .favorite-article-item .fav-remove:hover { color: #D97706; background: #FEF9EE; }
 
         .read-state {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 11px;
+            font-size: var(--font-caption);
             font-weight: 600;
             padding: 3px 8px;
             border-radius: 999px;
@@ -227,19 +386,148 @@
             text-align: center; padding: 60px 20px; color: #9CA3AF;
         }
         .empty-state i { font-size: 32px; display: block; margin-bottom: 12px; }
-        .empty-state p { font-size: 14px; margin: 0; }
+        .empty-state p { font-size: var(--font-body-small); margin: 0; }
+
+        @media (min-width: 961px) {
+            .back-link-bar {
+                margin-bottom: 14px;
+            }
+            .back-link-bar a {
+                padding: 0;
+                min-height: auto;
+                color: #64748B;
+            }
+            .back-link-bar a:hover {
+                background: transparent;
+                color: #111827;
+            }
+            .page-title-bar {
+                align-items: flex-start;
+                margin-bottom: 4px;
+                padding: 0;
+            }
+            .page-title-bar h2 {
+                font-size: var(--font-page-title);
+                line-height: 1.2;
+                margin-bottom: var(--spacing-compact);
+                color: #1E293B;
+                padding: 0;
+                letter-spacing: -0.01em;
+            }
+            .page-title-bar .page-desc {
+                margin: 0;
+                color: var(--text-muted);
+                font-size: var(--font-label);
+            }
+            .favorites-toolbar .km-page-search {
+                max-width: 360px;
+            }
+        }
+
+        @media (max-width: 960px) {
+            .favorites-layout {
+                grid-template-columns: 1fr;
+                margin-top: 16px;
+            }
+            .personal-sidebar {
+                display: none;
+            }
+            .mobile-mode-switch {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                scroll-snap-type: x proximity;
+                padding-bottom: 4px;
+            }
+            .mobile-mode-btn {
+                scroll-snap-align: start;
+            }
+            .favorites-toolbar {
+                margin: 0 0 14px;
+                padding: 0;
+                border: none;
+                background: transparent;
+                box-shadow: none;
+            }
+            .favorites-toolbar .km-page-search {
+                width: 100%;
+                max-width: none;
+                flex: 1 1 100%;
+            }
+            .favorite-filter-tabs {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                gap: 8px;
+                margin: 0;
+                padding: 4px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                scroll-snap-type: x proximity;
+                border-bottom: none;
+                border: 1px solid #E5EAF3;
+                border-radius: 999px;
+                background: #F8FAFC;
+            }
+            .favorite-filter-tabs::-webkit-scrollbar { display: none; }
+            .favorite-filter-tabs .search-category-tab {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                flex: 0 0 auto;
+                gap: 6px;
+                margin-bottom: 0;
+                min-height: 36px;
+                padding: 0 14px;
+                border: none;
+                border-radius: 999px;
+                background: transparent;
+                color: #64748B;
+                font-size: var(--font-label);
+                font-weight: 700;
+                white-space: nowrap;
+                scroll-snap-align: start;
+            }
+            .favorite-filter-tabs .search-category-tab.active {
+                background: #FFFFFF;
+                color: #111827;
+                border-bottom-color: transparent;
+                box-shadow: 0 1px 2px rgba(15,23,42,.10);
+            }
+            .favorite-filter-tabs .search-category-tab .tab-count {
+                margin-left: 2px;
+                padding: 1px 6px;
+                border-radius: 999px;
+                background: rgba(148,163,184,.14);
+                color: #94A3B8;
+                font-size: var(--font-caption);
+                font-weight: 700;
+            }
+            .favorite-filter-tabs .search-category-tab.active .tab-count {
+                background: #DBEAFE;
+                color: #4F46E5;
+            }
+            .result-count {
+                padding: 12px 16px;
+            }
+        }
 
         @media (max-width: 768px) {
+            .page-title-bar {
+                gap: 12px;
+            }
             .favorite-article-item {
                 flex-wrap: wrap;
-                padding: 16px 20px;
+                padding: 16px 18px;
             }
+            .favorite-article-item::after { left: 18px; right: 18px; }
             .favorite-article-item:first-child { padding-top: 24px; }
             .favorite-article-item:last-child { padding-bottom: 24px; }
-            .favorite-article-item .article-thumb {
-                width: 100%;
-                height: 120px;
-            }
             .favorite-article-item .article-side {
                 width: 100%;
                 min-width: 0;
@@ -262,7 +550,7 @@
 
     <!-- 主要內容區 -->
     <div class="main-content">
-        <div class="km-container">
+        <div class="km-container km-overview-content">
             <!-- 返回 -->
             <div class="back-link-bar" id="backLinkBar">
                 <a href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> 返回知識總覽</a>
@@ -282,19 +570,69 @@
                 </div>
             </div>
 
-            <!-- 操作列 -->
-            <div class="action-bar">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="搜尋收藏文章…" id="searchInput" oninput="searchFavorites()">
+            <div class="km-layout favorites-layout">
+                <div class="km-sidebar-panel personal-sidebar">
+                    <div class="panel-header">
+                        <strong>個人專區</strong>
+                    </div>
+                    <div class="panel-body">
+                        <div class="sidebar-section is-shortcut-group">
+                            <a class="sidebar-nav-item" href="km-manage.html#activity">我的活躍度</a>
+                            <a class="sidebar-nav-item active" href="km-favorites.html?from=manage">我的收藏 <span class="nav-badge" id="badgeFavoriteDesktop">10</span></a>
+                        </div>
+                        <div class="sidebar-section">
+                            <div class="sidebar-section-title">個人貢獻</div>
+                            <a class="sidebar-nav-item" href="km-manage.html#published">已發表文章 <span class="nav-badge">7</span></a>
+                            <a class="sidebar-nav-item" href="km-manage.html#draft">草稿 <span class="nav-badge">3</span></a>
+                            <a class="sidebar-nav-item" href="km-manage.html#expired">已失效文章 <span class="nav-badge">3</span></a>
+                        </div>
+                        <div class="sidebar-section">
+                            <div class="sidebar-section-title">文件審核</div>
+                            <a class="sidebar-nav-item" href="km-manage.html#my-submit">我送審的文章 <span class="nav-badge">5</span></a>
+                            <a class="sidebar-nav-item" href="km-manage.html#wait-me">等我審的文章 <span class="nav-badge">3</span></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="favorite-right-panel">
+                    <div class="mobile-mode-switch" id="mobileModeSwitch">
+                        <a class="mobile-mode-btn km-overview-tile" href="km-manage.html#activity">
+                            <span class="mobile-mode-main km-overview-tile-main"><i class="fa-solid fa-bolt"></i><span>我的活躍度</span></span>
+                        </a>
+                        <a class="mobile-mode-btn km-overview-tile active" href="km-favorites.html?from=manage">
+                            <span class="mobile-mode-main km-overview-tile-main"><i class="fa-solid fa-star"></i><span>我的收藏</span></span>
+                            <span class="km-overview-tile-badge" id="badgeFavoriteMobile">10</span>
+                        </a>
+                        <a class="mobile-mode-btn km-overview-tile" href="km-manage.html#published">
+                            <span class="mobile-mode-main km-overview-tile-main"><i class="fa-solid fa-file-lines"></i><span>個人貢獻</span></span>
+                        </a>
+                        <a class="mobile-mode-btn km-overview-tile" href="km-manage.html#my-submit">
+                            <span class="mobile-mode-main km-overview-tile-main"><i class="fa-solid fa-clipboard-check"></i><span>文件審核</span></span>
+                        </a>
+                    </div>
+
+                    <div class="favorites-toolbar">
+                        <div class="km-page-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="搜尋目前收藏列表…" id="searchInput" oninput="searchFavorites()">
+                        </div>
+                    </div>
+
+                    <div class="favorite-main-card km-overview-card">
+                        <div class="search-category-tabs favorite-filter-tabs km-overview-tab-bar" id="readFilterTabs">
+                            <button class="search-category-tab km-overview-tab active" type="button" data-filter="all" onclick="setReadFilter('all')">全部 <span class="tab-count" id="allCount">0</span></button>
+                            <button class="search-category-tab km-overview-tab" type="button" data-filter="unread" onclick="setReadFilter('unread')">未閱讀 <span class="tab-count" id="unreadCount">0</span></button>
+                            <button class="search-category-tab km-overview-tab" type="button" data-filter="read" onclick="setReadFilter('read')">已閱讀 <span class="tab-count" id="readCount">0</span></button>
+                        </div>
+
+                        <!-- 結果統計 -->
+                        <div class="result-count" id="resultCount"></div>
+
+                        <!-- 收藏列表 -->
+                        <div class="favorite-list-card" id="favoriteListCard"></div>
+                    </div>
                 </div>
             </div>
-
-            <!-- 結果統計 -->
-            <div class="result-count" id="resultCount"></div>
-
-            <!-- 收藏列表 -->
-            <div class="favorite-list-card" id="favoriteListCard"></div>
         </div>
     </div>
 
@@ -351,21 +689,58 @@
     ];
 
         let _filtered = [];
+        let _currentReadFilter = 'all';
 
     (function init() {
+                updateFavoriteCountBadges();
                 searchFavorites();
     })();
 
     function searchFavorites() {
         const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-        _filtered = _allFavorites.filter(a =>
+        const keywordMatched = _allFavorites.filter(a =>
             !keyword ||
             a.title.toLowerCase().includes(keyword) ||
             a.author.toLowerCase().includes(keyword) ||
             a.dept.toLowerCase().includes(keyword) ||
             (a.tags || []).some(t => t.toLowerCase().includes(keyword))
         ).sort((a, b) => new Date(b.savedDate) - new Date(a.savedDate));
+
+        updateReadFilterTabs(keywordMatched);
+
+        _filtered = keywordMatched.filter(a => {
+            if (_currentReadFilter === 'read') return a.isRead;
+            if (_currentReadFilter === 'unread') return !a.isRead;
+            return true;
+        });
         renderList();
+    }
+
+    function setReadFilter(filter) {
+        _currentReadFilter = filter;
+        searchFavorites();
+    }
+
+    function updateReadFilterTabs(sourceList) {
+        const allCount = sourceList.length;
+        const unreadCount = sourceList.filter(a => !a.isRead).length;
+        const readCount = sourceList.filter(a => a.isRead).length;
+
+        document.getElementById('allCount').textContent = allCount;
+        document.getElementById('unreadCount').textContent = unreadCount;
+        document.getElementById('readCount').textContent = readCount;
+
+        document.querySelectorAll('#readFilterTabs .search-category-tab').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === _currentReadFilter);
+        });
+    }
+
+    function updateFavoriteCountBadges() {
+        const count = _allFavorites.length;
+        ['badgeFavoriteDesktop', 'badgeFavoriteMobile'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = count;
+        });
     }
 
     function stripHtml(html) {
@@ -386,7 +761,7 @@
 
         const host = document.getElementById('favoriteListCard');
         if (!_filtered.length) {
-            host.innerHTML = '<div class="empty-state"><i class="fa-solid fa-bookmark"></i><p>沒有符合條件的收藏文章</p></div>';
+            host.innerHTML = '<div class="empty-state"><i class="fa-solid fa-star"></i><p>沒有符合條件的收藏文章</p></div>';
             return;
         }
         host.innerHTML = _filtered.map(a => {
@@ -395,9 +770,6 @@
             const readState = getReadState(a);
             return `
             <div class="favorite-article-item" onclick="openArticle('${a.id}')">
-                <div class="article-thumb">
-                    <span class="thumb-placeholder"><i class="fa-solid fa-bookmark"></i></span>
-                </div>
                 <div class="article-info">
                     <h4 class="article-title">${escHtml(a.title)}</h4>
                     <div class="article-meta">
@@ -410,7 +782,7 @@
                 </div>
                 <div class="article-side">
                     <div class="article-date">收藏於<br>${a.savedDate}</div>
-                    <button class="fav-remove" onclick="event.stopPropagation(); removeFav('${a.id}')" title="取消收藏"><i class="fa-solid fa-bookmark-slash"></i></button>
+                    <button class="fav-remove" onclick="event.stopPropagation(); removeFav('${a.id}')" title="取消收藏" aria-label="取消收藏" aria-pressed="true"><i class="fa-solid fa-star"></i><span>已收藏</span></button>
                 </div>
             </div>`;
         }).join('');
@@ -421,6 +793,7 @@
         if (idx === -1) return;
         const title = _allFavorites[idx].title;
         _allFavorites.splice(idx, 1);
+        updateFavoriteCountBadges();
         searchFavorites();
         showToast('已取消收藏「' + title + '」');
     }

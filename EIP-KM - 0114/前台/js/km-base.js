@@ -638,9 +638,12 @@ function toggleArticleFavorite(articleId, title, event) {
     document.querySelectorAll('.article-fav-btn[data-article-id="' + articleId + '"]').forEach(function(btn) {
         const isFav = isArticleFavorited(articleId);
         btn.classList.toggle('active', isFav);
+        btn.setAttribute('title', isFav ? '取消收藏' : '加入收藏');
+        btn.setAttribute('aria-label', isFav ? '取消收藏' : '加入收藏');
+        btn.setAttribute('aria-pressed', isFav ? 'true' : 'false');
         const icon = btn.querySelector('i');
         if (icon) {
-            icon.className = isFav ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark';
+            icon.className = isFav ? 'fa-solid fa-star' : 'fa-regular fa-star';
         }
     });
 }
@@ -648,11 +651,13 @@ function toggleArticleFavorite(articleId, title, event) {
 /**
  * 產生文章收藏按鈕 HTML
  */
-function articleFavBtnHtml(articleId, title) {
+function articleFavBtnHtml(articleId, title, showLabel) {
     const isFav = isArticleFavorited(articleId);
-    const iconClass = isFav ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark';
+    const iconClass = isFav ? 'fa-solid fa-star' : 'fa-regular fa-star';
     const activeClass = isFav ? ' active' : '';
-    return '<button class="article-fav-btn' + activeClass + '" data-article-id="' + articleId + '" title="' + (isFav ? '取消收藏' : '加入收藏') + '" onclick="toggleArticleFavorite(\'' + articleId + '\', \'' + title.replace(/'/g, "\\'") + '\', event)"><i class="' + iconClass + '"></i></button>';
+    const labelHtml = showLabel ? '<span class="article-fav-label">收藏</span>' : '';
+    const labelClass = showLabel ? ' has-label' : '';
+    return '<button class="article-fav-btn' + activeClass + labelClass + '" data-article-id="' + articleId + '" title="' + (isFav ? '取消收藏' : '加入收藏') + '" aria-label="' + (isFav ? '取消收藏' : '加入收藏') + '" aria-pressed="' + (isFav ? 'true' : 'false') + '" onclick="toggleArticleFavorite(\'' + articleId + '\', \'' + title.replace(/'/g, "\\'") + '\', event)"><i class="' + iconClass + '"></i>' + labelHtml + '</button>';
 }
 
 /**
@@ -662,4 +667,55 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+/**
+ * 計算 KM 活躍度摘要
+ * 以近 30 天閱讀與發表比率計分，發表權重較高。
+ */
+function getKmActivitySummary(activity) {
+    var totalUsers = Math.max(1, Number(activity && activity.totalUsers) || 1);
+    var personalReads = Math.max(0, Number(activity && activity.personalReads) || 0);
+    var publishedCount = Math.max(0, Number(activity && activity.publishedCount) || 0);
+    var config = {
+        periodLabel: '近 30 天',
+        targets: { reads: 20, published: 5 },
+        weights: { reads: 35, published: 65 }
+    };
+
+    var readRatio = Math.min(personalReads / config.targets.reads, 1);
+    var publishedRatio = Math.min(publishedCount / config.targets.published, 1);
+    var rawScore = (readRatio * config.weights.reads) + (publishedRatio * config.weights.published);
+    var exceededPercent = rawScore >= 100 ? 99 : Math.max(0, Math.min(99, Math.round(rawScore)));
+    var rank = totalUsers === 1 ? 1 : Math.max(1, Math.ceil(totalUsers * (100 - Math.min(rawScore, 100)) / 100));
+
+    return {
+        totalUsers: totalUsers,
+        personalReads: personalReads,
+        publishedCount: publishedCount,
+        score: Math.round(rawScore * 10) / 10,
+        exceededPercent: exceededPercent,
+        rank: rank,
+        ringPercent: Math.max(0, Math.min(rawScore, 100)),
+        periodLabel: config.periodLabel,
+        weights: config.weights,
+        targets: config.targets
+    };
+}
+
+/**
+ * 依超越比例產生活躍度說明文案
+ */
+function getKmActivityCaption(exceededPercent) {
+    var pct = Math.max(0, Math.min(99, Math.round(exceededPercent) || 0));
+    if (pct >= 90) {
+        return '目前活躍表現已超越 ' + pct + '% 使用者，持續透過閱讀與文章分享累積個人知識影響力。';
+    }
+    if (pct >= 80) {
+        return '目前活躍表現已超越 ' + pct + '% 使用者，整體表現不錯，持續閱讀與發表可再提升個人知識影響力。';
+    }
+    if (pct >= 70) {
+        return '目前活躍表現已超越 ' + pct + '% 使用者。';
+    }
+    return '目前活躍表現已超越 ' + pct + '% 使用者，持續閱讀與發表可逐步提升個人知識影響力。';
 }

@@ -439,74 +439,21 @@
     color: #6B7280;
 }
 
-/* ===== 我的收藏 — 水平卡片 ===== */
+/* ===== 我的收藏 — 列表 ===== */
 .fav-body {
-    padding: var(--spacing-element) var(--spacing-card) !important;
+    padding: 0 !important;
     max-height: none !important;
 }
-.fav-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
+.fav-list-item {
+    padding-right: var(--spacing-element);
 }
-.fav-card {
-    background: #F9FAFB;
-    border: 1px solid #E5E8ED;
-    border-radius: 10px;
-    padding: var(--spacing-compact) var(--spacing-element);
-    cursor: pointer;
-    transition: all .2s;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.fav-list-item .article-title {
+    margin-bottom: 4px;
 }
-.fav-card:hover {
-    background: #F3F4F6;
-    border-color: #D1D5DB;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0,0,0,.06);
-}
-.fav-card .fav-card-title {
-    font-size: var(--font-card-title);
-    font-weight: 600;
-    color: #1E293B;
-    line-height: var(--line-height-tight);
-    display: flex;
-    align-items: flex-start;
-    gap: 6px;
-    letter-spacing: -0.01em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.fav-card .fav-card-title .fav-star {
-    color: #F59E0B;
-    font-size: 12px;
+.fav-list-item .article-fav-btn {
+    margin-left: auto;
+    align-self: center;
     flex-shrink: 0;
-    margin-top: 2px;
-}
-.fav-card:hover .fav-card-title { color: var(--primary-color); }
-.fav-card .fav-card-meta {
-    font-size: var(--font-body-small);
-    color: #7F7F7F;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.fav-card .fav-card-meta span { display: flex; align-items: center; gap: 3px; }
-.fav-card .fav-card-meta i { color: var(--text-muted); font-size: 12px; width: 14px; text-align: center; }
-.fav-card .fav-card-tags {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-}
-.fav-card .fav-card-tags .tag {
-    font-size: 11px;
-    padding: 2px 7px;
-    border-radius: 4px;
-    border: 1px solid #E5E8ED;
-    color: #6B7280;
-    background: #FFFFFF;
 }
 
 /* ===== 審核 Tabs ===== */
@@ -701,12 +648,6 @@
     .contrib-stats {
         grid-template-columns: repeat(3, 1fr);
     }
-    .fav-grid {
-        grid-template-columns: 1fr;
-    }
-    .fav-grid .fav-card:nth-child(n+4) {
-        display: none;
-    }
     .review-tabs {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
@@ -770,19 +711,20 @@
     min-width: 36px;
     min-height: 36px;
 }
+.am-header .article-fav-btn.has-label {
+    min-width: auto;
+    padding: 6px 10px;
+}
+.am-header .article-fav-btn i {
+    font-size: 16px;
+}
 
-/* fav-card 上的收藏按鈕 */
-.fav-card .article-fav-btn {
-    position: absolute;
-    top: 6px;
-    right: 6px;
+/* 我的收藏列表上的收藏按鈕 */
+.fav-list-item .article-fav-btn {
     font-size: 14px;
     min-width: 28px;
     min-height: 28px;
     padding: 4px;
-}
-.fav-card {
-    position: relative;
 }
 
 /* ===== 我的活躍度卡片 ===== */

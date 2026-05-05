@@ -45,7 +45,7 @@
             font-size: 11px; padding: 1px 7px; border-radius: 999px;
             background: #F3F4F6; color: #9CA3AF; font-weight: 700;
         }
-        .review-tab-btn.active .tab-count { background: #EEF2FF; color: #4F46E5; }
+        .review-tab-btn.active .tab-count { background: #DBEAFE; color: #4F46E5; }
 
         /* 篩選列 */
         .toolbar {
@@ -53,23 +53,11 @@
             gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
         }
         .toolbar-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .toolbar .search-box { position: relative; }
-        .toolbar .search-box i {
-            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-            color: #9CA3AF; font-size: 13px;
-        }
-        .toolbar .search-box input {
-            padding: 8px 12px 8px 34px; width: 240px;
-            border: 1px solid #E5E8ED; border-radius: 8px;
-            font-size: 13px; background: #fff; box-sizing: border-box;
-            transition: border-color .2s;
-        }
-        .toolbar .search-box input:focus { outline: none; border-color: #4F46E5; }
+        .toolbar .km-page-search { width: 220px; max-width: 100%; flex: 0 1 220px; }
 
         /* 表格 */
         .review-table-card {
-            background: #fff; border: 1px solid #E5E8ED; border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,.04); overflow: hidden;
+            min-width: 0;
         }
         .review-table {
             width: 100%; border-collapse: collapse;
@@ -137,11 +125,10 @@
             display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
         }
         .rm-header h3 { font-size: var(--font-section-title); font-weight: 700; margin: 0; line-height: 1.4; }
-        .rm-header .close-btn {
-            background: none; border: none; font-size: 18px; color: #9CA3AF;
-            cursor: pointer; padding: 4px; transition: color .15s;
+        .rm-header .btn.ghost {
+            min-height: 36px;
+            padding: 6px 10px;
         }
-        .rm-header .close-btn:hover { color: #374151; }
         .rm-meta-grid {
             display: grid; grid-template-columns: 1fr 1fr;
             gap: 12px; padding: 16px 24px; background: #F9FAFB;
@@ -184,12 +171,19 @@
             padding: 14px 24px; border-top: 1px solid #F0F1F3;
             display: flex; align-items: center; justify-content: flex-end; gap: 8px;
         }
-        .btn-cancel {
-            padding: 8px 18px; border: 1px solid #E5E8ED; border-radius: 8px;
-            background: #fff; color: #6B7280; font-size: 13px; font-weight: 600;
-            cursor: pointer; transition: all .15s;
+        .rm-footer .btn {
+            min-height: 36px;
         }
-        .btn-cancel:hover { background: #F3F4F6; }
+
+        @media (max-width: 768px) {
+            .toolbar-left {
+                width: 100%;
+            }
+            .toolbar .km-page-search {
+                width: 100%;
+                flex: 1 1 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -204,7 +198,7 @@
         <!-- KM 知識管理導航 -->
         <div id="km-nav-container"></div>
 
-        <div class="km-container">
+        <div class="km-container km-overview-content">
             <!-- 標題 -->
             <div class="page-title-bar">
                 <div>
@@ -214,20 +208,20 @@
             </div>
 
             <!-- Tabs -->
-            <div class="review-tabs-bar" id="reviewTabs"></div>
+            <div class="review-tabs-bar km-overview-tab-bar" id="reviewTabs"></div>
 
             <!-- 篩選列 -->
             <div class="toolbar">
                 <div class="toolbar-left">
-                    <div class="search-box">
+                    <div class="km-page-search">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="搜尋文章標題…" id="searchInput" oninput="filterList()">
+                        <input type="text" placeholder="搜尋目前列表文章標題…" id="searchInput" oninput="filterList()">
                     </div>
                 </div>
             </div>
 
             <!-- 表格 -->
-            <div class="review-table-card">
+            <div class="review-table-card km-overview-card">
                 <table class="review-table">
                     <thead id="tableHead"></thead>
                     <tbody id="tableBody"></tbody>
@@ -241,7 +235,7 @@
         <div class="review-modal">
             <div class="rm-header">
                 <h3 id="rmTitle">—</h3>
-                <button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+                <button class="btn ghost" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="rm-meta-grid" id="rmMeta"></div>
             <div class="rm-body" id="rmBody"></div>
@@ -250,7 +244,7 @@
                 <div id="rmHistory"></div>
             </div>
             <div class="rm-footer">
-                <button class="btn-cancel" onclick="closeModal()">關閉</button>
+                <button class="btn" onclick="closeModal()">關閉</button>
             </div>
         </div>
     </div>
@@ -346,7 +340,7 @@
             { key:'pending',   label:'等我審核', icon:'fa-inbox',       count: _pendingMyReview.length },
         ];
         document.getElementById('reviewTabs').innerHTML = tabs.map(t => `
-            <button class="review-tab-btn ${t.key === _currentTab ? 'active' : ''}" onclick="switchTab('${t.key}')" data-tab="${t.key}">
+            <button class="review-tab-btn km-overview-tab ${t.key === _currentTab ? 'active' : ''}" onclick="switchTab('${t.key}')" data-tab="${t.key}">
                 <i class="fa-solid ${t.icon}"></i> ${t.label}
                 <span class="tab-count">${t.count}</span>
             </button>

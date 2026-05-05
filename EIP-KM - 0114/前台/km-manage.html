@@ -16,30 +16,36 @@
         /* ===== 管理文章頁專用 ===== */
 
         .page-title-bar {
-            padding: 4px 0 0;
-            margin-left: 14px;
+            padding: 0;
+            margin-left: 0;
             display: flex; align-items: flex-start; justify-content: space-between;
             gap: 16px; flex-wrap: wrap;
         }
         .page-title-bar h2 {
-            font-size: var(--font-page-title); font-weight: 700; color: #111827; margin: 0;
+            font-size: var(--font-page-title); font-weight: 700; color: #1E293B;
+            margin: 0 0 var(--spacing-compact);
+            line-height: 1.2;
+            letter-spacing: -0.01em;
             display: flex; align-items: center; gap: 10px;
         }
-        .page-title-bar h2 i { color: #4F46E5; }
-        .page-title-bar .page-desc { color: #9CA3AF; font-size: 13px; margin: 4px 0 0; }
+        .page-title-bar h2 i { color: #4F46E5; font-size: .9em; }
+        .page-title-bar .page-desc {
+            color: var(--text-muted);
+            font-size: var(--font-label);
+            line-height: 1.6;
+            margin: 0;
+        }
         .back-link-bar {
             margin-bottom: var(--spacing-element);
         }
         .back-link-bar a {
             display: inline-flex; align-items: center; gap: 8px;
-            font-size: 15px; color: var(--text-secondary); text-decoration: none;
+            font-size: var(--font-body); color: var(--text-secondary); text-decoration: none;
             padding: 8px 14px; border-radius: var(--radius-sm);
             min-height: var(--touch-target-min);
             transition: all .15s;
         }
         .back-link-bar a:hover { background: var(--hover-bg); color: var(--primary-color); }
-
-
 
         /* 操作列 */
         .toolbar {
@@ -48,105 +54,40 @@
         }
         .toolbar-left {
             display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+            min-width: 0;
         }
-        .toolbar .search-box {
-            display: flex; align-items: center; gap: 8px;
-            border: 1px solid #E5E8ED; border-radius: 8px;
-            background: #fff; padding: 0 12px;
-            min-width: 180px; max-width: 280px; flex: 1;
-            transition: border-color .2s;
+        .toolbar .km-page-search {
+            width: 220px;
+            max-width: 100%;
+            min-width: 0;
+            flex: 0 1 220px;
         }
-        .toolbar .search-box:focus-within { border-color: #4F46E5; }
-        .toolbar .search-box i {
-            color: #9CA3AF; font-size: 13px; flex-shrink: 0;
-        }
-        .toolbar .search-box input {
-            border: none; background: transparent;
-            padding: 8px 0; font-size: 13px;
-            width: 100%; min-width: 0;
-        }
-        .toolbar .search-box input:focus { outline: none; }
         .toolbar select {
             -webkit-appearance: none; -moz-appearance: none; appearance: none;
-            padding: 8px 32px 8px 14px; border: 1px solid #E5E8ED; border-radius: 8px;
-            font-size: 13px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;
-            color: #374151; cursor: pointer;
+            min-height: 44px;
+            padding: 0 32px 0 14px; border: 1px solid #E5E8ED; border-radius: 8px;
+            font-size: var(--font-body-small); background: #F9FAFB url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+            color: var(--text-primary); cursor: pointer;
+            transition: border-color .2s, background .2s;
         }
-        .toolbar select:focus { outline: none; border-color: #4F46E5; }
-        .btn-primary {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 8px 18px; background: #4F46E5; color: #fff;
-            border: none; border-radius: 8px; font-size: 13px;
-            font-weight: 600; cursor: pointer; transition: background .2s;
-            text-decoration: none;
+        .toolbar select:focus { outline: none; border-color: var(--primary-color); background: #fff; }
+        .page-title-bar .km-overview-outline-btn {
+            flex-shrink: 0;
         }
-        .btn-primary:hover { background: #4338CA; }
-        .btn-outline {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 8px 14px; background: #fff; color: #6B7280;
-            border: 1px solid #E5E8ED; border-radius: 8px; font-size: 13px;
-            font-weight: 600; cursor: pointer; transition: all .15s;
-        }
-        .btn-outline:hover { background: #F3F4F6; border-color: #D1D5DB; }
 
         .mobile-mode-switch {
             display: none;
-            align-items: center;
-            gap: 6px;
-            padding: 4px;
-            margin: 0 0 16px;
-            border: 1px solid #E5E8ED;
-            border-radius: 12px;
-            background: #F9FAFB;
+            gap: 10px;
+            margin: 0 0 18px;
+        }
+        .mobile-mode-switch::-webkit-scrollbar {
+            display: none;
         }
         .mobile-mode-btn {
-            flex: 1;
-            border: none;
-            background: transparent;
-            color: #6B7280;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 10px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all .15s;
+            flex: 0 0 auto;
         }
-        .mobile-mode-btn.active {
-            background: #fff;
-            color: #4F46E5;
-            box-shadow: 0 1px 2px rgba(15,23,42,.08);
-        }
-        .mobile-shortcuts {
-            display: none;
-            margin: 0 0 16px;
-        }
-        .mobile-shortcut-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            min-height: 40px;
-            padding: 10px 14px;
-            border: 1px solid #E5E8ED;
-            border-radius: 999px;
-            background: #fff;
-            color: #374151;
-            font-size: 13px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all .15s;
-        }
-        .mobile-shortcut-link:hover {
-            background: #F8FAFF;
-            border-color: #C7D2FE;
-            color: #4F46E5;
-        }
-        .mobile-shortcut-link .nav-badge {
-            font-size: 11px;
-            padding: 1px 7px;
-            border-radius: 999px;
-            background: #EEF2FF;
-            color: #4F46E5;
-            font-weight: 700;
+        .mobile-mode-main {
+            min-width: 0;
         }
         .activity-view {
             display: none;
@@ -162,14 +103,15 @@
         }
         .activity-rank-card,
         .activity-panel-card {
-            background: #fff;
-            border: 1px solid #E5E8ED;
-            border-radius: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,.04);
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid rgba(0, 0, 0, .125);
+            border-radius: .25rem;
+            box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
             padding: 20px;
         }
         .activity-card-label {
-            font-size: 12px;
+            font-size: var(--font-caption);
             font-weight: 700;
             color: #6B7280;
             letter-spacing: .02em;
@@ -194,83 +136,62 @@
             text-align: center;
         }
         .activity-rank-number {
-            font-size: 30px;
+            font-size: calc(var(--font-page-title) + 8px);
             font-weight: 700;
             line-height: 1;
             color: #111827;
         }
         .activity-rank-unit,
         .activity-rank-total {
-            font-size: 12px;
+            font-size: var(--font-caption);
             color: #9CA3AF;
         }
         .activity-rank-caption {
             margin: 0;
             color: #4B5563;
-            font-size: 13px;
+            font-size: var(--font-body-small);
             line-height: 1.7;
             text-align: center;
         }
         .activity-panel-heading h3 {
             margin: 0;
-            font-size: 18px;
+            font-size: var(--font-section-title);
             font-weight: 700;
             color: #111827;
         }
         .activity-panel-heading p {
             margin: 6px 0 0;
             color: #6B7280;
-            font-size: 13px;
+            font-size: var(--font-label);
         }
         .activity-metrics {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 12px;
             margin-top: 16px;
         }
         .activity-metric-card {
             padding: 16px;
-            border: 1px solid #EEF2F7;
-            border-radius: 14px;
-            background: #FBFCFE;
+            border: 1px solid #F0F1F3;
+            border-radius: .25rem;
+            background: #fff;
         }
         .activity-metric-label {
-            font-size: 12px;
+            font-size: var(--font-label);
             font-weight: 700;
             color: #6B7280;
         }
         .activity-metric-value {
             margin-top: 10px;
-            font-size: 28px;
+            font-size: calc(var(--font-page-title) + 6px);
             font-weight: 700;
             line-height: 1;
             color: #111827;
         }
         .activity-metric-unit {
             margin-top: 6px;
-            font-size: 12px;
+            font-size: var(--font-caption);
             color: #9CA3AF;
-        }
-        .activity-highlight-list {
-            display: grid;
-            gap: 10px;
-            margin-top: 16px;
-        }
-        .activity-highlight-item {
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            padding: 12px 14px;
-            border: 1px solid #EEF2F7;
-            border-radius: 12px;
-            background: #FBFCFE;
-            color: #374151;
-            font-size: 13px;
-            line-height: 1.7;
-        }
-        .activity-highlight-item i {
-            color: #4F46E5;
-            margin-top: 3px;
         }
 
         /* 統計卡片 */
@@ -283,31 +204,44 @@
             gap: 10px;
             margin: 0 0 16px;
             padding: 12px;
-            border: 1px solid #E5E8ED;
-            border-radius: 14px;
-            background: linear-gradient(180deg, #FFFFFF 0%, #FBFCFE 100%);
+            border: 1px solid rgba(0, 0, 0, .125);
+            border-radius: .25rem;
+            background: #fff;
+            box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
         }
         .stat-card {
+            appearance: none;
             display: flex;
             align-items: center;
             gap: 10px;
             flex: 1 1 180px;
             min-width: 0;
+            width: auto;
+            min-height: 0;
             padding: 10px 12px;
             border: 1px solid transparent;
+            border-right: none;
             border-radius: 12px;
             background: transparent;
             box-shadow: none;
-            cursor: default;
-            transition: background .15s, border-color .15s;
+            cursor: pointer;
+            transition: background .15s, border-color .15s, box-shadow .15s;
+            text-align: left;
         }
+        .stat-card:last-child { border-right: none; }
         .stat-card:hover {
+            background: transparent;
             border-color: transparent;
             box-shadow: none;
         }
+        .stat-card:focus-visible {
+            outline: none;
+            border-color: #A5B4FC;
+            box-shadow: 0 0 0 3px rgba(79,70,229,.16);
+        }
         .stat-card.is-active {
-            background: #F5F7FF;
-            border-color: #C7D2FE;
+            background: #EFF6FF;
+            border-color: #BFDBFE;
             box-shadow: none;
         }
         .stat-icon {
@@ -338,49 +272,56 @@
         }
         .stat-body {
             min-width: 0;
+            text-align: left;
         }
         .stat-number {
-            font-size: 20px;
+            font-size: calc(var(--font-page-title) + 6px);
             font-weight: 700;
-            line-height: 1.1;
+            line-height: 1;
             color: #111827;
         }
         .stat-label {
             margin-top: 2px;
-            font-size: 12px;
+            font-size: var(--font-label);
             color: #6B7280;
+            font-weight: 600;
             white-space: nowrap;
         }
 
         /* 表格 */
         .manage-table-card {
-            background: #fff; border: 1px solid #E5E8ED; border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,.04); overflow: hidden;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid rgba(0, 0, 0, .125);
+            border-radius: .25rem;
+            box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
+            overflow: hidden;
             margin-left: 14px;
         }
         .manage-table {
             width: 100%; border-collapse: collapse;
         }
         .manage-table th {
-            text-align: left; padding: 12px 16px; font-size: 12px;
+            text-align: left; padding: 12px 16px; font-size: var(--font-label);
             font-weight: 600; color: #9CA3AF; background: #F9FAFB;
             border-bottom: 1px solid #E5E8ED; white-space: nowrap;
         }
         .manage-table td {
-            padding: 14px 16px; font-size: 13px; color: #374151;
+            padding: 14px 16px; font-size: var(--font-body-small); color: #374151;
             border-bottom: 1px solid #F0F1F3; vertical-align: middle;
         }
         .manage-table tbody tr { transition: background .15s; }
         .manage-table tbody tr:hover { background: #F9FAFB; }
         .manage-table tbody tr:last-child td { border-bottom: none; }
         .manage-table .article-title-cell {
+            font-size: var(--font-card-title);
             font-weight: 600; color: #111827; max-width: 300px;
             overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
             cursor: pointer;
         }
         .manage-table .article-title-cell:hover { color: #4F46E5; }
         .manage-table .status-badge {
-            font-size: 11px; padding: 3px 10px; border-radius: 999px;
+            font-size: var(--font-caption); padding: 3px 10px; border-radius: 999px;
             font-weight: 600; display: inline-flex; align-items: center; gap: 4px;
             white-space: nowrap;
         }
@@ -394,10 +335,10 @@
             display: flex; gap: 4px; align-items: center;
         }
         .manage-table .action-btn {
-            width: 30px; height: 30px; border-radius: 6px;
+            width: 32px; height: 32px; border-radius: 8px;
             border: 1px solid #E5E8ED; background: #fff;
             color: #9CA3AF; cursor: pointer; font-size: 12px;
-            display: flex; align-items: center; justify-content: center;
+            display: inline-flex; align-items: center; justify-content: center;
             transition: all .15s;
         }
         .manage-table .action-btn:hover { background: #F3F4F6; color: #4F46E5; border-color: #C7D2FE; }
@@ -409,7 +350,7 @@
             margin: 0 0 16px; gap: 0;
         }
         .manage-tab {
-            padding: 9px 16px; font-size: 13px; font-weight: 500;
+            padding: 9px 16px; font-size: var(--font-body-small); font-weight: 500;
             cursor: pointer; border: none; background: none;
             color: #6B7280; border-bottom: 2px solid transparent;
             margin-bottom: -1px; transition: color .15s, border-color .15s;
@@ -417,9 +358,10 @@
         .manage-tab:hover { color: #374151; }
         .manage-tab.active { color: #4F46E5; border-bottom-color: #4F46E5; font-weight: 600; }
         .manage-tab .tab-count {
-            font-size: 11px; margin-left: 4px; color: #9CA3AF; font-weight: 600;
+            font-size: var(--font-caption); padding: 1px 7px; border-radius: 999px;
+            background: #F3F4F6; color: #9CA3AF; font-weight: 700;
         }
-        .manage-tab.active .tab-count { color: #4F46E5; }
+        .manage-tab.active .tab-count { background: #DBEAFE; color: #4F46E5; }
 
         /* 分頁 */
         .pagination {
@@ -430,7 +372,7 @@
         .pagination .page-btn {
             min-width: 36px; height: 36px; border-radius: 8px;
             border: 1px solid #E5E8ED; background: #fff;
-            font-size: 13px; font-weight: 600; color: #6B7280;
+            font-size: var(--font-body-small); font-weight: 600; color: #6B7280;
             cursor: pointer; display: flex; align-items: center;
             justify-content: center; transition: all .15s;
         }
@@ -442,57 +384,8 @@
             text-align: center; padding: 60px 20px; color: #9CA3AF;
         }
         .empty-state i { font-size: 32px; display: block; margin-bottom: 12px; }
-        .empty-state p { font-size: 14px; margin: 4px 0 0; }
+        .empty-state p { font-size: var(--font-body-small); margin: 4px 0 0; }
 
-        /* 快速操作 Tooltip */
-        .manage-table .action-btn[title] { position: relative; }
-
-        /* ===== 個人專區左側選單 ===== */
-        .personal-sidebar .panel-header {
-            padding: 14px 16px;
-            border-bottom: 1px solid #E5E8ED;
-            background: #F9FAFB;
-        }
-        .personal-sidebar .panel-header strong {
-            font-size: 15px; font-weight: 700; color: #111827;
-        }
-        .personal-sidebar .panel-body {
-            padding: 12px 14px;
-        }
-        .sidebar-section {
-            margin-bottom: 8px;
-        }
-        .sidebar-section-title {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 13px; font-weight: 700; color: #374151;
-            padding: 8px 8px 6px; cursor: default;
-        }
-        .sidebar-section-title i {
-            font-size: 12px; color: #9CA3AF;
-        }
-        .sidebar-nav-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 7px 12px 7px 28px; margin: 1px 0;
-            border-radius: 6px; font-size: 13px; color: #6B7280;
-            cursor: pointer; transition: all .15s; text-decoration: none;
-        }
-        .sidebar-nav-item:hover {
-            background: #F3F4F6; color: #374151;
-        }
-        .sidebar-nav-item.active {
-            background: #EEF2FF; color: #4F46E5; font-weight: 600;
-        }
-        .sidebar-nav-item .nav-badge {
-            font-size: 11px; padding: 1px 7px; border-radius: 999px;
-            background: #F3F4F6; color: #9CA3AF; font-weight: 700;
-        }
-        .sidebar-nav-item.active .nav-badge {
-            background: #C7D2FE; color: #4F46E5;
-        }
-        .sidebar-section + .sidebar-section {
-            border-top: 1px solid #F0F1F3;
-            padding-top: 8px;
-        }
 
         /* 右側主區域：移除多餘 margin-left */
         .manage-right-panel .manage-tabs,
@@ -500,6 +393,211 @@
         .manage-right-panel .manage-table-card,
         .manage-right-panel .page-title-bar {
             margin-left: 0;
+        }
+
+        @media (min-width: 961px) {
+            .back-link-bar {
+                margin-bottom: 14px;
+            }
+            .back-link-bar a {
+                padding: 0;
+                min-height: auto;
+                color: #64748B;
+            }
+            .back-link-bar a:hover {
+                background: transparent;
+                color: #111827;
+            }
+            .page-title-bar {
+                align-items: flex-start;
+                margin-bottom: 4px;
+                padding: 0;
+            }
+            .page-title-bar h2 {
+                font-size: var(--font-page-title);
+                line-height: 1.2;
+                margin-bottom: var(--spacing-compact);
+                color: #1E293B;
+                padding: 0;
+                letter-spacing: -0.01em;
+            }
+            .page-title-bar .page-desc {
+                margin: 0;
+                color: var(--text-muted);
+                font-size: var(--font-label);
+            }
+            .page-title-bar .km-overview-outline-btn {
+                min-height: 42px;
+                padding: 0 18px;
+                box-shadow: none;
+            }
+            .km-layout {
+                grid-template-columns: 272px minmax(0, 1fr);
+                gap: 20px;
+                margin-top: 22px;
+                align-items: start;
+            }
+            .personal-sidebar {
+                position: sticky;
+                top: 88px;
+                border: 1px solid rgba(0, 0, 0, .125);
+                border-radius: .25rem;
+                background: #fff;
+                box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
+            }
+            .personal-sidebar .panel-header {
+                padding: 18px 20px 14px;
+                background: #fff;
+            }
+            .personal-sidebar .panel-header strong {
+                font-size: var(--font-section-title);
+                font-weight: 700;
+            }
+            .personal-sidebar .panel-body {
+                padding: 14px;
+            }
+            .sidebar-section {
+                padding-top: 10px;
+            }
+            .sidebar-section.is-shortcut-group {
+                padding-top: 0;
+            }
+            .sidebar-section + .sidebar-section {
+                margin-top: 8px;
+                border-top: 1px solid #EEF2F7;
+            }
+            .sidebar-section-title {
+                padding: 0 10px 8px;
+                font-size: var(--font-caption);
+                font-weight: 700;
+                letter-spacing: .08em;
+                color: #94A3B8;
+            }
+            .sidebar-nav-item {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                margin: 2px 0;
+                padding: 12px 14px 12px 18px;
+                border: none;
+                border-radius: 10px;
+                color: #334155;
+                text-decoration: none;
+                font-size: var(--font-body-small);
+                font-weight: 600;
+                transition: background .18s ease, color .18s ease;
+            }
+            .sidebar-nav-item:hover {
+                background: #F8FAFC;
+                color: #0F172A;
+            }
+            .sidebar-nav-item.active {
+                background: #EAF2FF;
+                color: #2563EB;
+                box-shadow: none;
+            }
+            .sidebar-nav-item.active::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 6px;
+                bottom: 6px;
+                width: 3px;
+                border-radius: 999px;
+                background: #3B82F6;
+            }
+            .sidebar-nav-item .nav-badge {
+                flex-shrink: 0;
+                padding: 2px 8px;
+                border-radius: 999px;
+                background: #F1F5F9;
+                color: #64748B;
+                font-size: var(--font-caption);
+                font-weight: 700;
+            }
+            .sidebar-nav-item.active .nav-badge {
+                background: #DCEAFF;
+                color: #2563EB;
+            }
+            .stat-cards {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin: 0 0 16px;
+                padding: 12px;
+                border: 1px solid rgba(0, 0, 0, .125);
+                border-radius: .25rem;
+                background: #fff;
+                box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
+            }
+            .stat-card {
+                flex: 1 1 180px;
+                min-height: 0;
+                padding: 10px 12px;
+                border: 1px solid transparent;
+                background: transparent;
+                box-shadow: none;
+            }
+            .stat-card:hover {
+                transform: none;
+                background: transparent;
+                border-color: transparent;
+                box-shadow: none;
+            }
+            .stat-card.is-active {
+                background: #EFF6FF;
+                border-color: #BFDBFE;
+                box-shadow: none;
+            }
+            .stat-icon {
+                width: 44px;
+                height: 44px;
+                border-radius: 14px;
+                font-size: 16px;
+            }
+            .stat-number {
+                font-size: calc(var(--font-page-title) + 6px);
+            }
+            .stat-label {
+                margin-top: 4px;
+                font-size: var(--font-label);
+            }
+            .toolbar {
+                margin: 0 0 18px;
+                padding: 14px 16px;
+                border: 1px solid rgba(0, 0, 0, .125);
+                border-radius: .25rem;
+                background: #fff;
+                box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
+            }
+            .toolbar .km-page-search {
+                max-width: 360px;
+            }
+            .manage-table-card {
+                margin-left: 0;
+                border: 1px solid rgba(0, 0, 0, .125);
+                border-radius: .25rem;
+                box-shadow: rgba(176, 184, 214, 0.09) 0px 10px 10px 20px, rgb(176, 184, 214) 10px 10px 15px -5px;
+            }
+            .manage-table th {
+                padding: 14px 18px;
+                background: #F9FAFB;
+                font-size: var(--font-caption);
+                letter-spacing: .08em;
+                text-transform: uppercase;
+                color: #94A3B8;
+            }
+            .manage-table td {
+                padding: 16px 18px;
+            }
+            .manage-table tbody tr:hover {
+                background: #FCFDFF;
+            }
+            .manage-table .article-title-cell {
+                font-weight: 700;
+            }
         }
 
         @media (max-width: 1200px) {
@@ -513,36 +611,72 @@
             .personal-sidebar { display: none; }
             #pageTitleBar { margin-left: 0 !important; }
             .mobile-mode-switch {
-                display: inline-flex;
-                width: 100%;
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                scroll-snap-type: x proximity;
+                padding-bottom: 4px;
             }
-            .mobile-shortcuts {
-                display: block;
-            }
+            .mobile-mode-btn { scroll-snap-align: start; }
             .stat-cards { display: none; }
             .manage-tabs {
                 display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
                 gap: 8px;
                 margin: 0 0 12px;
-                padding-bottom: 4px;
-                border-bottom: none;
+                padding: 4px;
                 overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
                 scrollbar-width: none;
+                scroll-snap-type: x proximity;
+                border-bottom: none;
+                border: 1px solid #E5EAF3;
+                border-radius: 999px;
+                background: #F8FAFC;
             }
             .manage-tabs::-webkit-scrollbar { display: none; }
             .manage-tab {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
                 flex: 0 0 auto;
+                gap: 6px;
                 margin-bottom: 0;
-                padding: 10px 14px;
-                border: 1px solid #E5E8ED;
+                min-height: 36px;
+                padding: 0 14px;
+                border: none;
                 border-radius: 999px;
-                background: #fff;
+                background: transparent;
+                color: #64748B;
+                font-size: var(--font-label);
+                font-weight: 700;
+                white-space: nowrap;
+                scroll-snap-align: start;
             }
             .manage-tab.active {
-                background: #EEF2FF;
+                background: #FFFFFF;
+                color: #111827;
+                border-color: transparent;
+                border-bottom-color: transparent;
+                box-shadow: 0 1px 2px rgba(15,23,42,.10);
+            }
+            .manage-tab .tab-count {
+                margin-left: 2px;
+                padding: 1px 6px;
+                border-radius: 999px;
+                background: rgba(148,163,184,.14);
+                color: #94A3B8;
+                font-size: var(--font-caption);
+                font-weight: 700;
+            }
+            .manage-tab.active .tab-count {
+                background: #DBEAFE;
                 color: #4F46E5;
-                border-color: #C7D2FE;
-                border-bottom-color: #C7D2FE;
             }
             .toolbar {
                 margin: 0 0 14px;
@@ -553,13 +687,11 @@
                 flex-direction: column;
                 align-items: stretch;
             }
-            .toolbar .search-box,
-            .toolbar-right,
-            .toolbar-right .btn-outline {
+            .toolbar .km-page-search,
+            .toolbar-right {
                 width: 100%;
                 max-width: none;
             }
-            .toolbar-right { display: none !important; }
             .toolbar select { display: none !important; }
             .manage-table-card { margin-left: 0; }
             .activity-overview {
@@ -569,8 +701,8 @@
 
         @media (max-width: 640px) {
             .page-title-bar { gap: 12px; }
-            .page-title-bar .page-desc { font-size: 12px; }
-            .page-title-bar .btn-primary {
+            .page-title-bar .page-desc { font-size: var(--font-label); }
+            .page-title-bar .km-overview-outline-btn {
                 width: auto;
                 justify-content: center;
                 padding: 8px 12px;
@@ -612,7 +744,7 @@
                 position: absolute;
                 top: 12px;
                 left: 14px;
-                font-size: 12px;
+                font-size: var(--font-label);
                 font-weight: 600;
                 color: #9CA3AF;
             }
@@ -640,7 +772,7 @@
             }
             .manage-table .actions-cell .action-btn::after {
                 content: attr(title);
-                font-size: 12px;
+                font-size: var(--font-label);
             }
             .manage-table .empty-row td {
                 padding: 40px 20px;
@@ -667,7 +799,7 @@
             width: 28px; height: 28px; border-radius: 50%;
             background: #EEF2FF; color: #4F46E5;
             display: inline-flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 700; flex-shrink: 0;
+            font-size: var(--font-caption); font-weight: 700; flex-shrink: 0;
         }
 
         /* ===== 審核詳情 Modal ===== */
@@ -688,37 +820,36 @@
             display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
         }
         .rm-header h3 { font-size: var(--font-section-title); font-weight: 700; margin: 0; line-height: 1.4; }
-        .rm-header .close-btn {
-            background: none; border: none; font-size: 18px; color: #9CA3AF;
-            cursor: pointer; padding: 4px; transition: color .15s;
+        .rm-header .btn.ghost {
+            min-height: 36px;
+            padding: 6px 10px;
         }
-        .rm-header .close-btn:hover { color: #374151; }
         .rm-meta-grid {
             display: grid; grid-template-columns: 1fr 1fr;
             gap: 12px; padding: 16px 24px; background: #F9FAFB;
             border-bottom: 1px solid #F0F1F3;
         }
-        .rm-meta-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
-        .rm-meta-item .meta-label { color: #9CA3AF; font-size: 12px; }
+        .rm-meta-item { display: flex; align-items: center; gap: 8px; font-size: var(--font-body-small); }
+        .rm-meta-item .meta-label { color: #9CA3AF; font-size: var(--font-label); }
         .rm-meta-item .meta-value { font-weight: 600; color: #111827; }
-        .rm-body { padding: 24px; font-size: 14px; line-height: 1.8; color: #374151; }
+        .rm-body { padding: 24px; font-size: var(--font-body-small); line-height: 1.8; color: #374151; }
         .rm-body p { margin-bottom: 14px; }
         .rm-history-section {
             padding: 16px 24px; border-top: 1px solid #F0F1F3;
         }
         .rm-history-section h4 {
-            font-size: 14px; font-weight: 700; color: #111827;
+            font-size: var(--font-body-small); font-weight: 700; color: #111827;
             margin: 0 0 10px; display: flex; align-items: center; gap: 6px;
         }
         .review-history-item {
             display: flex; gap: 12px; padding: 10px 0;
-            border-bottom: 1px solid #F0F1F3; font-size: 13px;
+            border-bottom: 1px solid #F0F1F3; font-size: var(--font-body-small);
         }
         .review-history-item:last-child { border-bottom: none; }
         .rh-icon {
             width: 28px; height: 28px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 11px; flex-shrink: 0;
+            font-size: var(--font-caption); flex-shrink: 0;
         }
         .rh-icon.created  { background: #EEF2FF; color: #4F46E5; }
         .rh-icon.approved  { background: #ECFDF5; color: #059669; }
@@ -726,18 +857,15 @@
         .rh-icon.reviewing { background: #DBEAFE; color: #1D4ED8; }
         .rh-content { flex: 1; }
         .rh-action { font-weight: 600; color: #111827; }
-        .rh-time { font-size: 11px; color: #9CA3AF; margin-top: 2px; }
-        .rh-comment { font-size: 12px; color: #6B7280; margin-top: 4px; font-style: italic; }
+        .rh-time { font-size: var(--font-caption); color: #9CA3AF; margin-top: 2px; }
+        .rh-comment { font-size: var(--font-label); color: #6B7280; margin-top: 4px; font-style: italic; }
         .rm-footer {
             padding: 14px 24px; border-top: 1px solid #F0F1F3;
             display: flex; align-items: center; justify-content: flex-end; gap: 8px;
         }
-        .btn-cancel {
-            padding: 8px 18px; border: 1px solid #E5E8ED; border-radius: 8px;
-            background: #fff; color: #6B7280; font-size: 13px; font-weight: 600;
-            cursor: pointer; transition: all .15s;
+        .rm-footer .btn {
+            min-height: 36px;
         }
-        .btn-cancel:hover { background: #F3F4F6; }
     </style>
 </head>
 <body>
@@ -749,16 +877,16 @@
 
     <!-- 主要內容區 -->
     <div class="main-content">
-        <div class="km-container">
+        <div class="km-container km-overview-content">
             <!-- 返回 -->
             <div class="back-link-bar">
                 <a href="km-knowledge.html"><i class="fa-solid fa-arrow-left"></i> 返回知識總覽</a>
             </div>
-            <div class="page-title-bar" style="margin-left:14px;" id="pageTitleBar">
+            <div class="page-title-bar" id="pageTitleBar">
                 <div>
                     <h2>管理文章</h2>
                 </div>
-                <a class="btn-primary" href="km-editor.html"><i class="fa-solid fa-plus"></i> 新增文章</a>
+                <a class="km-overview-outline-btn" href="km-editor.html"><i class="fa-solid fa-plus"></i> 新增文章</a>
             </div>
 
             <!-- 雙欄佈局：左側選單 + 右側主內容 -->
@@ -769,24 +897,16 @@
                         <strong>個人專區</strong>
                     </div>
                     <div class="panel-body">
-                        <!-- 個人概況 -->
-                        <div class="sidebar-section">
-                            <div class="sidebar-section-title">個人概況</div>
+                        <div class="sidebar-section is-shortcut-group">
                             <a class="sidebar-nav-item" href="#activity" data-nav="activity">我的活躍度</a>
-                        </div>
-                        <!-- 個人收藏 -->
-                        <div class="sidebar-section">
-                            <div class="sidebar-section-title">個人收藏</div>
                             <a class="sidebar-nav-item" href="km-favorites.html?from=manage" data-nav="favorite">我的收藏 <span class="nav-badge" id="badgeFavorite">10</span></a>
                         </div>
-                        <!-- 個人貢獻 -->
                         <div class="sidebar-section">
                             <div class="sidebar-section-title">個人貢獻</div>
                             <a class="sidebar-nav-item" href="#published" data-nav="published">已發表文章 <span class="nav-badge" id="badgePublished">7</span></a>
                             <a class="sidebar-nav-item" href="#draft" data-nav="draft">草稿 <span class="nav-badge" id="badgeDraft">3</span></a>
                             <a class="sidebar-nav-item" href="#expired" data-nav="expired">已失效文章 <span class="nav-badge" id="badgeExpired">3</span></a>
                         </div>
-                        <!-- 文件審核 -->
                         <div class="sidebar-section">
                             <div class="sidebar-section-title">文件審核</div>
                             <a class="sidebar-nav-item" href="#my-submit" data-nav="my-submit">我送審的文章 <span class="nav-badge" id="badgeMySubmit">5</span></a>
@@ -798,31 +918,27 @@
                 <!-- 右側：主內容 -->
                 <div class="manage-right-panel">
                     <div class="mobile-mode-switch" id="mobileModeSwitch"></div>
-                    <div class="mobile-shortcuts" id="mobileShortcuts"></div>
                     <div class="activity-view" id="activityView"></div>
 
                     <!-- 統計卡片 -->
                     <div class="stat-cards" id="statCards"></div>
 
                     <!-- Tabs -->
-                    <div class="manage-tabs" id="manageTabs"></div>
+                    <div class="manage-tabs km-overview-tab-bar is-compact" id="manageTabs"></div>
 
                     <!-- 搜尋列 -->
                     <div class="toolbar">
                         <div class="toolbar-left">
-                            <div class="search-box">
+                            <div class="km-page-search">
                                 <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="text" placeholder="搜尋文章標題…" id="searchInput" oninput="searchArticles()">
+                                <input type="text" placeholder="搜尋目前列表文章標題…" id="searchInput" oninput="searchArticles()">
                             </div>
-                            <select id="filterSort" onchange="searchArticles()">
+                            <select id="filterSort" class="km-overview-select" onchange="searchArticles()">
                                 <option value="date-desc">最新在前</option>
                                 <option value="date-asc">最舊在前</option>
                                 <option value="views-desc">瀏覽量高→低</option>
                                 <option value="title-asc">標題 A→Z</option>
                             </select>
-                        </div>
-                        <div class="toolbar-right">
-                            <button class="btn-outline" onclick="exportArticles()"><i class="fa-solid fa-download"></i> 匯出</button>
                         </div>
                     </div>
 
@@ -843,7 +959,7 @@
         <div class="review-modal">
             <div class="rm-header">
                 <h3 id="rmTitle">—</h3>
-                <button class="close-btn" onclick="closeReviewModal()"><i class="fa-solid fa-xmark"></i></button>
+                <button class="btn ghost" onclick="closeReviewModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="rm-meta-grid" id="rmMeta"></div>
             <div class="rm-body" id="rmBody"></div>
@@ -852,7 +968,7 @@
                 <div id="rmHistory"></div>
             </div>
             <div class="rm-footer">
-                <button class="btn-cancel" onclick="closeReviewModal()">關閉</button>
+                <button class="btn" onclick="closeReviewModal()">關閉</button>
             </div>
         </div>
     </div>
@@ -957,9 +1073,7 @@
         },
     ];
 
-    const _favoriteCount = 10;
     const _myActivity = {
-        rank: 2630,
         totalUsers: 32819,
         personalReads: 15,
         totalArticleReads: 1200
@@ -979,7 +1093,7 @@
     };
 
     var VIEW_META = {
-        'activity':   { label:'我的活躍度', desc:'查看你的閱讀、收藏與文章影響力概況。' },
+        'activity':   { label:'我的活躍度', desc:'查看近 30 天閱讀與發表的活躍表現概況。' },
         'published':  { label:'已發表文章', desc:'查看你已發布的知識文章與後續管理。' },
         'draft':      { label:'草稿', desc:'持續編修中的文章草稿。' },
         'reviewing':  { label:'審核中', desc:'已送審，等待審核結果的文章。' },
@@ -1027,7 +1141,6 @@
     function renderAll() {
         renderPageTitle();
         renderMobileModeSwitch();
-        renderMobileShortcuts();
         renderActivityView();
         renderStatCards();
         renderTabs();
@@ -1046,9 +1159,9 @@
             bar.innerHTML = '<div><h2>我的活躍度</h2><p class="page-desc">' + meta.desc + '</p></div>';
         } else if (_currentMode === 'contribution') {
             bar.innerHTML = '<div><h2>管理文章</h2><p class="page-desc">目前檢視：' + meta.label + '，共 ' + count + ' 篇。</p></div>' +
-                '<a class="btn-primary" href="km-editor.html"><i class="fa-solid fa-plus"></i> 新增文章</a>';
+                '<a class="km-overview-outline-btn" href="km-editor.html"><i class="fa-solid fa-plus"></i> 新增文章</a>';
         } else {
-            bar.innerHTML = '<div><h2><i class="fa-solid fa-clipboard-check"></i> 文件審核</h2>' +
+            bar.innerHTML = '<div><h2>文件審核</h2>' +
                 '<p class="page-desc">' + meta.desc + ' 目前共 ' + count + ' 篇。</p></div>';
         }
     }
@@ -1056,20 +1169,20 @@
     function renderMobileModeSwitch() {
         var container = document.getElementById('mobileModeSwitch');
         if (!container) return;
-        container.innerHTML = [
-            { key:'activity', label:'我的活躍度' },
-            { key:'contribution', label:'個人貢獻' },
-            { key:'review', label:'文件審核' }
-        ].map(function(item) {
-            return '<button class="mobile-mode-btn ' + (item.key === _currentMode ? 'active' : '') + '" onclick="switchMode(\'' + item.key + '\')">' + item.label + '</button>';
+        var items = [
+            { type:'mode', key:'activity', label:'我的活躍度', icon:'fa-bolt' },
+            { type:'link', label:'我的收藏', icon:'fa-star', href:'km-favorites.html?from=manage', badge:getArticleFavorites().length },
+            { type:'mode', key:'contribution', label:'個人貢獻', icon:'fa-file-lines' },
+            { type:'mode', key:'review', label:'文件審核', icon:'fa-clipboard-check' }
+        ];
+        container.innerHTML = items.map(function(item) {
+            var badgeHtml = item.badge != null ? '<span class="mobile-mode-badge km-overview-tile-badge">' + item.badge + '</span>' : '';
+            var contentHtml = '<span class="mobile-mode-main km-overview-tile-main"><i class="fa-solid ' + item.icon + '"></i><span>' + item.label + '</span></span>' + badgeHtml;
+            if (item.type === 'link') {
+                return '<a class="mobile-mode-btn km-overview-tile" href="' + item.href + '">' + contentHtml + '</a>';
+            }
+            return '<button class="mobile-mode-btn km-overview-tile ' + (item.key === _currentMode ? 'active' : '') + '" type="button" onclick="switchMode(\'' + item.key + '\')">' + contentHtml + '</button>';
         }).join('');
-    }
-
-    function renderMobileShortcuts() {
-        var container = document.getElementById('mobileShortcuts');
-        if (!container) return;
-        container.innerHTML = '<a class="mobile-shortcut-link" href="km-favorites.html?from=manage">' +
-            '<i class="fa-solid fa-bookmark"></i> 我的收藏 <span class="nav-badge">' + _favoriteCount + '</span></a>';
     }
 
     function renderActivityView() {
@@ -1084,13 +1197,14 @@
             return;
         }
 
-        var percentile = Math.max(0, Math.round((1 - _myActivity.rank / _myActivity.totalUsers) * 100));
+        var activity = getKmActivitySummary({
+            totalUsers: _myActivity.totalUsers,
+            personalReads: _myActivity.personalReads,
+            publishedCount: _myArticles.published.length
+        });
         var radius = 56;
         var circumference = 2 * Math.PI * radius;
-        var offset = circumference * (1 - percentile / 100);
-        var inProgressCount = _mySubmitted.filter(function(item) {
-            return item.status === 'pending' || item.status === 'reviewing';
-        }).length;
+        var offset = circumference * (1 - activity.ringPercent / 100);
 
         tableCard.style.display = 'none';
         container.classList.add('is-visible');
@@ -1103,27 +1217,22 @@
                         '<circle cx="80" cy="80" r="' + radius + '" fill="none" stroke="#4F46E5" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 80 80)"></circle>' +
                     '</svg>' +
                     '<div class="activity-ring-center">' +
-                        '<div class="activity-rank-number">' + _myActivity.rank.toLocaleString() + '</div>' +
+                        '<div class="activity-rank-number">' + activity.rank.toLocaleString() + '</div>' +
                         '<div class="activity-rank-unit">排名</div>' +
-                        '<div class="activity-rank-total">/' + _myActivity.totalUsers.toLocaleString() + ' 人</div>' +
+                        '<div class="activity-rank-total">/' + activity.totalUsers.toLocaleString() + ' 人</div>' +
                     '</div>' +
                 '</div>' +
-                '<p class="activity-rank-caption">目前活躍表現約落在前 ' + percentile + '%，持續透過閱讀、收藏與文章分享累積個人知識影響力。</p>' +
+                '<p class="activity-rank-caption">' + getKmActivityCaption(activity.exceededPercent) + '</p>' +
             '</section>' +
             '<section class="activity-panel-card">' +
                 '<div class="activity-panel-heading">' +
                     '<h3>個人活躍摘要</h3>' +
-                    '<p>聚合閱讀、收藏、發表與知識擴散等關鍵指標。</p>' +
+                    '<p>整理' + activity.periodLabel + '的閱讀與發表表現概況。</p>' +
                 '</div>' +
                 '<div class="activity-metrics">' +
                     '<div class="activity-metric-card"><div class="activity-metric-label">本月閱讀量</div><div class="activity-metric-value">' + _myActivity.personalReads + '</div><div class="activity-metric-unit">篇 / 本月</div></div>' +
-                    '<div class="activity-metric-card"><div class="activity-metric-label">我的收藏</div><div class="activity-metric-value">' + _favoriteCount + '</div><div class="activity-metric-unit">篇文章</div></div>' +
                     '<div class="activity-metric-card"><div class="activity-metric-label">已發表文章</div><div class="activity-metric-value">' + _myArticles.published.length + '</div><div class="activity-metric-unit">篇已上架內容</div></div>' +
-                    '<div class="activity-metric-card"><div class="activity-metric-label">文章總閱讀數</div><div class="activity-metric-value">' + _myActivity.totalArticleReads.toLocaleString() + '</div><div class="activity-metric-unit">次瀏覽</div></div>' +
-                '</div>' +
-                '<div class="activity-highlight-list">' +
-                    '<div class="activity-highlight-item"><i class="fa-solid fa-chart-line"></i><div>目前有 <strong>' + inProgressCount + '</strong> 篇文章仍在送審流程中，建議優先追蹤審核進度。</div></div>' +
-                    '<div class="activity-highlight-item"><i class="fa-solid fa-clipboard-check"></i><div>你手上另有 <strong>' + _pendingMyReview.length + '</strong> 篇待審文章，可直接切換到文件審核處理。</div></div>' +
+                    '<div class="activity-metric-card"><div class="activity-metric-label">累積閱讀總量</div><div class="activity-metric-value">' + _myActivity.totalArticleReads.toLocaleString() + '</div><div class="activity-metric-unit">次 / 累積</div></div>' +
                 '</div>' +
             '</section>' +
         '</div>';
@@ -1137,14 +1246,13 @@
         var data = [
             { key:'published', label:'已發表', icon:'fa-circle-check', count: _myArticles.published.length },
             { key:'draft',     label:'草稿',   icon:'fa-file-pen',      count: _myArticles.draft.length },
-            { key:'reviewing', label:'審核中', icon:'fa-spinner',       count: _myArticles.reviewing.length },
             { key:'expired',   label:'已失效', icon:'fa-file-circle-xmark', count: _myArticles.expired.length },
         ];
         container.innerHTML = data.map(function(d) {
-            return '<div class="stat-card ' + d.key + (d.key === _currentTab ? ' is-active' : '') + '">'+
+            return '<button type="button" class="stat-card ' + d.key + (d.key === _currentTab ? ' is-active' : '') + '" onclick="switchTab(\'' + d.key + '\')" aria-pressed="' + (d.key === _currentTab ? 'true' : 'false') + '">'+
                 '<div class="stat-icon"><i class="fa-solid ' + d.icon + '"></i></div>'+
                 '<div class="stat-body"><div class="stat-number">' + d.count + '</div>'+
-                '<div class="stat-label">' + d.label + '</div></div></div>';
+                '<div class="stat-label">' + d.label + '</div></div></button>';
         }).join('');
     }
 
@@ -1162,7 +1270,6 @@
             tabs = [
                 { key:'published', label:'已發表', icon:'fa-circle-check' },
                 { key:'draft',     label:'草稿',   icon:'fa-file-pen' },
-                { key:'reviewing', label:'審核中', icon:'fa-spinner' },
                 { key:'expired',   label:'已失效', icon:'fa-file-circle-xmark' },
             ];
         } else {
@@ -1173,7 +1280,7 @@
         }
         container.innerHTML = tabs.map(function(t) {
             var count = getTabCount(t.key);
-            return '<button class="manage-tab ' + (t.key === _currentTab ? 'active' : '') + '" onclick="switchTab(\'' + t.key + '\')" data-tab="' + t.key + '">'+
+            return '<button class="manage-tab km-overview-tab ' + (t.key === _currentTab ? 'active' : '') + '" onclick="switchTab(\'' + t.key + '\')" data-tab="' + t.key + '">'+
                 '<i class="fa-solid ' + t.icon + '"></i> ' + t.label +
                 ' <span class="tab-count">' + count + '</span></button>';
         }).join('');
@@ -1212,7 +1319,6 @@
     function renderToolbar() {
         var toolbar = document.querySelector('.toolbar');
         var sortEl    = document.getElementById('filterSort');
-        var exportBtn = document.querySelector('.toolbar-right');
         if (_currentMode === 'activity') {
             if (toolbar) toolbar.style.display = 'none';
             return;
@@ -1220,10 +1326,8 @@
         if (toolbar) toolbar.style.display = '';
         if (_currentMode === 'review') {
             sortEl.style.display    = 'none';
-            if (exportBtn) exportBtn.style.display = 'none';
         } else {
             sortEl.style.display    = '';
-            if (exportBtn) exportBtn.style.display = '';
         }
         document.getElementById('searchInput').value = '';
     }
@@ -1235,7 +1339,7 @@
         });
     }
     function updateSidebarBadges() {
-        setBadge('badgeFavorite',  _favoriteCount);
+        setBadge('badgeFavorite',  getArticleFavorites().length);
         setBadge('badgePublished', _myArticles.published.length);
         setBadge('badgeDraft',     _myArticles.draft.length);
         setBadge('badgeExpired',   _myArticles.expired.length);
@@ -1289,9 +1393,9 @@
                     '<td data-label="發表日期">' + a.date + '</td>' +
                     '<td data-label="瀏覽"><i class="fa-solid fa-eye" style="color:#9CA3AF;margin-right:3px;"></i> ' + a.views + '</td>' +
                     '<td data-label="操作"><div class="actions-cell">' +
-                    '<button class="action-btn" title="編輯" onclick="editArticle(\'' + a.id + '\')"><i class="fa-solid fa-pen"></i></button>' +
-                    '<button class="action-btn" title="分享" onclick="shareArticle(\'' + a.id + '\')"><i class="fa-solid fa-share-nodes"></i></button>' +
-                    '<button class="action-btn danger" title="下架" onclick="archiveArticle(\'' + a.id + '\')"><i class="fa-solid fa-box-archive"></i></button>' +
+                    '<button class="action-btn km-overview-icon-btn" title="編輯" onclick="editArticle(\'' + a.id + '\')"><i class="fa-solid fa-pen"></i></button>' +
+                    '<button class="action-btn km-overview-icon-btn" title="分享" onclick="shareArticle(\'' + a.id + '\')"><i class="fa-solid fa-share-nodes"></i></button>' +
+                    '<button class="action-btn km-overview-icon-btn danger" title="下架" onclick="archiveArticle(\'' + a.id + '\')"><i class="fa-solid fa-box-archive"></i></button>' +
                     '</div></td></tr>';
             }).join('');
         } else if (_currentTab === 'draft') {
@@ -1301,9 +1405,9 @@
                 return '<tr><td class="article-title-cell" data-label="文章標題" onclick="editArticle(\'' + a.id + '\')">' + escHtml(a.title) + '</td>' +
                     '<td data-label="建立日期">' + a.date + '</td><td data-label="最後編輯">' + a.lastEdit + '</td>' +
                     '<td data-label="操作"><div class="actions-cell">' +
-                    '<button class="action-btn" title="繼續編輯" onclick="editArticle(\'' + a.id + '\')"><i class="fa-solid fa-pen"></i></button>' +
-                    '<button class="action-btn" title="送審" onclick="submitReview(\'' + a.id + '\')"><i class="fa-solid fa-paper-plane"></i></button>' +
-                    '<button class="action-btn danger" title="刪除" onclick="deleteArticle(\'' + a.id + '\')"><i class="fa-solid fa-trash-can"></i></button>' +
+                    '<button class="action-btn km-overview-icon-btn" title="繼續編輯" onclick="editArticle(\'' + a.id + '\')"><i class="fa-solid fa-pen"></i></button>' +
+                    '<button class="action-btn km-overview-icon-btn" title="送審" onclick="submitReview(\'' + a.id + '\')"><i class="fa-solid fa-paper-plane"></i></button>' +
+                    '<button class="action-btn km-overview-icon-btn danger" title="刪除" onclick="deleteArticle(\'' + a.id + '\')"><i class="fa-solid fa-trash-can"></i></button>' +
                     '</div></td></tr>';
             }).join('');
         } else if (_currentTab === 'reviewing') {
@@ -1315,8 +1419,8 @@
                     '<td data-label="審核人"><i class="fa-solid fa-user-check" style="color:#9CA3AF;margin-right:3px;"></i> ' + escHtml(a.reviewer) + '</td>' +
                     '<td data-label="狀態"><span class="status-badge ' + a.status + '"><i class="fa-solid ' + getStatusIcon(a.status) + '"></i> ' + a.statusText + '</span></td>' +
                     '<td data-label="操作"><div class="actions-cell">' +
-                    '<button class="action-btn" title="查看" onclick="goArticle(\'' + a.id + '\')"><i class="fa-solid fa-eye"></i></button>' +
-                    '<button class="action-btn danger" title="撤回" onclick="withdrawReview(\'' + a.id + '\')"><i class="fa-solid fa-rotate-left"></i></button>' +
+                    '<button class="action-btn km-overview-icon-btn" title="查看" onclick="goArticle(\'' + a.id + '\')"><i class="fa-solid fa-eye"></i></button>' +
+                    '<button class="action-btn km-overview-icon-btn danger" title="撤回" onclick="withdrawReview(\'' + a.id + '\')"><i class="fa-solid fa-rotate-left"></i></button>' +
                     '</div></td></tr>';
             }).join('');
         } else if (_currentTab === 'expired') {
@@ -1327,9 +1431,9 @@
                     '<td data-label="原發表日">' + a.date + '</td>' +
                     '<td data-label="失效日期" style="color:#DC2626;font-weight:600;">' + a.expiredDate + '</td>' +
                     '<td data-label="操作"><div class="actions-cell">' +
-                    '<button class="action-btn" title="重新發表" onclick="republishArticle(\'' + a.id + '\')"><i class="fa-solid fa-rotate-right"></i></button>' +
-                    '<button class="action-btn" title="編輯更新" onclick="editArticle(\'' + a.id + '\')"><i class="fa-solid fa-pen"></i></button>' +
-                    '<button class="action-btn danger" title="永久刪除" onclick="deleteArticle(\'' + a.id + '\')"><i class="fa-solid fa-trash-can"></i></button>' +
+                    '<button class="action-btn km-overview-icon-btn" title="重新發表" onclick="republishArticle(\'' + a.id + '\')"><i class="fa-solid fa-rotate-right"></i></button>' +
+                    '<button class="action-btn km-overview-icon-btn" title="編輯更新" onclick="editArticle(\'' + a.id + '\')"><i class="fa-solid fa-pen"></i></button>' +
+                    '<button class="action-btn km-overview-icon-btn danger" title="永久刪除" onclick="deleteArticle(\'' + a.id + '\')"><i class="fa-solid fa-trash-can"></i></button>' +
                     '</div></td></tr>';
             }).join('');
         } else {
@@ -1392,7 +1496,6 @@
     function withdrawReview(id)  { showToast('已撤回審核申請'); }
     function republishArticle(id){ showToast('文章已重新上架'); }
     function deleteArticle(id)   { showToast('文章已刪除'); }
-    function exportArticles()    { showToast('匯出功能開發中…'); }
 
     // ===== 審核詳情 Modal =====
     function openReviewModal(type, id) {
@@ -1443,7 +1546,7 @@
         var toast = document.createElement('div');
         toast.className = 'toast';
         toast.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#059669;"></i> ' + escHtml(msg);
-        toast.style.cssText = 'display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #E5E8ED;border-radius:10px;padding:12px 18px;box-shadow:0 4px 12px rgba(0,0,0,.1);font-size:13px;animation:slideIn .3s ease;';
+        toast.style.cssText = 'display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #E5E8ED;border-radius:10px;padding:12px 18px;box-shadow:0 4px 12px rgba(0,0,0,.1);font-size:var(--font-label);animation:slideIn .3s ease;';
         container.appendChild(toast);
         setTimeout(function() { toast.style.animation = 'slideOut .3s ease'; setTimeout(function() { toast.remove(); }, 300); }, 2500);
     }

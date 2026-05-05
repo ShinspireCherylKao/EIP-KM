@@ -37,6 +37,7 @@ function initSidebar() {
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const sidebarContainer = document.getElementById('sidebar-container');
+    if (!sidebar) return;
     
     if (window.innerWidth <= 640) {
         // 手機版：顯示/隱藏
@@ -58,6 +59,7 @@ function toggleSidebar() {
 function handleResponsiveSidebar() {
     const sidebar = document.getElementById('sidebar');
     const sidebarContainer = document.getElementById('sidebar-container');
+    if (!sidebar) return;
     
     if (window.innerWidth <= 640) {
         sidebar.classList.remove('collapsed');
@@ -83,6 +85,7 @@ document.addEventListener('click', function(e) {
     
     if (window.innerWidth <= 640 && 
         sidebar && 
+        menuToggle &&
         sidebar.classList.contains('show') && 
         !sidebar.contains(e.target) && 
         !menuToggle.contains(e.target)) {
